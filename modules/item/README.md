@@ -1,0 +1,83 @@
+## Items
+Items are loaded from a JSON data file, the format is described below
+
+### Format
+The format is shown below, I would suggest a simple tool to convert a slightly nicer format 
+and generate IDs/property map automatically. I made 
+
+```json5
+{
+  // Item namespace ID, one for each unique item.
+  "unnnamed:item": {
+    // Numeric ID for this item
+    "id": 25,
+    // Item material
+    //todo might want to decide this based on other factors
+    "material": "minecraft:stick",
+    // State system
+    // Default state id, at least one must be present and this should be its ID
+    "defaultStateId": 100,
+    // Only present if there are more than one property, keys and all possible values are listed
+    "properties": {
+      "key": [
+        "true",
+        "false",
+      ]
+    },
+    // States must always be present, even with a single state
+    "states": {
+      // One key for each possible state.
+      // If there are no states, there should be one single entry with the key `[]`.
+      "[key=true]": {
+        // Inside here any properties from the root may be overridden, for example this state will be a blaze rod
+        "stateId": 100,
+        "material": "minecraft:blaze_rod"
+      },
+      "[key=false]": {
+        "stateId": 101
+      },
+    }
+  }
+}
+```
+
+### Future Notes
+Below is a minimal item, except for the commented parts which have not currently been done but probably need to be.
+```json5
+{
+  "unnnamed:item": {
+    "id": 25,
+    "material": "minecraft:stick",
+    // Max stack size, probably this should choose which material is used if not specified 
+    // eg if stack size is 16 choose egg/ender pearl, another question is whether custom stack 
+    // sizes actually makes sense at all given the client predictions issue.
+    "stackSize": 32,
+    // A map from component ID to content (any json)
+    "components": {
+      // Turns this item into a pickaxe
+      "unnamed:pickaxe": {
+        "miningSpeed": 25,
+        "miningLevel": 2,
+      },
+      "unnamed:something": 25,
+    },
+    "defaultStateId": 100,
+    "states": {
+      "[]": {
+        "stateId": 100
+      }
+    }
+  }
+}
+```
+
+Some things that still need to be worked out:
+- Name/lore in more detail
+  - Would like to do translations but that very well may be out of scope, and is complicated when
+    components need to add content to the lore.
+- Resource pack things (textures/models)
+  - I have a draft of this that I can work on soon
+- Testing
+  - Not currently super testable without testing e2e flow, need to create mock items.
+  - Basically just want to test item loading (ensure it loads item registry data) as well as multiple states.
+
