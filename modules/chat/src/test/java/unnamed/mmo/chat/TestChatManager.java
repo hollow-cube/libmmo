@@ -5,6 +5,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.junit.jupiter.api.Test;
 import unnamed.mmo.chat.storage.MockChatStorage;
+import unnamed.mmo.test.TestUtil;
 
 import java.util.Collections;
 

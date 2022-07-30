@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import unnamed.mmo.chat.ChatQuery;
-import unnamed.mmo.chat.TestUtil;
+import unnamed.mmo.test.TestUtil;
 import unnamed.mmo.chat.ChatMessage;
 
 import java.io.BufferedReader;
