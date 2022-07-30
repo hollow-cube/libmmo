@@ -32,7 +32,7 @@ public class TestChatManager {
         assertFalse(event.isCancelled());
         ChatMessage message = storage.assertOneMessage();
         assertEquals(player.getUuid(), message.sender());
-        assertEquals("global", message.channelId());
+        assertEquals("global", message.context());
         assertEquals("test message 1", message.message());
     }
 

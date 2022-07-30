@@ -83,11 +83,14 @@ class MongoChatStorage implements ChatStorage {
         // { $and: [ { <field>: <value> }, ... ]
         // if there is only a single query value.
 
-        if (!query.serverIds().isEmpty())
-            conditions.add(in("serverId", query.serverIds()));
+        if (!query.serverIds().isEmpty()) {
+            // Server ID matches anything starting with the provided string.
+            // $or the provided strings with a trailing '*' as regex
+            conditions.add(or(query.serverIds().stream().map(str -> regex("serverId", str + "*")).toList()));
+        }
 
-        if (!query.channelIds().isEmpty())
-            conditions.add(in("channelId", query.channelIds()));
+        if (!query.contexts().isEmpty())
+            conditions.add(in("context", query.contexts()));
 
         if (!query.senders().isEmpty())
             conditions.add(in("sender", query.senders()));

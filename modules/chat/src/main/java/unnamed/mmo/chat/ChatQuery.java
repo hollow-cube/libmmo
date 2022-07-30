@@ -8,22 +8,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public record ChatQuery(
         //todo timestamps
         @NotNull List<String> serverIds,
-        @NotNull List<String> channelIds,
+        @NotNull List<String> contexts,
         @NotNull List<UUID> senders,
         @Nullable String message
 ) {
+    public static final Predicate<String> SERVER_ID_REGEX = Pattern.compile("[a-zA-Z0-9_-]*").asMatchPredicate();
+
     public static @NotNull Builder builder() {
         return new Builder();
     }
 
     public ChatQuery {
         serverIds = List.copyOf(serverIds);
-        channelIds = List.copyOf(channelIds);
+        contexts = List.copyOf(contexts);
         senders = List.copyOf(senders);
+
+        // Only allow alphanumeric characters in server IDs
+        for (String serverId : serverIds) {
+            if (SERVER_ID_REGEX.test(serverId))
+                continue;
+            throw new IllegalArgumentException("Illegal character in serverId '" + serverId + "'");
+        }
     }
 
 
@@ -36,13 +47,13 @@ public record ChatQuery(
         private Builder() {}
 
         @Contract("_ -> this")
-        public @NotNull Builder channelId(String... channelIds) {
-            return this.channelIds(Arrays.asList(channelIds));
+        public @NotNull Builder context(String... context) {
+            return this.contexts(Arrays.asList(context));
         }
 
         @Contract("_ -> this")
-        public @NotNull Builder channelIds(List<String> channelIds) {
-            this.channelIds.addAll(channelIds);
+        public @NotNull Builder contexts(List<String> contexts) {
+            this.channelIds.addAll(contexts);
             return this;
         }
 
