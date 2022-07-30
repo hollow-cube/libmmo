@@ -3,51 +3,75 @@ package unnamed.mmo.chat.command;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
-import net.minestom.server.command.builder.arguments.ArgumentString;
 import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.command.builder.suggestion.Suggestion;
+import net.minestom.server.command.builder.suggestion.SuggestionCallback;
+import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.chat.ChatQuery;
+import unnamed.mmo.chat.storage.ChatStorage;
 
 import java.util.List;
 
 public class LogCommand extends Command {
+    private final ChatStorage storage;
 
-    public LogCommand() {
+    public LogCommand(@NotNull ChatStorage storage) {
         super("log");
+        this.storage = storage;
 
-        // log all commands /whitelist
-        // log all chat stink
-        // log sethprg chat poop
-        // log sethprg commands
-        // log sethprg all context=private[notmattw]
-        // log sethprg all context=global, context=local
-        // log sethprg commands /msg, /r
-        // log sethprg chat 10/10/2022 server=mapmaker
-        // log sethprg chat server=mapmaker_AB1C, mapmaker_235A
         var filters = ArgumentType.Loop(
                 "filters",
                 ArgumentType.Group(
-                        "contextGroup",
-                        ArgumentType.Literal("context"),
-                        ArgumentType.Word("contextId")
-                                .from("global")
+                        "serverGroup",
+                        ArgumentType.Word("server").from("server", "on"),
+                        //todo would be nice to suggest some entries? Not sure where this would come from
+                        ArgumentType.Word("serverId")
                 ),
                 ArgumentType.Group(
-                        "testGroup",
-                        ArgumentType.Literal("test"),
-                        ArgumentType.String("testStr")
+                        "contextGroup",
+                        ArgumentType.Word("context").from("context", "in"),
+                        ArgumentType.Word("contextId")
+                                //todo better way to add an optional suggestion?
+                                .setSuggestionCallback((sender, context, suggestion) -> suggestion.addEntry(new SuggestionEntry("global")))
+                ),
+                ArgumentType.Group(
+                        "fromGroup",
+                        ArgumentType.Literal("from"),
+                        //todo is entity only online players? Can you input a UUID?
+                        ArgumentType.Entity("fromEntity")
+                                .onlyPlayers(true)
+                                .singleEntity(true)
                 )
         );
 
-        // log notmattw [...]
-        addSyntax(this::onLog, ArgumentType.Entity("target").onlyPlayers(true).singleEntity(true), filters);
-
+        // log [...]
+        addSyntax(this::onLog, filters);
     }
 
     private void onLog(CommandSender sender, CommandContext context) {
-        List<CommandContext> filters = context.get("filters");
 
+        ChatQuery.Builder query = ChatQuery.builder();
+        parseFilters(query, context.get("filters"));
+
+        storage.queryChatMessages(query.build());
     }
 
-
+    private void parseFilters(ChatQuery.Builder query, List<CommandContext> filters) {
+        for (CommandContext context : filters) {
+            switch (context.getCommandName()) {
+                case "server", "on" -> {
+                    final String serverId = context.get("serverId");
+                    query.serverId(serverId);
+                }
+                case "context", "in" -> {
+                    final String contextId = context.get("contextId");
+                    query.context(contextId);
+                }
+                default -> throw new RuntimeException("bad command");
+            }
+        }
+    }
 
 
 }

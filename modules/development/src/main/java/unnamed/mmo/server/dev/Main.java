@@ -5,9 +5,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.CommandManager;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
@@ -18,7 +16,6 @@ import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
 import org.bson.UuidRepresentation;
 import unnamed.mmo.chat.ChatManager;
-import unnamed.mmo.chat.command.LogCommand;
 import unnamed.mmo.chat.storage.ChatStorage;
 
 public class Main {
@@ -44,8 +41,6 @@ public class Main {
             player.setAllowFlying(true);
         });
 
-        CommandManager commandManager = MinecraftServer.getCommandManager();
-
 
         // For now, manually register chat (with conn to mongo :/ need a config system)
         MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
@@ -54,8 +49,7 @@ public class Main {
                 .build());
         ChatStorage chatStorage = ChatStorage.mongo(mongoClient);
         ChatManager chatManager = new ChatManager(chatStorage);
-        eventHandler.addChild(chatManager.eventNode());
-        commandManager.register(new LogCommand());
+        chatManager.hook(MinecraftServer.process());
 
         server.start("0.0.0.0", 25565);
     }
