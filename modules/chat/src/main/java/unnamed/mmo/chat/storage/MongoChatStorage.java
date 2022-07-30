@@ -17,17 +17,15 @@ import unnamed.mmo.chat.ChatQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Sorts.descending;
 
 class MongoChatStorage implements ChatStorage {
-    //todo need to change this. Would prefer to use an async driver but the reactive streams one seems horrible.
-    //todo perhaps worth writing a small wrapper around MongoClient to use CompletableFuture
-    private static final Executor THREAD_POOL = Executors.newSingleThreadExecutor();
+    //todo Would prefer to use an async driver but the reactive streams one seems horrible. Perhaps worth creating a small completablefuture wrapper around the sync driver
+
 
     // todo eventually db name needs to be a configurable value (at minimum by env var, perhaps also file)
     private static final String DB_NAME = "mmo";
@@ -50,7 +48,7 @@ class MongoChatStorage implements ChatStorage {
 
     @Override
     public CompletableFuture<Void> recordChatMessage(@NotNull ChatMessage message) {
-        return CompletableFuture.runAsync(() -> collection().insertOne(message), THREAD_POOL);
+        return CompletableFuture.runAsync(() -> collection().insertOne(message), ForkJoinPool.commonPool());
     }
 
     @Override
@@ -63,7 +61,7 @@ class MongoChatStorage implements ChatStorage {
                     .limit(CHAT_QUERY_MAX_RESULT_WINDOW)
                     .into(results);
             return results;
-        }, THREAD_POOL);
+        }, ForkJoinPool.commonPool());
     }
 
     /**
