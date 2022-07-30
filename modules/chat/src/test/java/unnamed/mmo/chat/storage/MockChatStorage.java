@@ -10,10 +10,13 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public record MockChatStorage(@NotNull List<ChatMessage> messages) implements ChatStorage {
+public record MockChatStorage(
+        @NotNull List<ChatMessage> messages,
+        @NotNull List<ChatQuery> queries
+) implements ChatStorage {
 
     public MockChatStorage() {
-        this(new ArrayList<>());
+        this(new ArrayList<>(), new ArrayList<>());
     }
 
     @Override
@@ -24,7 +27,8 @@ public record MockChatStorage(@NotNull List<ChatMessage> messages) implements Ch
 
     @Override
     public CompletableFuture<List<ChatMessage>> queryChatMessages(@NotNull ChatQuery query) {
-        return null;
+        queries.add(query);
+        return CompletableFuture.completedFuture(List.of());
     }
 
     public ChatMessage assertOneMessage() {
