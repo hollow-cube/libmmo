@@ -1,0 +1,47 @@
+[
+  {
+    "timestamp": {
+      "$date": "2022-07-30T13:26:49.473Z"
+    },
+    "serverId": "test-server",
+    "contextId": "global",
+    "_sender": "251dcab9-9309-4ee5-a611-0f36cac73230",
+    "sender": {
+      "$binary": {
+        "base64": "JR3KuZMJTuWmEQ82yscyMA==",
+        "subType": "04"
+      }
+    },
+    "message": "Hello, world"
+  },
+  {
+    "timestamp": {
+      "$date": "2022-07-30T13:27:15.414Z"
+    },
+    "serverId": "test-server",
+    "contextId": "global",
+    "_sender": "5c44635e-3fa6-40c0-b752-e8cb00aa8c4d",
+    "sender": {
+      "$binary": {
+        "base64": "XERjXj+mQMC3UujLAKqMTQ==",
+        "subType": "04"
+      }
+    },
+    "message": "Hello, world"
+  },
+  {
+    "timestamp": {
+      "$date": "2022-07-30T13:27:24.339Z"
+    },
+    "serverId": "test-server",
+    "contextId": "global",
+    "_sender": "38c46b86-a34d-441f-b61d-61cb056f7c01",
+    "sender": {
+      "$binary": {
+        "base64": "OMRrhqNNRB+2HWHLBW98AQ==",
+        "subType": "04"
+      }
+    },
+    "message": "Hello, world"
+  }
+]
