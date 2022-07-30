@@ -59,7 +59,8 @@ public class LogCommand extends Command {
                         //todo better message/translation/whatever
                         sender.sendMessage(String.format("%s: %s", message.sender(), message.message()));
                     }
-                });
+                })
+                .exceptionally(FutureUtil::handleException);
     }
 
     private void parseFilters(ChatQuery.Builder query, List<CommandContext> filters) {

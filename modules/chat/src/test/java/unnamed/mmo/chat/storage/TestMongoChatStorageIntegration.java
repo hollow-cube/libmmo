@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -173,7 +174,7 @@ public class TestMongoChatStorageIntegration {
         InputStream content = getClass().getClassLoader().getResourceAsStream("fixtures/" + name + ".json");
         assertThat(content).isNotNull();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(content))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(content, Charset.defaultCharset()))) {
             String fileContent = reader.lines().collect(Collectors.joining("\n"));
 
             mongoClient.getDatabase("mmo").getCollection("chat", BsonDocument.class)
