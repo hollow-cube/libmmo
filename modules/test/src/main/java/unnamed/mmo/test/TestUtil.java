@@ -1,4 +1,4 @@
-package unnamed.mmo.chat;
+package unnamed.mmo.test;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.packet.server.SendablePacket;
@@ -10,7 +10,7 @@ import java.net.SocketAddress;
 import java.time.Instant;
 import java.util.UUID;
 
-//todo move me to common test lib
+// Moved straight from chat module, needs some refactoring
 public class TestUtil {
 
     public static Instant instantNow() {

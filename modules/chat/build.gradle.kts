@@ -1,11 +1,8 @@
 
 dependencies {
-    implementation("org.mongodb:mongodb-driver-sync:4.7.0")
-    testImplementation("org.testcontainers:mongodb:1.17.3") {
-        exclude(group = "junit", module = "junit") // JUnit 4
-    }
+    implementation(project(":modules:common"))
 
-    testImplementation("com.google.truth:truth:1.1.3")
+    implementation("org.mongodb:mongodb-driver-sync:4.7.0")
 }
 
 tasks.test {

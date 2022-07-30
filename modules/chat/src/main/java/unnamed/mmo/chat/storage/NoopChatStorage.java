@@ -13,11 +13,9 @@ import java.util.concurrent.CompletableFuture;
  * Dummy chat storage which does not do anything with the messages.
  */
 class NoopChatStorage implements ChatStorage {
-    private static final Logger logger = LoggerFactory.getLogger(NoopChatStorage.class);
 
     @Override
     public CompletableFuture<Void> recordChatMessage(@NotNull ChatMessage message) {
-        logger.debug("'Recorded' chat message: {}", message);
         return CompletableFuture.completedFuture(null);
     }
 

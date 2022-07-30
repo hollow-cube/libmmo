@@ -1,19 +1,16 @@
 package unnamed.mmo.chat.command;
 
-import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.CommandDispatcher;
 import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import unnamed.mmo.chat.ChatQuery;
-import unnamed.mmo.chat.TestUtil;
+import unnamed.mmo.test.TestUtil;
 import unnamed.mmo.chat.storage.MockChatStorage;
 
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
