@@ -18,6 +18,10 @@ import org.bson.UuidRepresentation;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -50,6 +54,9 @@ public class Main {
         ChatStorage chatStorage = ChatStorage.mongo(mongoClient);
         ChatManager chatManager = new ChatManager(chatStorage);
         chatManager.hook(MinecraftServer.process());
+
+        MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
+                ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
 
         server.start("0.0.0.0", 25565);
     }
