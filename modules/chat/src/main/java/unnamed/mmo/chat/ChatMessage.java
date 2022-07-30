@@ -8,7 +8,7 @@ import java.util.UUID;
 public record ChatMessage(
         @NotNull Instant timestamp,
         @NotNull String serverId,
-        @NotNull String channelId,
+        @NotNull String context,
         @NotNull UUID sender,
         @NotNull String message
 ) {

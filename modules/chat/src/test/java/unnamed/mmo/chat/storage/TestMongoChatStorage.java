@@ -34,9 +34,18 @@ public class TestMongoChatStorage {
             BsonDocument expected = BsonDocument.parse("""
                     {
                         "$and": [{
-                            "serverId": {
-                                "$in": ["a", "b"]
-                            }
+                            $or: [
+                                {
+                                    "serverId": {
+                                        "$regularExpression": {"pattern": "a*", "options": ""}
+                                    }
+                                },
+                                {
+                                    "serverId": {
+                                        "$regularExpression": {"pattern": "b*", "options": ""}
+                                    }
+                                }
+                            ]
                         }]
                     }
                     """);
@@ -46,14 +55,14 @@ public class TestMongoChatStorage {
         @Test
         public void testFilterChannelIds() {
             ChatQuery chatQuery = ChatQuery.builder()
-                    .channelId("1", "2")
+                    .context("1", "2")
                     .build();
             BsonDocument query = storage.chatQueryToBson(chatQuery);
 
             BsonDocument expected = BsonDocument.parse("""
                     {
                         "$and": [{
-                            "channelId": {
+                            "context": {
                                 "$in": ["1", "2"]
                             }
                         }]
