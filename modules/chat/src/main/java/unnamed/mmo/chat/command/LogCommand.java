@@ -4,12 +4,12 @@ import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
-import net.minestom.server.command.builder.suggestion.Suggestion;
-import net.minestom.server.command.builder.suggestion.SuggestionCallback;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.chat.ChatMessage;
 import unnamed.mmo.chat.ChatQuery;
 import unnamed.mmo.chat.storage.ChatStorage;
+import unnamed.mmo.util.FutureUtil;
 
 import java.util.List;
 
@@ -34,14 +34,6 @@ public class LogCommand extends Command {
                         ArgumentType.Word("contextId")
                                 //todo better way to add an optional suggestion?
                                 .setSuggestionCallback((sender, context, suggestion) -> suggestion.addEntry(new SuggestionEntry("global")))
-                ),
-                ArgumentType.Group(
-                        "fromGroup",
-                        ArgumentType.Literal("from"),
-                        //todo is entity only online players? Can you input a UUID?
-                        ArgumentType.Entity("fromEntity")
-                                .onlyPlayers(true)
-                                .singleEntity(true)
                 )
         );
 
@@ -54,7 +46,20 @@ public class LogCommand extends Command {
         ChatQuery.Builder query = ChatQuery.builder();
         parseFilters(query, context.get("filters"));
 
-        storage.queryChatMessages(query.build());
+        storage.queryChatMessages(query.build())
+                .exceptionally(FutureUtil::handleException)
+                .thenAccept(messages -> {
+                    if (messages == null) {
+                        // An error occurred, it was already reported internally. Inform the sender
+                        sender.sendMessage("An error occurred"); //todo better message
+                        return;
+                    }
+
+                    for (ChatMessage message : messages) {
+                        //todo better message/translation/whatever
+                        sender.sendMessage(String.format("%s: %s", message.sender(), message.message()));
+                    }
+                });
     }
 
     private void parseFilters(ChatQuery.Builder query, List<CommandContext> filters) {

@@ -12,6 +12,7 @@ import unnamed.mmo.chat.command.LogCommand;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.server.Facet;
 import unnamed.mmo.util.EventUtil;
+import unnamed.mmo.util.FutureUtil;
 
 import java.time.Instant;
 
@@ -65,11 +66,7 @@ public class ChatManager implements Facet {
                 DEFAULT_CHANNEL,
                 event.getPlayer().getUuid(),
                 event.getMessage()
-        )).exceptionally(ex -> {
-            //todo what to do on exception? I guess send to sentry or some other such service
-            ex.printStackTrace();
-            return null;
-        });
+        )).exceptionally(FutureUtil::handleException);
     }
 
     private void handleCommandEvent(PlayerCommandEvent event) {
@@ -80,10 +77,6 @@ public class ChatManager implements Facet {
                 COMMAND_CHANNEL,
                 event.getPlayer().getUuid(),
                 event.getCommand()
-        )).exceptionally(ex -> {
-            //todo what to do on exception?
-            ex.printStackTrace();
-            return null;
-        });
+        )).exceptionally(FutureUtil::handleException);
     }
 }
