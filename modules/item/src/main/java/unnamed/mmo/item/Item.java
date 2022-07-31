@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Resource;
 
 import java.util.Collection;
@@ -42,6 +43,11 @@ public interface Item extends Resource.Id {
 
     @Contract(pure = true)
     Item withAmount(int amount);
+
+
+    // Components
+
+    <C extends ItemComponent> @Nullable C getComponent(Class<C> type);
 
 
     // ItemStack conversion
