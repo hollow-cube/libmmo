@@ -1,5 +1,6 @@
 package unnamed.mmo.chat.command;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
@@ -51,7 +52,12 @@ public class LogCommand extends Command {
                 .thenAccept(messages -> {
                     if (messages == null) {
                         // An error occurred, it was already reported internally. Inform the sender
-                        sender.sendMessage("An error occurred"); //todo better message
+                        sender.sendMessage(Component.translatable("command.chat.log.err_unknown"));
+                        return;
+                    }
+
+                    if (messages.isEmpty()) {
+                        sender.sendMessage(Component.translatable("command.chat.log.err_no_results"));
                         return;
                     }
 
