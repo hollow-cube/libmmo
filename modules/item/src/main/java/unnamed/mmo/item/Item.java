@@ -47,7 +47,9 @@ public interface Item extends Resource.Id {
 
     // Components
 
-    <C extends ItemComponent> @Nullable C getComponent(Class<C> type);
+    default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
+        return null;
+    }
 
 
     // ItemStack conversion
