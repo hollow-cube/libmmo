@@ -17,16 +17,19 @@ public record ItemImpl(
         int amount
 ) implements Item {
 
+    @Override
     @Contract(pure = true)
     public @NotNull NamespaceID namespace() {
         return registry().namespace();
     }
 
+    @Override
     @Contract(pure = true)
     public int id() {
         return registry().id();
     }
 
+    @Override
     @Contract(pure = true)
     public int stateId() {
         return registry().stateId();
@@ -47,6 +50,7 @@ public record ItemImpl(
         return Map.class.cast(Object2ObjectMaps.unmodifiable(new Object2ObjectArrayMap<>(keys, values, length)));
     }
 
+    @Override
     @Contract(pure = true)
     public @NotNull Material material() {
         return registry().material();

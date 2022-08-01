@@ -10,7 +10,6 @@ public class PlayerLongDiggingTickEvent implements PlayerInstanceEvent, BlockEve
     private final Player player;
     private final Block block;
 
-    private String id;
     private int damage = 0;
 
     public PlayerLongDiggingTickEvent(Player player, Block block) {
@@ -20,12 +19,12 @@ public class PlayerLongDiggingTickEvent implements PlayerInstanceEvent, BlockEve
 
     @Override
     public @NotNull Block getBlock() {
-        return null;
+        return block;
     }
 
     @Override
     public @NotNull Player getPlayer() {
-        return null;
+        return player;
     }
 
     public int getDamage() {
