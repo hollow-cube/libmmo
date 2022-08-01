@@ -1,45 +1,64 @@
 package unnamed.mmo.blocks.handlers;
 
+import net.kyori.adventure.sound.Sound;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
+import net.minestom.server.entity.metadata.item.ItemEntityMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.BlockInteractionUtils;
 
-import java.util.Set;
+import java.util.Map;
 
 public class FarmlandHandler implements BlockHandler {
 
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
-        BlockHandler.super.onDestroy(destroy);
         Point cropPosition = destroy.getBlockPosition().add(0, 1, 0);
-        if(plantables.contains(destroy.getInstance().getBlock(cropPosition).registry().material())) {
+        Instance instance = destroy.getInstance();
+        if(cropMap.containsKey(instance.getBlock(cropPosition).registry().material())) {
+            // Drop item
+            Entity entity = new Entity(EntityType.ITEM);
+            CropBlockData data = cropMap.get(instance.getBlock(cropPosition).registry().material());
+            if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
+                itemEntityMeta.setItem(ItemStack.of(data.seedDropMaterial));
+            }
+            entity.setInstance(instance, cropPosition);
             // Break it too
-            destroy.getInstance().setBlock(cropPosition, Block.AIR);
-            // TODO Drop item
+            instance.setBlock(cropPosition, Block.AIR);
+            // Minestom please better particle methods
             // TODO Particle effects
-            // TODO Sound
+            // Probably want to PR this into Minestom, but a instance.playSound(Sound, Point) convenience method
+            instance.playSound(Sound.sound(SoundEvent.BLOCK_GRASS_HIT, Sound.Source.BLOCK, 1f, 1f), cropPosition.blockX(), cropPosition.blockY(), cropPosition.blockZ());
         }
     }
 
-    private final Set<Material> plantables = Set.of(Material.WHEAT_SEEDS, Material.CARROT, Material.POTATO, Material.BEETROOT_SEEDS, Material.PUMPKIN_SEEDS, Material.MELON_SEEDS);
+    // A Map between a crop's seed item material and its block material
+    private final Map<Material, CropBlockData> cropMap = Map.of(
+            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT, 7),
+            Material.CARROT, new CropBlockData(Material.CARROT, 7),
+            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, 3),
+            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, 7),
+            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, 7)
+    );
 
     @Override
     public boolean onInteract(@NotNull Interaction interaction) {
         Player player = interaction.getPlayer();
         Material heldMaterial = player.getItemInMainHand().material();
-        if(plantables.contains(heldMaterial)) {
+        if(cropMap.containsKey(heldMaterial)) {
             Point cropPosition = interaction.getBlockPosition().add(0, 1, 0);
-            if(heldMaterial == Material.WHEAT_SEEDS) {
-                Block block = Material.WHEAT.block().withProperty("age", "0").withHandler(new CropHandler());
-                interaction.getInstance().setBlock(cropPosition, block);
-            }
-            // TODO Other crops
+            CropBlockData cropData = cropMap.get(heldMaterial);
+            Block block = cropData.seedDropMaterial.block().withProperty("age", "0").withHandler(new CropHandler(cropData.maximumAge));
+            interaction.getInstance().setBlock(cropPosition, block);
             return true;
         } else {
             return false;
@@ -88,6 +107,8 @@ public class FarmlandHandler implements BlockHandler {
 
     @Override
     public @NotNull NamespaceID getNamespaceId() {
-        return BlockInteractionUtils.createInteractionID("farmlandhandler");
+        return BlockInteractionUtils.FARMLAND_HANDLER_ID;
     }
+
+    private record CropBlockData(Material seedDropMaterial, int maximumAge) {}
 }

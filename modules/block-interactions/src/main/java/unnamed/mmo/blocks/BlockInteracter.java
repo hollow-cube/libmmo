@@ -1,6 +1,5 @@
 package unnamed.mmo.blocks;
 
-import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.item.Material;
