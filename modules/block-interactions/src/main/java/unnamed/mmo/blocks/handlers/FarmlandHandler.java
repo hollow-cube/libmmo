@@ -29,7 +29,7 @@ public class FarmlandHandler implements BlockHandler {
             Entity entity = new Entity(EntityType.ITEM);
             CropBlockData data = cropMap.get(instance.getBlock(cropPosition).registry().material());
             if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
-                itemEntityMeta.setItem(ItemStack.of(data.seedDropMaterial));
+                itemEntityMeta.setItem(ItemStack.of(data.cropBlockMaterial()));
             }
             entity.setInstance(instance, cropPosition);
             // Break it too
@@ -41,13 +41,13 @@ public class FarmlandHandler implements BlockHandler {
         }
     }
 
-    // A Map between a crop's seed item material and its block material
+    // A Map between a crop's seed item material and data about the seed
     private final Map<Material, CropBlockData> cropMap = Map.of(
-            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT, 7),
-            Material.CARROT, new CropBlockData(Material.CARROT, 7),
-            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, 3),
-            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, 7),
-            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, 7)
+            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT_SEEDS, Material.WHEAT, 7, false),
+            Material.CARROT, new CropBlockData(Material.CARROT, Material.CARROT, 7, false),
+            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, Material.BEETROOT, 3, false),
+            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, Material.PUMPKIN_SEEDS, 7, true),
+            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, Material.PUMPKIN_SEEDS, 7, true)
     );
 
     @Override
@@ -57,7 +57,7 @@ public class FarmlandHandler implements BlockHandler {
         if(cropMap.containsKey(heldMaterial)) {
             Point cropPosition = interaction.getBlockPosition().add(0, 1, 0);
             CropBlockData cropData = cropMap.get(heldMaterial);
-            Block block = cropData.seedDropMaterial.block().withProperty("age", "0").withHandler(new CropHandler(cropData.maximumAge));
+            Block block = cropData.cropBlockMaterial().block().withProperty("age", "0").withHandler(new CropHandler(cropData));
             interaction.getInstance().setBlock(cropPosition, block);
             return true;
         } else {
@@ -109,6 +109,4 @@ public class FarmlandHandler implements BlockHandler {
     public @NotNull NamespaceID getNamespaceId() {
         return BlockInteractionUtils.FARMLAND_HANDLER_ID;
     }
-
-    private record CropBlockData(Material seedDropMaterial, int maximumAge) {}
 }

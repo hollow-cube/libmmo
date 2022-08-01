@@ -1,21 +1,37 @@
 package unnamed.mmo.blocks.handlers;
 
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.metadata.item.ItemEntityMeta;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.BlockInteractionUtils;
 
 public class CropHandler implements BlockHandler {
 
-    private final int maximumAge;
+    private final CropBlockData blockData;
 
-    public CropHandler(int maximumAge) {
-        this.maximumAge = maximumAge;
+    public CropHandler(CropBlockData blockData) {
+        this.blockData = blockData;
     }
 
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
-        // TODO: Drop seeds if not fully grown, drop seeds and crop if fully gornw
+        if(blockData.maximumAge() == getCurrentAge(destroy.getBlock()) && !blockData.createAnotherBlock()) {
+            Entity entity = new Entity(EntityType.ITEM);
+            if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
+                itemEntityMeta.setItem(ItemStack.of(blockData.cropBlockMaterial()));
+            }
+            entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.5, 0.5));
+        }
+        Entity entity = new Entity(EntityType.ITEM);
+        if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
+            itemEntityMeta.setItem(ItemStack.of(blockData.seedMaterial()));
+        }
+        entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.5, 0.5));
     }
 
     @Override
@@ -32,13 +48,26 @@ public class CropHandler implements BlockHandler {
         cropUpdateCounter++;
         if(cropUpdateCounter >= cropUpdateThreshold) {
             cropUpdateCounter = 0;
-            String ageString = tick.getBlock().getProperty("age");
-            int age = Integer.parseInt(ageString);
-            if(age < maximumAge) {
+            int age = getCurrentAge(tick.getBlock());
+            if(age == -1) {
+                //TODO Log error?
+                return;
+            }
+            if(age == blockData.maximumAge() && blockData.createAnotherBlock()) {
+                // TODO: Specific cases for pumpkins/melons
+            }
+            if(age < blockData.maximumAge()) {
                 tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty("age", Integer.toString(++age)));
             }
         }
-        // TODO; Specific cases for pumpkins/melons
+    }
+
+    private int getCurrentAge(Block block) {
+        if(block.getProperty("age") != null) {
+            return Integer.parseInt(block.getProperty("age"));
+        } else {
+            return -1;
+        }
     }
 
     @Override
