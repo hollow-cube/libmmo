@@ -1,4 +1,4 @@
 ## test
 A module for test utilities used by the others. Only ever included for tests.
 
-Would eventually contain something similar to Minestoms internal command framework I guess
+Contains a copy of the Minestom internal test framework until that has been extracted to its own module.
