@@ -52,7 +52,7 @@ public class Main {
         BaseCommandRegister.registerCommands();
 
         // For now, manually register chat (with conn to mongo :/ need a config system)
-        /*MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
+        MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .build());
@@ -61,7 +61,7 @@ public class Main {
         chatManager.hook(MinecraftServer.process());
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
-                ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));*/
+                ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
 
         BlockInteracter.registerEvents();
 
