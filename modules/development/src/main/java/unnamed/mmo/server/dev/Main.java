@@ -16,8 +16,10 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
 import org.bson.UuidRepresentation;
+import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
+import unnamed.mmo.command.BaseCommandRegister;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -47,9 +49,10 @@ public class Main {
             player.setAllowFlying(true);
         });
 
+        BaseCommandRegister.registerCommands();
 
         // For now, manually register chat (with conn to mongo :/ need a config system)
-        MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
+        /*MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .build());
@@ -58,7 +61,9 @@ public class Main {
         chatManager.hook(MinecraftServer.process());
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
-                ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
+                ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));*/
+
+        BlockInteracter.registerEvents();
 
         server.start("0.0.0.0", 25565);
     }
