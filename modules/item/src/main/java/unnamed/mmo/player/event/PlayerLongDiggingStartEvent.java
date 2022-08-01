@@ -21,12 +21,12 @@ public class PlayerLongDiggingStartEvent implements PlayerInstanceEvent, BlockEv
 
     @Override
     public @NotNull Block getBlock() {
-        return null;
+        return block;
     }
 
     @Override
     public @NotNull Player getPlayer() {
-        return null;
+        return player;
     }
 
     public @Nullable String getBreakId() {

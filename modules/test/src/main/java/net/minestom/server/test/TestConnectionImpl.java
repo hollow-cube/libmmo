@@ -5,6 +5,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.network.PlayerProvider;
 import net.minestom.server.network.packet.server.SendablePacket;
 import net.minestom.server.network.packet.server.ServerPacket;
 import net.minestom.server.network.player.PlayerConnection;
@@ -30,8 +31,8 @@ final class TestConnectionImpl implements TestConnection {
     }
 
     @Override
-    public @NotNull CompletableFuture<Player> connect(@NotNull Instance instance, @NotNull Pos pos) {
-        Player player = new Player(UUID.randomUUID(), "RandName", playerConnection);
+    public @NotNull CompletableFuture<Player> connect(@NotNull PlayerProvider playerProvider, @NotNull Instance instance, @NotNull Pos pos) {
+        Player player = playerProvider.createPlayer(UUID.randomUUID(), "RandName", playerConnection);
         player.eventNode().addListener(PlayerLoginEvent.class, event -> {
             event.setSpawningInstance(instance);
             event.getPlayer().setRespawnPoint(pos);

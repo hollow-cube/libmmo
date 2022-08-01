@@ -73,6 +73,7 @@ public class PlayerImpl extends Player {
                 // unless they are in the bypass mode that might exist on the dev server
                 clearLongDigging();
             }
+            default -> {}
         }
     }
 

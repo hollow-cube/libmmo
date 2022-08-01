@@ -7,6 +7,7 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.network.PlayerProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -39,7 +40,11 @@ public interface Env {
     }
 
     default @NotNull Player createPlayer(@NotNull Instance instance, @NotNull Pos pos) {
-        return createConnection().connect(instance, pos).join();
+        return createConnection().connect(Player::new, instance, pos).join();
+    }
+
+    default @NotNull Player createPlayer(@NotNull PlayerProvider playerProvider, @NotNull Instance instance, @NotNull Pos pos) {
+        return createConnection().connect(playerProvider, instance, pos).join();
     }
 
     default @NotNull Instance createFlatInstance() {
