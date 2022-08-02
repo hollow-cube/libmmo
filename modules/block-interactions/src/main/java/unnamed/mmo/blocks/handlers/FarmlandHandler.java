@@ -15,6 +15,7 @@ import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.BlockInteractionUtils;
+import unnamed.mmo.blocks.ParticleUtils;
 
 import java.util.Map;
 
@@ -34,8 +35,10 @@ public class FarmlandHandler implements BlockHandler {
             entity.setInstance(instance, cropPosition);
             // Break it too
             instance.setBlock(cropPosition, Block.AIR);
-            // Minestom please better particle methods
-            // TODO Particle effects
+            // Spawn particles
+            if(destroy instanceof PlayerDestroy playerDestroy) {
+                ParticleUtils.spawnBlockBreakParticles(playerDestroy.getPlayer(), playerDestroy.getBlockPosition(), data.seedMaterial());
+            }
             instance.playSound(Sound.sound(SoundEvent.BLOCK_GRASS_HIT, Sound.Source.BLOCK, 1f, 1f), cropPosition.blockX(), cropPosition.blockY(), cropPosition.blockZ());
         }
     }
