@@ -36,7 +36,6 @@ public class FarmlandHandler implements BlockHandler {
             instance.setBlock(cropPosition, Block.AIR);
             // Minestom please better particle methods
             // TODO Particle effects
-            // Probably want to PR this into Minestom, but a instance.playSound(Sound, Point) convenience method
             instance.playSound(Sound.sound(SoundEvent.BLOCK_GRASS_HIT, Sound.Source.BLOCK, 1f, 1f), cropPosition.blockX(), cropPosition.blockY(), cropPosition.blockZ());
         }
     }
@@ -57,8 +56,8 @@ public class FarmlandHandler implements BlockHandler {
         if(cropMap.containsKey(heldMaterial)) {
             Point cropPosition = interaction.getBlockPosition().add(0, 1, 0);
             CropBlockData cropData = cropMap.get(heldMaterial);
-            Block block = cropData.cropBlockMaterial().block().withProperty("age", "0").withHandler(new CropHandler(cropData));
-            interaction.getInstance().setBlock(cropPosition, block);
+            Block block = BlockInteractionUtils.storeDataOntoBlock(cropData.cropBlockMaterial().block(), cropData);
+            interaction.getInstance().setBlock(cropPosition, block.withProperty("age", "0").withHandler(new CropHandler()));
             return true;
         } else {
             return false;

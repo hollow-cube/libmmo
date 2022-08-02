@@ -12,14 +12,11 @@ import unnamed.mmo.blocks.BlockInteractionUtils;
 
 public class CropHandler implements BlockHandler {
 
-    private final CropBlockData blockData;
-
-    public CropHandler(CropBlockData blockData) {
-        this.blockData = blockData;
-    }
-
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
+        CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(destroy.getBlock());
+        if(blockData == null) return;
+
         if(blockData.maximumAge() == getCurrentAge(destroy.getBlock()) && !blockData.createAnotherBlock()) {
             Entity entity = new Entity(EntityType.ITEM);
             if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
@@ -48,6 +45,9 @@ public class CropHandler implements BlockHandler {
         cropUpdateCounter++;
         if(cropUpdateCounter >= cropUpdateThreshold) {
             cropUpdateCounter = 0;
+            CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(tick.getBlock());
+            if(blockData == null) return;
+
             int age = getCurrentAge(tick.getBlock());
             if(age == -1) {
                 //TODO Log error?
