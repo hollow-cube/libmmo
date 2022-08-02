@@ -32,7 +32,7 @@ public class BlockInteractionUtils {
         if(block.hasTag(Tag.Integer("seedMaterial"))) {
             return new CropBlockData(
                     Material.fromId(block.getTag(Tag.Integer("seedMaterial"))),
-                    Material.fromId(block.getTag(Tag.Integer("seedMaterial"))),
+                    Material.fromId(block.getTag(Tag.Integer("cropBlockMaterial"))),
                     block.getTag(Tag.Integer("maximumAge")),
                     block.getTag(Tag.Boolean("createsAnotherBlock"))
             );
