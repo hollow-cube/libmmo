@@ -6,7 +6,9 @@ import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import unnamed.mmo.item.component.ItemComponent;
 
 import java.util.*;
 
@@ -49,6 +51,12 @@ public record ItemImpl(
     @Contract(pure = true)
     public @NotNull Material material() {
         return registry().material();
+    }
+
+    @Override
+    public <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace) {
+        //noinspection unchecked
+        return (C) registry().components().get(namespace);
     }
 
     @Override

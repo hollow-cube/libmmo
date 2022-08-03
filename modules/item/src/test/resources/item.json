@@ -1,0 +1,17 @@
+{
+  "test:item": {
+    "id": 0,
+    "material": "minecraft:gold_ingot",
+    "components": {
+      "test:component": {
+        "name": "Hello, world"
+      }
+    },
+    "defaultStateId": 0,
+    "states": {
+      "[]": {
+        "stateId": 0
+      }
+    }
+  }
+}

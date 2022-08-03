@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import unnamed.mmo.item.component.ComponentHandler;
 import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Resource;
 
@@ -48,8 +49,11 @@ public interface Item extends Resource.Id {
     // Components
 
     default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
-        return null;
+        final String id = ComponentHandler.getComponentId(type);
+        return id == null ? null : getComponent(id);
     }
+
+    <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace);
 
 
     // ItemStack conversion

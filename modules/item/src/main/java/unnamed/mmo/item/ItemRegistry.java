@@ -6,10 +6,14 @@ import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.block.BlockUtils;
 import net.minestom.server.utils.collection.MergedMap;
 import net.minestom.server.utils.collection.ObjectArray;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.item.component.ComponentHandler;
+import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,12 +27,26 @@ public class ItemRegistry {
         private final int stateId;
         private final Material material;
 
+        private final Map<String, ItemComponent> components;
+
         private Entry(String namespace, Properties props) {
             this.namespace = NamespaceID.from(namespace);
             this.id = props.getInt("id");
             this.stateId = props.getInt("stateId");
 
             this.material = Material.fromNamespaceId(props.getString("material"));
+
+            var componentMap = props.section("components");
+            var components = new HashMap<String, ItemComponent>();
+            for (var entry : componentMap) {
+                String componentNamespace = entry.getKey();
+                ComponentHandler<?> handler = ComponentHandler.fromNamespaceId(componentNamespace);
+                Check.notNull(handler, "Missing item component handler '" + componentNamespace + "'");
+
+                ItemComponent component = handler.factory().apply(Properties.fromMap((Map<String, Object>) entry.getValue()));
+                components.put(componentNamespace, component);
+            }
+            this.components = Map.copyOf(components);
         }
 
         public @NotNull NamespaceID namespace() {
@@ -46,6 +64,10 @@ public class ItemRegistry {
         public Material material() {
             return material;
         }
+
+        public Map<String, ItemComponent> components() {
+            return components;
+        }
     }
 
     private static final Resource.Type RESOURCE = new Resource.Type("item");
@@ -59,64 +81,65 @@ public class ItemRegistry {
     // Item id -> Map<PropertiesValues, Item>
     static final ObjectArray<Map<ItemImpl.PropertiesHolder, ItemImpl>> POSSIBLE_STATES = ObjectArray.singleThread();
 
-    static final Registry.IdContainer<Item> CONTAINER = Registry.createIdContainer(RESOURCE,
-            (namespace, props) -> {
-                final int itemId = props.getInt("id");
+    static Registry.Container.Loader<Item> LOADER = (namespace, props) -> {
+        final int itemId = props.getInt("id");
 
-                // Retrieve properties
-                ItemImpl.PropertyType[] propertyTypes;
-                {
-                    Properties stateProperties = props.section("properties");
-                    if (stateProperties != null) {
-                        final int stateCount = stateProperties.size();
-                        propertyTypes = new ItemImpl.PropertyType[stateCount];
-                        int i = 0;
-                        for (var entry : stateProperties) {
-                            final var k = entry.getKey();
-                            final var v = (List<String>) entry.getValue();
-                            propertyTypes[i++] = new ItemImpl.PropertyType(k, v);
-                        }
-                    } else {
-                        propertyTypes = new ItemImpl.PropertyType[0];
-                    }
+        // Retrieve properties
+        ItemImpl.PropertyType[] propertyTypes;
+        {
+            Properties stateProperties = props.section("properties");
+            if (stateProperties != null) {
+                final int stateCount = stateProperties.size();
+                propertyTypes = new ItemImpl.PropertyType[stateCount];
+                int i = 0;
+                for (var entry : stateProperties) {
+                    final var k = entry.getKey();
+                    final var v = (List<String>) entry.getValue();
+                    propertyTypes[i++] = new ItemImpl.PropertyType(k, v);
                 }
-                PROPERTIES_TYPE.set(itemId, propertyTypes);
+            } else {
+                propertyTypes = new ItemImpl.PropertyType[0];
+            }
+        }
+        PROPERTIES_TYPE.set(itemId, propertyTypes);
 
-                // Retrieve item states
-                {
-                    final Properties stateObject = props.section("states");
-                    final int propertiesCount = stateObject.size();
-                    ItemImpl[] itemValues = new ItemImpl[propertiesCount];
-                    ItemImpl.PropertiesHolder[] propertiesKeys = new ItemImpl.PropertiesHolder[propertiesCount];
+        // Retrieve item states
+        {
+            final Properties stateObject = props.section("states");
+            final int propertiesCount = stateObject.size();
+            ItemImpl[] itemValues = new ItemImpl[propertiesCount];
+            ItemImpl.PropertiesHolder[] propertiesKeys = new ItemImpl.PropertiesHolder[propertiesCount];
 
-                    int propertiesOffset = 0;
-                    for (var stateEntry : stateObject) {
-                        final String query = stateEntry.getKey();
-                        final var stateOverride = (Map<String, Object>) stateEntry.getValue();
-                        final var propertyMap = BlockUtils.parseProperties(query);
-                        assert propertyTypes.length == propertyMap.size();
+            int propertiesOffset = 0;
+            for (var stateEntry : stateObject) {
+                final String query = stateEntry.getKey();
+                final var stateOverride = (Map<String, Object>) stateEntry.getValue();
+                final var propertyMap = BlockUtils.parseProperties(query);
+                assert propertyTypes.length == propertyMap.size();
 
-                        byte[] propertiesArray = new byte[propertyTypes.length];
-                        for (var entry : propertyMap.entrySet()) {
-                            final byte keyIndex = findKeyIndex(propertyTypes, entry.getKey(), null);
-                            final byte valueIndex = findValueIndex(propertyTypes[keyIndex], entry.getValue(), null);
-                            propertiesArray[keyIndex] = valueIndex;
-                        }
-
-                        var mainProperties = net.minestom.server.registry.Registry.Properties.fromMap(new MergedMap<>(stateOverride, props.asMap()));
-                        final ItemImpl block = new ItemImpl(new Entry(namespace, mainProperties), propertiesArray, 1);
-                        ITEM_STATE_MAP.set(block.stateId(), block);
-                        propertiesKeys[propertiesOffset] = new ItemImpl.PropertiesHolder(propertiesArray);
-                        itemValues[propertiesOffset++] = block;
-                    }
-
-                    POSSIBLE_STATES.set(itemId, ArrayUtils.toMap(propertiesKeys, itemValues, propertiesOffset));
+                byte[] propertiesArray = new byte[propertyTypes.length];
+                for (var entry : propertyMap.entrySet()) {
+                    final byte keyIndex = findKeyIndex(propertyTypes, entry.getKey(), null);
+                    final byte valueIndex = findValueIndex(propertyTypes[keyIndex], entry.getValue(), null);
+                    propertiesArray[keyIndex] = valueIndex;
                 }
 
-                // Default state
-                final int defaultStateId = props.getInt("defaultStateId");
-                return ItemImpl.getState(defaultStateId);
-            });
+                var mainProperties = net.minestom.server.registry.Registry.Properties.fromMap(new MergedMap<>(stateOverride, props.asMap()));
+                final ItemImpl block = new ItemImpl(new Entry(namespace, mainProperties), propertiesArray, 1);
+                ITEM_STATE_MAP.set(block.stateId(), block);
+                propertiesKeys[propertiesOffset] = new ItemImpl.PropertiesHolder(propertiesArray);
+                itemValues[propertiesOffset++] = block;
+            }
+
+            POSSIBLE_STATES.set(itemId, ArrayUtils.toMap(propertiesKeys, itemValues, propertiesOffset));
+        }
+
+        // Default state
+        final int defaultStateId = props.getInt("defaultStateId");
+        return ItemImpl.getState(defaultStateId);
+    };
+
+    static final Registry.IdContainer<Item> CONTAINER = Registry.createIdContainer(RESOURCE, LOADER);
 
     static {
         PROPERTIES_TYPE.trim();
