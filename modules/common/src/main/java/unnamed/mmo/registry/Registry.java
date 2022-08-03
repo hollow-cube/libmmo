@@ -47,7 +47,6 @@ public class Registry {
         return new IdContainer<>(resource, namespaces, ids);
     }
 
-    @ApiStatus.Internal
     private static Map<String, Map<String, Object>> load(Resource.Type resource) {
         Map<String, Map<String, Object>> map = new HashMap<>();
 
@@ -118,7 +117,7 @@ public class Registry {
 
     }
 
-    private static Object readObject(JsonReader reader) throws IOException {
+    public static Object readObject(JsonReader reader) throws IOException {
         return switch (reader.peek()) {
             case BEGIN_ARRAY -> {
                 List<Object> list = new ArrayList<>();
