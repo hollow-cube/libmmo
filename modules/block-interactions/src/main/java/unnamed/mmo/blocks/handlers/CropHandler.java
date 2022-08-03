@@ -62,7 +62,7 @@ public class CropHandler implements BlockHandler {
         }
     }
 
-    private int getCurrentAge(Block block) {
+    private int getCurrentAge(@NotNull Block block) {
         if(block.getProperty("age") != null) {
             return Integer.parseInt(block.getProperty("age"));
         } else {

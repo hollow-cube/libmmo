@@ -88,7 +88,7 @@ public class FarmlandHandler implements BlockHandler {
         }
     }
 
-    private boolean hasNearbyWater(Instance instance, Point point) {
+    private boolean hasNearbyWater(@NotNull Instance instance, @NotNull Point point) {
         final int waterRange = 4;
         for(int x = point.blockX() - waterRange; x <= point.blockX() + waterRange; x++) {
             for(int y = point.blockY(); y < point.blockY() + 2; y++) { // Checks at farmland y level and 1 above
