@@ -43,3 +43,4 @@ bin/
 
 .*
 !.env.sample
+!.github
