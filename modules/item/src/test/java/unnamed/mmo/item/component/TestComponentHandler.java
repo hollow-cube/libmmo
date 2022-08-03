@@ -1,12 +1,10 @@
 package unnamed.mmo.item.component;
 
 import com.google.auto.service.AutoService;
-import com.google.gson.JsonObject;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.trait.ItemEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.item.ItemStack;
