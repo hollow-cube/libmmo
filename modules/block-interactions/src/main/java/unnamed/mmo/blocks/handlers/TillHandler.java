@@ -30,10 +30,8 @@ public class TillHandler implements BlockHandler {
             instance.setBlock(point, block);
             instance.playSound(Sound.sound(SoundEvent.ITEM_HOE_TILL, Sound.Source.BLOCK, 1f, 1f), point.blockX(), point.blockY(), point.blockZ());
             // TODO: Damage item in hand?
-            return true;
-        } else {
-            return false;
         }
+        return true;
     }
 
     @Override

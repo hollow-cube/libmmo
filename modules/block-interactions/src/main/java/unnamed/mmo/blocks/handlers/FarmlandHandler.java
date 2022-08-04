@@ -25,7 +25,8 @@ public class FarmlandHandler implements BlockHandler {
     public void onDestroy(@NotNull Destroy destroy) {
         Point cropPosition = destroy.getBlockPosition().add(0, 1, 0);
         Instance instance = destroy.getInstance();
-        if(cropMap.containsKey(instance.getBlock(cropPosition).registry().material())) {
+        Material material = instance.getBlock(cropPosition).registry().material();
+        if(material != null && cropMap.containsKey(material)) {
             // Drop item
             Entity entity = new Entity(EntityType.ITEM);
             CropBlockData data = cropMap.get(instance.getBlock(cropPosition).registry().material());
@@ -61,10 +62,8 @@ public class FarmlandHandler implements BlockHandler {
             CropBlockData cropData = cropMap.get(heldMaterial);
             Block block = BlockInteractionUtils.storeDataOntoBlock(cropData.cropBlockMaterial().block(), cropData);
             interaction.getInstance().setBlock(cropPosition, block.withProperty("age", "0").withHandler(new CropHandler()));
-            return true;
-        } else {
-            return false;
         }
+        return true;
     }
 
     private final int waterUpdateThreshold = 5*20; // every 5 seconds
@@ -93,7 +92,7 @@ public class FarmlandHandler implements BlockHandler {
         for(int x = point.blockX() - waterRange; x <= point.blockX() + waterRange; x++) {
             for(int y = point.blockY(); y < point.blockY() + 2; y++) { // Checks at farmland y level and 1 above
                 for(int z = point.blockZ() - waterRange; z <= point.blockZ() + waterRange; z++) {
-                    if(instance.getBlock(x, y, z).isLiquid()) { //TODO: Find a better water check, Water and flowing water aren't in the material list??
+                    if(instance.getBlock(x, y, z).id() == Block.WATER.id()) { //TODO: Waterlogged blocks should count as well
                         return true;
                     }
                 }
