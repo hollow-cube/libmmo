@@ -1,5 +1,11 @@
 package unnamed.mmo.item;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Keyable;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.ArrayUtils;
 import net.minestom.server.utils.NamespaceID;
@@ -12,14 +18,42 @@ import unnamed.mmo.item.component.ComponentHandler;
 import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
+import unnamed.mmo.util.DFUUtil;
+import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static net.minestom.server.registry.Registry.Properties;
 
 public class ItemRegistry {
+
+    public record EntryV2(
+            NamespaceID namespace,
+            int id,
+            int stateId,
+            Material material,
+            Map<String, ItemComponent> components
+    ) {
+
+        public static final Codec<EntryV2> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(EntryV2::namespace),
+                Codec.INT.fieldOf("id").forGetter(EntryV2::id),
+                Codec.INT.fieldOf("stateId").forGetter(EntryV2::stateId),
+                ExtraCodecs.MATERIAL.fieldOf("material").forGetter(EntryV2::material),
+                // This is a little cursed so I will explain. Registry dispatch (see link) only works
+                // on a `type` field within the object, but the ItemComponent is not guaranteed to expose
+                // the type field back. We still want a Map<_type, component> so we parse both the type
+                // field and component as a list of pairs. Then convert the list of pairs into a map.
+                Codec.pair(Codec.STRING.fieldOf("_type").codec(), ItemComponent.CODEC)
+                        .listOf()
+                        .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList)
+                        .fieldOf("components").forGetter(EntryV2::components)
+        ).apply(i, EntryV2::new));
+
+    }
 
     public static final class Entry {
         private final NamespaceID namespace;
@@ -79,7 +113,6 @@ public class ItemRegistry {
     static final ObjectArray<ItemImpl.PropertyType[]> PROPERTIES_TYPE = ObjectArray.singleThread();
 
     // Item id -> Map<PropertiesValues, Item>
-    static final ObjectArray<Map<ItemImpl.PropertiesHolder, ItemImpl>> POSSIBLE_STATES = ObjectArray.singleThread();
 
     static Registry.Container.Loader<Item> LOADER = (namespace, props) -> {
         final int itemId = props.getInt("id");
@@ -108,7 +141,6 @@ public class ItemRegistry {
             final Properties stateObject = props.section("states");
             final int propertiesCount = stateObject.size();
             ItemImpl[] itemValues = new ItemImpl[propertiesCount];
-            ItemImpl.PropertiesHolder[] propertiesKeys = new ItemImpl.PropertiesHolder[propertiesCount];
 
             int propertiesOffset = 0;
             for (var stateEntry : stateObject) {
@@ -125,13 +157,11 @@ public class ItemRegistry {
                 }
 
                 var mainProperties = net.minestom.server.registry.Registry.Properties.fromMap(new MergedMap<>(stateOverride, props.asMap()));
-                final ItemImpl block = new ItemImpl(new Entry(namespace, mainProperties), propertiesArray, 1);
-                ITEM_STATE_MAP.set(block.stateId(), block);
-                propertiesKeys[propertiesOffset] = new ItemImpl.PropertiesHolder(propertiesArray);
-                itemValues[propertiesOffset++] = block;
+                final ItemImpl item = new ItemImpl(new Entry(namespace, mainProperties), propertiesArray, 1);
+                ITEM_STATE_MAP.set(item.stateId(), item);
+                itemValues[propertiesOffset++] = item;
             }
 
-            POSSIBLE_STATES.set(itemId, ArrayUtils.toMap(propertiesKeys, itemValues, propertiesOffset));
         }
 
         // Default state
@@ -143,7 +173,6 @@ public class ItemRegistry {
 
     static {
         PROPERTIES_TYPE.trim();
-        POSSIBLE_STATES.trim();
         ITEM_STATE_MAP.trim();
     }
 

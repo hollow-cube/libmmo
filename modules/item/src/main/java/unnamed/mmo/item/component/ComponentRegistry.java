@@ -1,26 +1,20 @@
 package unnamed.mmo.item.component;
 
-import unnamed.mmo.registry.Registry;
-import unnamed.mmo.registry.Resource;
+import unnamed.mmo.registry2.Registry;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
 class ComponentRegistry {
 
-    private static final Resource.Type RESOURCE = new Resource.Type("component_handlers");
+    static final Registry<ComponentHandler<?>> REGISTRY = Registry.create(() -> {
+        List<ComponentHandler<?>> handlers = new ArrayList<>();
+        for (ComponentHandler<?> handler : ServiceLoader.load(ComponentHandler.class))
+            handlers.add(handler);
+        return handlers;
+    });
 
-    static final Map<Class<?>, String> CLASS_ID_MAP = new HashMap<>();
-    static final Registry.Container<ComponentHandler<?>> CONTAINER = loadComponentHandlers();
-
-    private static Registry.Container<ComponentHandler<?>> loadComponentHandlers() {
-        Map<String, ComponentHandler<?>> resources = new HashMap<>();
-        for (ComponentHandler<?> handler : ServiceLoader.load(ComponentHandler.class)) {
-            resources.put(handler.name(), handler);
-            CLASS_ID_MAP.put(handler.componentType(), handler.name());
-        }
-        return new Registry.Container<>(RESOURCE, resources);
-    }
-
+    static final Registry.Index<Class<?>, ComponentHandler<?>> COMPONENT_CLASS_INDEX = REGISTRY.index(ComponentHandler::componentType);
 }

@@ -12,12 +12,29 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static net.minestom.server.registry.Registry.Properties;
 
 public class Registry {
+
     @TestOnly
     static Path DATA_PATH = Path.of(System.getProperty("unnamed.data.dir", "data"));
+
+    public static <T extends Resource> Container<T> containerFromIterable(Resource.Type resource, Iterable<T> source) {
+        Map<String, T> resources = new HashMap<>();
+        for (T element : source)
+            resources.put(element.name(), element);
+        return new Registry.Container<>(resource, resources);
+    }
+
+    public static <T extends Resource> Container<T> createFromService(Resource.Type resource, Class<? super unnamed.mmo.item.component.ComponentHandler> serviceClass) {
+        Map<String, T> resources = new HashMap<>();
+        for (T element : ServiceLoader.load(serviceClass))
+            resources.put(element.name(), element);
+        return new Registry.Container<>(resource, resources);
+    }
 
     @ApiStatus.Internal
     public static <T extends Resource> Container<T> createContainer(Resource.Type resource, Container.Loader<T> loader) {
@@ -82,6 +99,14 @@ public class Registry {
 
         public Collection<T> values() {
             return namespaces.values();
+        }
+
+        public <K, V> Map<K, V> index(Function<T, K> keyGetter, Function<T, V> valueGetter) {
+            return values().stream().collect(Collectors.toUnmodifiableMap(keyGetter, valueGetter));
+        }
+
+        public <K> Map<K, T> index(Function<T, K> keyGetter) {
+            return values().stream().collect(Collectors.toUnmodifiableMap(keyGetter, i -> i));
         }
 
         @Override
