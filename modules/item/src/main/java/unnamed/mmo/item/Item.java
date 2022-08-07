@@ -1,5 +1,7 @@
 package unnamed.mmo.item;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
@@ -18,6 +20,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public interface Item extends Resource.Id {
+
+    Codec<Item> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.STRING.fieldOf("id").forGetter(Item::name),
+            Codec.INT.fieldOf("amount").forGetter(Item::amount)
+    ).apply(i, (name, amount) -> Objects.requireNonNull(Item.fromNamespaceId(name))
+            //todo better error if null item? not sure how we should handle deserializing a bad item.
+            .withAmount(amount)));
 
     @Contract(pure = true)
     @NotNull NamespaceID namespace();

@@ -1,10 +1,10 @@
 package unnamed.mmo.item.component;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.registry.Resource;
 
 import java.util.function.Function;
@@ -13,7 +13,7 @@ import static net.minestom.server.registry.Registry.Properties;
 
 public interface ComponentHandler<C extends ItemComponent> extends Resource {
 
-
+    Codec<ComponentHandler<?>> CODEC = Codec.STRING.xmap(ComponentRegistry.REGISTRY::get, ComponentHandler::name);
 
     @NotNull EventNode<Event> eventNode();
 
@@ -21,15 +21,16 @@ public interface ComponentHandler<C extends ItemComponent> extends Resource {
 
     @NotNull Function<@NotNull Properties, @NotNull C> factory();
 
+    @NotNull Codec<@NotNull C> codec();
+
 
     // Static helpers
 
-    static @Nullable String getComponentId(Class<? extends ItemComponent> componentClass) {
-        return ComponentRegistry.CLASS_ID_MAP.get(componentClass);
+    static <C extends ItemComponent> @NotNull ComponentHandler<C> from(C component) {
+        var value = ComponentRegistry.COMPONENT_CLASS_INDEX.get(component.getClass());
+        Check.notNull(value, "Missing component handler for component " + component.getClass());
+        //noinspection unchecked
+        return (ComponentHandler<C>) value;
     }
 
-    static <C extends ItemComponent> @Nullable ComponentHandler<C> fromNamespaceId(@NotNull String namespace) {
-        //noinspection unchecked
-        return (ComponentHandler<C>) ComponentRegistry.CONTAINER.getSafe(namespace);
-    }
 }

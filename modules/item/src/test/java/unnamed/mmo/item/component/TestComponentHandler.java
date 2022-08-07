@@ -1,6 +1,7 @@
 package unnamed.mmo.item.component;
 
 import com.google.auto.service.AutoService;
+import com.mojang.serialization.Codec;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
@@ -49,6 +50,11 @@ public class TestComponentHandler implements ComponentHandler<TestComponent> {
     @Override
     public @NotNull Function<@NotNull Properties, @NotNull TestComponent> factory() {
         return TestComponent::new;
+    }
+
+    @Override
+    public @NotNull Codec<@NotNull TestComponent> codec() {
+        return TestComponent.CODEC;
     }
 
     @Override
