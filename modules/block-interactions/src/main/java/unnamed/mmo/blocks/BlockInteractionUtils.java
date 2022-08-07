@@ -19,9 +19,10 @@ public class BlockInteractionUtils {
 
 
     public static @NotNull Block storeDataOntoBlock(@NotNull Block block, @NotNull CropBlockData data) {
-        return block
+         return block
                 .withTag(Tag.Integer("seedMaterial"), data.seedMaterial().id())
-                .withTag(Tag.Integer("cropBlockMaterial"), data.cropBlockMaterial().id())
+                .withTag(Tag.Integer("cropGrownMaterial"), data.cropGrownMaterial().id())
+                .withTag(Tag.Integer("cropBlock"), data.cropBlock().id())
                 .withTag(Tag.Integer("maximumAge"), data.maximumAge())
                 .withTag(Tag.Boolean("createsAnotherBlock"), data.createAnotherBlock());
     }
@@ -35,7 +36,8 @@ public class BlockInteractionUtils {
         if(block.hasTag(Tag.Integer("seedMaterial"))) {
             return new CropBlockData(
                     Objects.requireNonNullElse(Material.fromId(block.getTag(Tag.Integer("seedMaterial"))), Material.AIR),
-                    Objects.requireNonNullElse(Material.fromId(block.getTag(Tag.Integer("cropBlockMaterial"))), Material.AIR),
+                    Objects.requireNonNullElse(Material.fromId(block.getTag(Tag.Integer("cropGrownMaterial"))), Material.AIR),
+                    Objects.requireNonNullElse(Block.fromBlockId(block.getTag(Tag.Integer("cropBlock"))), Block.AIR),
                     block.getTag(Tag.Integer("maximumAge")),
                     block.getTag(Tag.Boolean("createsAnotherBlock"))
             );

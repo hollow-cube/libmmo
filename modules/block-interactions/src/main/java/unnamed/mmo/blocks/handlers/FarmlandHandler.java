@@ -23,6 +23,8 @@ public class FarmlandHandler implements BlockHandler {
 
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
+        // Called when moisture updates, since you have to set the block again with a different property
+        // Todo: Fix somehow?
         Point cropPosition = destroy.getBlockPosition().add(0, 1, 0);
         Instance instance = destroy.getInstance();
         Material material = instance.getBlock(cropPosition).registry().material();
@@ -31,9 +33,9 @@ public class FarmlandHandler implements BlockHandler {
             Entity entity = new Entity(EntityType.ITEM);
             CropBlockData data = cropMap.get(instance.getBlock(cropPosition).registry().material());
             if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
-                itemEntityMeta.setItem(ItemStack.of(data.cropBlockMaterial()));
+                itemEntityMeta.setItem(ItemStack.of(data.seedMaterial()));
             }
-            entity.setInstance(instance, cropPosition);
+            //entity.setInstance(instance, cropPosition);
             // Break it too
             instance.setBlock(cropPosition, Block.AIR);
             // Spawn particles
@@ -46,11 +48,11 @@ public class FarmlandHandler implements BlockHandler {
 
     // A Map between a crop's seed item material and data about the seed
     private final Map<Material, CropBlockData> cropMap = Map.of(
-            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT_SEEDS, Material.WHEAT, 7, false),
-            Material.CARROT, new CropBlockData(Material.CARROT, Material.CARROT, 7, false),
-            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, Material.BEETROOT, 3, false),
-            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, Material.PUMPKIN_SEEDS, 7, true),
-            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, Material.PUMPKIN_SEEDS, 7, true)
+            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT_SEEDS, Material.WHEAT, Block.WHEAT, 7, false),
+            Material.CARROT, new CropBlockData(Material.CARROT, Material.CARROT, Block.CARROTS, 7, false),
+            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, Material.BEETROOT, Block.BEETROOTS, 3, false),
+            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, Material.PUMPKIN_SEEDS, Block.PUMPKIN_STEM, 7, true),
+            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, Material.PUMPKIN_SEEDS, Block.MELON_STEM, 7, true)
     );
 
     @Override
@@ -60,8 +62,9 @@ public class FarmlandHandler implements BlockHandler {
         if(cropMap.containsKey(heldMaterial)) {
             Point cropPosition = interaction.getBlockPosition().add(0, 1, 0);
             CropBlockData cropData = cropMap.get(heldMaterial);
-            Block block = BlockInteractionUtils.storeDataOntoBlock(cropData.cropBlockMaterial().block(), cropData);
-            interaction.getInstance().setBlock(cropPosition, block.withProperty("age", "0").withHandler(new CropHandler()));
+            Block block = BlockInteractionUtils.storeDataOntoBlock(cropData.cropBlock(), cropData);
+            interaction.getInstance().setBlock(cropPosition, block.withHandler(new CropHandler()));
+            System.out.println(interaction.getInstance().getBlock(cropPosition));
         }
         return true;
     }
