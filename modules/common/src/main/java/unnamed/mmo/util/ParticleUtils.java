@@ -1,4 +1,4 @@
-package unnamed.mmo.blocks;
+package unnamed.mmo.util;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Player;

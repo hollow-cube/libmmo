@@ -12,16 +12,17 @@ public class BlockInteracter {
 
     public static void registerEvents() {
         MinecraftServer.getGlobalEventHandler().addListener(PlayerBlockPlaceEvent.class, event -> {
-           if(event.getBlock().registry().material() == Material.DIRT) {
+           if (event.getBlock().registry().material() == Material.DIRT) {
                event.setBlock(event.getBlock().withHandler(new TillHandler()));
            }
         });
         MinecraftServer.getGlobalEventHandler().addListener(PlayerBlockInteractEvent.class, event -> {
             Player player = event.getPlayer();
-            if(player.getItemInMainHand().material() == Material.WATER_BUCKET) {
+            if (player.getItemInMainHand().material() == Material.WATER_BUCKET) {
                 player.getInstance().setBlock(event.getBlockPosition().relative(event.getBlockFace()), Block.WATER);
                 player.setItemInMainHand(player.getItemInMainHand().withMaterial(Material.BUCKET));
             }
         });
+        BlockInteractionUtils.registerHandlers();
     }
 }

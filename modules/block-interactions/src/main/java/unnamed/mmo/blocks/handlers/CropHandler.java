@@ -9,14 +9,22 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.BlockInteractionUtils;
+import unnamed.mmo.blocks.data.CropBlockData;
 
 public class CropHandler implements BlockHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(CropHandler.class);
+    private static final int cropUpdateThreshold = 3*20;
+
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
-        // Called when age updates as well, same as FarmlandHandler
-        // TODO: Also fix
+        // If the block ids of the previous and current block match, stop here
+        // This is most likely because a property/tag updated, and we shouldn't process things like they have been destroyed.
+        if(destroy.getBlock().id() == destroy.getInstance().getBlock(destroy.getBlockPosition()).id()) return;
+
         CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(destroy.getBlock());
         if(blockData == null) return;
 
@@ -40,8 +48,6 @@ public class CropHandler implements BlockHandler {
         return false;
     }
 
-    private final int cropUpdateThreshold = 40*20;
-
     private final Tag<Integer> tickTag = Tag.Integer("cropTickCount").defaultValue(0);
 
     @Override
@@ -51,14 +57,15 @@ public class CropHandler implements BlockHandler {
             tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withTag(tickTag, 0));
         } else {
             if(count > cropUpdateThreshold) {
+                System.out.println("Block tick at " + tick.getBlockPosition());
                 Block block = tick.getBlock().withTag(tickTag, 0);
                 CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(tick.getBlock());
-                System.out.println(blockData);
+                //System.out.println(blockData);
                 if(blockData == null) return;
 
                 int age = getCurrentAge(tick.getBlock());
                 if(age == -1) {
-                    //TODO Log error?
+                    logger.warn("Got invalid age for crop block at position " + tick.getBlockPosition() + ", correcting!");
                     tick.getInstance().setBlock(tick.getBlockPosition(), block);
                     return;
                 }

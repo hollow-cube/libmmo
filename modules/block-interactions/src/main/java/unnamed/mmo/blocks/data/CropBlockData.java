@@ -1,4 +1,4 @@
-package unnamed.mmo.blocks.handlers;
+package unnamed.mmo.blocks.data;
 
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.Material;

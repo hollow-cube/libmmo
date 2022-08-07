@@ -1,14 +1,16 @@
 package unnamed.mmo.blocks;
 
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.instance.block.Block;
-import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import unnamed.mmo.blocks.handlers.CropBlockData;
-
-import java.util.Objects;
+import unnamed.mmo.blocks.data.CropBlockData;
+import unnamed.mmo.blocks.data.CropBlockDataSerializer;
+import unnamed.mmo.blocks.handlers.CropHandler;
+import unnamed.mmo.blocks.handlers.FarmlandHandler;
+import unnamed.mmo.blocks.handlers.TillHandler;
 
 public class BlockInteractionUtils {
     private static final String DOMAIN_NAME = "unnammedmmo";
@@ -18,13 +20,17 @@ public class BlockInteractionUtils {
     public static final NamespaceID CROP_HANDLER_ID = NamespaceID.from(DOMAIN_NAME, "crophandler");
 
 
+    public static void registerHandlers() {
+        MinecraftServer.getBlockManager().registerHandler(TILL_HANDLER_ID, TillHandler::new);
+        MinecraftServer.getBlockManager().registerHandler(FARMLAND_HANDLER_ID, FarmlandHandler::new);
+        MinecraftServer.getBlockManager().registerHandler(CROP_HANDLER_ID, CropHandler::new);
+    }
+
+
+    private static final Tag<CropBlockData> cropBlockDataTag = Tag.Structure("CropBlockData", new CropBlockDataSerializer());
+
     public static @NotNull Block storeDataOntoBlock(@NotNull Block block, @NotNull CropBlockData data) {
-         return block
-                .withTag(Tag.Integer("seedMaterial"), data.seedMaterial().id())
-                .withTag(Tag.Integer("cropGrownMaterial"), data.cropGrownMaterial().id())
-                .withTag(Tag.Integer("cropBlock"), data.cropBlock().id())
-                .withTag(Tag.Integer("maximumAge"), data.maximumAge())
-                .withTag(Tag.Boolean("createsAnotherBlock"), data.createAnotherBlock());
+        return block.withTag(cropBlockDataTag, data);
     }
 
     /**
@@ -33,14 +39,8 @@ public class BlockInteractionUtils {
      * @return The stored CropBlockData, or null if the block does not have the proper data
      */
     public static @Nullable CropBlockData readDataFromBlock(@NotNull Block block) {
-        if(block.hasTag(Tag.Integer("seedMaterial"))) {
-            return new CropBlockData(
-                    Objects.requireNonNullElse(Material.fromId(block.getTag(Tag.Integer("seedMaterial"))), Material.AIR),
-                    Objects.requireNonNullElse(Material.fromId(block.getTag(Tag.Integer("cropGrownMaterial"))), Material.AIR),
-                    Objects.requireNonNullElse(Block.fromBlockId(block.getTag(Tag.Integer("cropBlock"))), Block.AIR),
-                    block.getTag(Tag.Integer("maximumAge")),
-                    block.getTag(Tag.Boolean("createsAnotherBlock"))
-            );
+        if (block.hasTag(cropBlockDataTag)) {
+            return block.getTag(cropBlockDataTag);
         } else {
             return null;
         }

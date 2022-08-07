@@ -15,16 +15,30 @@ import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.BlockInteractionUtils;
-import unnamed.mmo.blocks.ParticleUtils;
+import unnamed.mmo.blocks.data.CropBlockData;
+import unnamed.mmo.util.ParticleUtils;
 
 import java.util.Map;
 
 public class FarmlandHandler implements BlockHandler {
 
+    // A Map between a crop's seed item material and data about the seed
+    private static final Map<Material, CropBlockData> cropMap = Map.of(
+            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT_SEEDS, Material.WHEAT, Block.WHEAT, 7, false),
+            Material.CARROT, new CropBlockData(Material.CARROT, Material.CARROT, Block.CARROTS, 7, false),
+            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, Material.BEETROOT, Block.BEETROOTS, 3, false),
+            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, Material.PUMPKIN_SEEDS, Block.PUMPKIN_STEM, 7, true),
+            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, Material.PUMPKIN_SEEDS, Block.MELON_STEM, 7, true)
+    );
+    private static final int waterUpdateThreshold = 5*20; // every 5 seconds
+    private static final String moisturePropertyName = "moisture";
+
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
-        // Called when moisture updates, since you have to set the block again with a different property
-        // Todo: Fix somehow?
+        // If the block ids of the previous and current block match, stop here
+        // This is most likely because a property/tag updated, and we shouldn't process things like they have been destroyed.
+        if(destroy.getBlock().id() == destroy.getInstance().getBlock(destroy.getBlockPosition()).id()) return;
+
         Point cropPosition = destroy.getBlockPosition().add(0, 1, 0);
         Instance instance = destroy.getInstance();
         Material material = instance.getBlock(cropPosition).registry().material();
@@ -46,15 +60,6 @@ public class FarmlandHandler implements BlockHandler {
         }
     }
 
-    // A Map between a crop's seed item material and data about the seed
-    private final Map<Material, CropBlockData> cropMap = Map.of(
-            Material.WHEAT_SEEDS, new CropBlockData(Material.WHEAT_SEEDS, Material.WHEAT, Block.WHEAT, 7, false),
-            Material.CARROT, new CropBlockData(Material.CARROT, Material.CARROT, Block.CARROTS, 7, false),
-            Material.BEETROOT_SEEDS, new CropBlockData(Material.BEETROOT_SEEDS, Material.BEETROOT, Block.BEETROOTS, 3, false),
-            Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, Material.PUMPKIN_SEEDS, Block.PUMPKIN_STEM, 7, true),
-            Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, Material.PUMPKIN_SEEDS, Block.MELON_STEM, 7, true)
-    );
-
     @Override
     public boolean onInteract(@NotNull Interaction interaction) {
         Player player = interaction.getPlayer();
@@ -69,9 +74,7 @@ public class FarmlandHandler implements BlockHandler {
         return true;
     }
 
-    private final int waterUpdateThreshold = 5*20; // every 5 seconds
     private int waterUpdateCount = 0;
-    private final String propertyName = "moisture";
 
     @Override
     public void tick(@NotNull Tick tick) {
@@ -79,12 +82,12 @@ public class FarmlandHandler implements BlockHandler {
         if(waterUpdateCount >= waterUpdateThreshold) {
             waterUpdateCount = 0;
             if(hasNearbyWater(tick.getInstance(), tick.getBlockPosition())) {
-                tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty(propertyName, "7"));
+                tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty(moisturePropertyName, "7"));
             } else {
-                String count = tick.getBlock().getProperty(propertyName);
+                String count = tick.getBlock().getProperty(moisturePropertyName);
                 int moistureCount = Integer.parseInt(count);
                 if(moistureCount > 0) {
-                    tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty(propertyName, Integer.toString(--moistureCount)));
+                    tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty(moisturePropertyName, Integer.toString(--moistureCount)));
                 }
             }
         }
