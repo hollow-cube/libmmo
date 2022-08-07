@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class TillHandler implements BlockHandler {
 
-    private final Set<Material> hoes = Set.of(Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE);
+    private static final Set<Material> hoes = Set.of(Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE);
 
     @Override
     public boolean onInteract(@NotNull Interaction interaction) {
@@ -24,7 +24,7 @@ public class TillHandler implements BlockHandler {
         Player player = interaction.getPlayer();
         Instance instance = interaction.getInstance();
         Point point = interaction.getBlockPosition();
-        if(hoes.contains(player.getItemInMainHand().material())) {
+        if (hoes.contains(player.getItemInMainHand().material())) {
             // convert block to farmland
             Block block = Block.FARMLAND.withHandler(new FarmlandHandler());
             instance.setBlock(point, block);

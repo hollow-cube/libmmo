@@ -37,23 +37,17 @@ public class FarmlandHandler implements BlockHandler {
     public void onDestroy(@NotNull Destroy destroy) {
         // If the block ids of the previous and current block match, stop here
         // This is most likely because a property/tag updated, and we shouldn't process things like they have been destroyed.
-        if(destroy.getBlock().id() == destroy.getInstance().getBlock(destroy.getBlockPosition()).id()) return;
+        if (destroy.getBlock().id() == destroy.getInstance().getBlock(destroy.getBlockPosition()).id()) return;
 
         Point cropPosition = destroy.getBlockPosition().add(0, 1, 0);
         Instance instance = destroy.getInstance();
         Material material = instance.getBlock(cropPosition).registry().material();
-        if(material != null && cropMap.containsKey(material)) {
-            // Drop item
-            Entity entity = new Entity(EntityType.ITEM);
+        if (material != null && cropMap.containsKey(material)) {
             CropBlockData data = cropMap.get(instance.getBlock(cropPosition).registry().material());
-            if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
-                itemEntityMeta.setItem(ItemStack.of(data.seedMaterial()));
-            }
-            //entity.setInstance(instance, cropPosition);
-            // Break it too
+            // Break block, will call its onDestroy method and drop items
             instance.setBlock(cropPosition, Block.AIR);
             // Spawn particles
-            if(destroy instanceof PlayerDestroy playerDestroy) {
+            if (destroy instanceof PlayerDestroy playerDestroy) {
                 ParticleUtils.spawnBlockBreakParticles(playerDestroy.getPlayer(), playerDestroy.getBlockPosition(), data.seedMaterial());
             }
             instance.playSound(Sound.sound(SoundEvent.BLOCK_GRASS_HIT, Sound.Source.BLOCK, 1f, 1f), cropPosition.blockX(), cropPosition.blockY(), cropPosition.blockZ());
@@ -64,7 +58,7 @@ public class FarmlandHandler implements BlockHandler {
     public boolean onInteract(@NotNull Interaction interaction) {
         Player player = interaction.getPlayer();
         Material heldMaterial = player.getItemInMainHand().material();
-        if(cropMap.containsKey(heldMaterial)) {
+        if (cropMap.containsKey(heldMaterial)) {
             Point cropPosition = interaction.getBlockPosition().add(0, 1, 0);
             CropBlockData cropData = cropMap.get(heldMaterial);
             Block block = BlockInteractionUtils.storeDataOntoBlock(cropData.cropBlock(), cropData);
@@ -79,14 +73,14 @@ public class FarmlandHandler implements BlockHandler {
     @Override
     public void tick(@NotNull Tick tick) {
         waterUpdateCount++;
-        if(waterUpdateCount >= waterUpdateThreshold) {
+        if (waterUpdateCount >= waterUpdateThreshold) {
             waterUpdateCount = 0;
-            if(hasNearbyWater(tick.getInstance(), tick.getBlockPosition())) {
+            if (hasNearbyWater(tick.getInstance(), tick.getBlockPosition())) {
                 tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty(moisturePropertyName, "7"));
             } else {
                 String count = tick.getBlock().getProperty(moisturePropertyName);
                 int moistureCount = Integer.parseInt(count);
-                if(moistureCount > 0) {
+                if (moistureCount > 0) {
                     tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withProperty(moisturePropertyName, Integer.toString(--moistureCount)));
                 }
             }
@@ -98,7 +92,7 @@ public class FarmlandHandler implements BlockHandler {
         for(int x = point.blockX() - waterRange; x <= point.blockX() + waterRange; x++) {
             for(int y = point.blockY(); y < point.blockY() + 2; y++) { // Checks at farmland y level and 1 above
                 for(int z = point.blockZ() - waterRange; z <= point.blockZ() + waterRange; z++) {
-                    if(instance.getBlock(x, y, z).id() == Block.WATER.id()) { //TODO: Waterlogged blocks should count as well
+                    if (instance.getBlock(x, y, z).id() == Block.WATER.id()) { //TODO: Waterlogged blocks should count as well
                         return true;
                     }
                 }

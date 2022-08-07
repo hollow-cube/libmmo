@@ -18,25 +18,26 @@ public class CropHandler implements BlockHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(CropHandler.class);
     private static final int cropUpdateThreshold = 3*20;
+    private static final Tag<Integer> tickTag = Tag.Integer("cropTickCount").defaultValue(0);
 
     @Override
     public void onDestroy(@NotNull Destroy destroy) {
         // If the block ids of the previous and current block match, stop here
         // This is most likely because a property/tag updated, and we shouldn't process things like they have been destroyed.
-        if(destroy.getBlock().id() == destroy.getInstance().getBlock(destroy.getBlockPosition()).id()) return;
+        if (destroy.getBlock().id() == destroy.getInstance().getBlock(destroy.getBlockPosition()).id()) return;
 
         CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(destroy.getBlock());
-        if(blockData == null) return;
+        if (blockData == null) return;
 
-        if(blockData.maximumAge() == getCurrentAge(destroy.getBlock()) && !blockData.createAnotherBlock()) {
+        if (blockData.maximumAge() == getCurrentAge(destroy.getBlock()) && !blockData.createAnotherBlock()) {
             Entity entity = new Entity(EntityType.ITEM);
-            if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
+            if (entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
                 itemEntityMeta.setItem(ItemStack.of(blockData.cropGrownMaterial()));
             }
             entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.2, 0.5));
         }
         Entity entity = new Entity(EntityType.ITEM);
-        if(entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
+        if (entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
             itemEntityMeta.setItem(ItemStack.of(blockData.seedMaterial()));
         }
         entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.2, 0.5));
@@ -48,15 +49,13 @@ public class CropHandler implements BlockHandler {
         return false;
     }
 
-    private final Tag<Integer> tickTag = Tag.Integer("cropTickCount").defaultValue(0);
-
     @Override
     public void tick(@NotNull Tick tick) {
         Integer count = tick.getBlock().getTag(tickTag);
-        if(count == null) {
+        if (count == null) {
             tick.getInstance().setBlock(tick.getBlockPosition(), tick.getBlock().withTag(tickTag, 0));
         } else {
-            if(count > cropUpdateThreshold) {
+            if (count > cropUpdateThreshold) {
                 System.out.println("Block tick at " + tick.getBlockPosition());
                 Block block = tick.getBlock().withTag(tickTag, 0);
                 CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(tick.getBlock());
@@ -64,15 +63,15 @@ public class CropHandler implements BlockHandler {
                 if(blockData == null) return;
 
                 int age = getCurrentAge(tick.getBlock());
-                if(age == -1) {
+                if (age == -1) {
                     logger.warn("Got invalid age for crop block at position " + tick.getBlockPosition() + ", correcting!");
                     tick.getInstance().setBlock(tick.getBlockPosition(), block);
                     return;
                 }
-                if(age == blockData.maximumAge() && blockData.createAnotherBlock()) {
+                if (age == blockData.maximumAge() && blockData.createAnotherBlock()) {
                     // TODO: Specific cases for pumpkins/melons
                 }
-                if(age < blockData.maximumAge()) {
+                if (age < blockData.maximumAge()) {
                     tick.getInstance().setBlock(tick.getBlockPosition(), block.withProperty("age", Integer.toString(++age)));
                 } else {
                     tick.getInstance().setBlock(tick.getBlockPosition(), block);
@@ -84,7 +83,7 @@ public class CropHandler implements BlockHandler {
     }
 
     private int getCurrentAge(@NotNull Block block) {
-        if(block.getProperty("age") != null) {
+        if (block.getProperty("age") != null) {
             return Integer.parseInt(block.getProperty("age"));
         } else {
             return -1;
