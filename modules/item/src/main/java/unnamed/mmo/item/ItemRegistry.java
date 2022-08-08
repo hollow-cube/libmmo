@@ -8,7 +8,6 @@ import net.minestom.server.utils.ArrayUtils;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.block.BlockUtils;
 import net.minestom.server.utils.collection.ObjectArray;
-import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.util.DFUUtil;
 import unnamed.mmo.util.ExtraCodecs;
@@ -25,7 +24,7 @@ public class ItemRegistry {
             int id,
             int stateId,
             Material material,
-            Map<String, ItemComponent> components
+            Map<String, Component> components
     ) {
 
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -37,7 +36,7 @@ public class ItemRegistry {
                 // on a `type` field within the object, but the ItemComponent is not guaranteed to expose
                 // the type field back. We still want a Map<_type, component> so we parse both the type
                 // field and component as a list of pairs. Then convert the list of pairs into a map.
-                Codec.pair(Codec.STRING.fieldOf("type").codec(), ItemComponent.CODEC)
+                Codec.pair(Codec.STRING.fieldOf("type").codec(), Component.CODEC)
                         .listOf()
                         .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList)
                         .fieldOf("components").forGetter(Entry::components)

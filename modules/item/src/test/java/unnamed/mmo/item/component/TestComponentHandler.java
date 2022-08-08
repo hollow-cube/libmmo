@@ -11,11 +11,8 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.item.ComponentHandler;
 import unnamed.mmo.item.Item;
-
-import java.util.function.Function;
-
-import static net.minestom.server.registry.Registry.Properties;
 
 @AutoService(ComponentHandler.class)
 public class TestComponentHandler implements ComponentHandler<TestComponent> {

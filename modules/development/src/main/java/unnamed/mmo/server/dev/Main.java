@@ -20,6 +20,7 @@ import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
+import unnamed.mmo.item.ItemManager;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +60,10 @@ public class Main {
         ChatStorage chatStorage = ChatStorage.mongo(mongoClient);
         ChatManager chatManager = new ChatManager(chatStorage);
         chatManager.hook(MinecraftServer.process());
+
+        //todo properly implement a config system & use facets better
+        ItemManager itemManager = new ItemManager();
+        itemManager.hook(MinecraftServer.process());
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
                 ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
