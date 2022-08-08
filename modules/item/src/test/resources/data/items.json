@@ -1,12 +1,14 @@
-{
-  "test:item": {
+[
+  {
+    "namespace": "test:item_with_component",
     "id": 0,
     "material": "minecraft:gold_ingot",
-    "components": {
-      "test:component": {
+    "components": [
+      {
+        "type": "test:component",
         "name": "Hello, world"
       }
-    },
+    ],
     "defaultStateId": 0,
     "states": {
       "[]": {
@@ -14,4 +16,4 @@
       }
     }
   }
-}
+]

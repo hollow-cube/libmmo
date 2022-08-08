@@ -83,23 +83,23 @@ public interface Item extends Resource.Id {
     // Static helpers
 
     static @NotNull Collection<@NotNull Item> values() {
-        return ItemImpl.values();
+        return ItemRegistry.REGISTRY.values();
     }
 
     static @Nullable Item fromNamespaceId(@NotNull String namespaceId) {
-        return ItemImpl.getSafe(namespaceId);
+        return ItemRegistry.REGISTRY.get(namespaceId);
     }
 
     static @Nullable Item fromNamespaceId(@NotNull NamespaceID namespaceId) {
-        return ItemImpl.getSafe(namespaceId.asString());
+        return ItemRegistry.REGISTRY.get(namespaceId);
     }
 
     static @Nullable Item fromId(int id) {
-        return ItemImpl.getId(id);
+        return ItemRegistry.ID_TO_ITEM.get(id);
     }
 
     static @Nullable Item fromStateId(int stateId) {
-        return ItemImpl.getState(stateId);
+        return ItemRegistry.ITEM_STATE_MAP.get(stateId);
     }
 
 }

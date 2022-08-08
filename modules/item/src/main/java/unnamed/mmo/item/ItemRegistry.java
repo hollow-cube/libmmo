@@ -1,36 +1,26 @@
 package unnamed.mmo.item;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.Keyable;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.ArrayUtils;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.block.BlockUtils;
-import net.minestom.server.utils.collection.MergedMap;
 import net.minestom.server.utils.collection.ObjectArray;
-import net.minestom.server.utils.validate.Check;
-import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.item.component.ComponentHandler;
 import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Registry;
-import unnamed.mmo.registry.Resource;
 import unnamed.mmo.util.DFUUtil;
 import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.util.JsonUtil;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import static net.minestom.server.registry.Registry.Properties;
-
+@SuppressWarnings("UnstableApiUsage")
 public class ItemRegistry {
 
-    public record EntryV2(
+    public record Entry(
             NamespaceID namespace,
             int id,
             int stateId,
@@ -38,75 +28,25 @@ public class ItemRegistry {
             Map<String, ItemComponent> components
     ) {
 
-        public static final Codec<EntryV2> CODEC = RecordCodecBuilder.create(i -> i.group(
-                ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(EntryV2::namespace),
-                Codec.INT.fieldOf("id").forGetter(EntryV2::id),
-                Codec.INT.fieldOf("stateId").forGetter(EntryV2::stateId),
-                ExtraCodecs.MATERIAL.fieldOf("material").forGetter(EntryV2::material),
+        public static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(Entry::namespace),
+                Codec.INT.fieldOf("id").forGetter(Entry::id),
+                Codec.INT.fieldOf("stateId").forGetter(Entry::stateId),
+                ExtraCodecs.MATERIAL.fieldOf("material").forGetter(Entry::material),
                 // This is a little cursed so I will explain. Registry dispatch (see link) only works
                 // on a `type` field within the object, but the ItemComponent is not guaranteed to expose
                 // the type field back. We still want a Map<_type, component> so we parse both the type
                 // field and component as a list of pairs. Then convert the list of pairs into a map.
-                Codec.pair(Codec.STRING.fieldOf("_type").codec(), ItemComponent.CODEC)
+                Codec.pair(Codec.STRING.fieldOf("type").codec(), ItemComponent.CODEC)
                         .listOf()
                         .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList)
-                        .fieldOf("components").forGetter(EntryV2::components)
-        ).apply(i, EntryV2::new));
+                        .fieldOf("components").forGetter(Entry::components)
+        ).apply(i, Entry::new));
 
     }
 
-    public static final class Entry {
-        private final NamespaceID namespace;
-        private final int id;
-        private final int stateId;
-        private final Material material;
 
-        private final Map<String, ItemComponent> components;
-
-        private Entry(String namespace, Properties props) {
-            this.namespace = NamespaceID.from(namespace);
-            this.id = props.getInt("id");
-            this.stateId = props.getInt("stateId");
-
-            this.material = Material.fromNamespaceId(props.getString("material"));
-
-            var componentMap = props.section("components");
-            var components = new HashMap<String, ItemComponent>();
-            for (var entry : componentMap) {
-                String componentNamespace = entry.getKey();
-                ComponentHandler<?> handler = ComponentHandler.fromNamespaceId(componentNamespace);
-                Check.notNull(handler, "Missing item component handler '" + componentNamespace + "'");
-
-                ItemComponent component = handler.factory().apply(Properties.fromMap((Map<String, Object>) entry.getValue()));
-                components.put(componentNamespace, component);
-            }
-            this.components = Map.copyOf(components);
-        }
-
-        public @NotNull NamespaceID namespace() {
-            return namespace;
-        }
-
-        public int id() {
-            return id;
-        }
-
-        public int stateId() {
-            return stateId;
-        }
-
-        public Material material() {
-            return material;
-        }
-
-        public Map<String, ItemComponent> components() {
-            return components;
-        }
-    }
-
-    private static final Resource.Type RESOURCE = new Resource.Type("item");
-
-    // Item state -> item object
+    // Item state -> Item
     static final ObjectArray<Item> ITEM_STATE_MAP = ObjectArray.singleThread();
 
     // Item id -> valid property keys (order is important for lookup)
@@ -115,19 +55,21 @@ public class ItemRegistry {
     // Item id -> Map<PropertiesValues, Item>
     static final ObjectArray<Map<ItemImpl.PropertiesHolder, ItemImpl>> POSSIBLE_STATES = ObjectArray.singleThread();
 
-    static Registry.Container.Loader<Item> LOADER = (namespace, props) -> {
-        final int itemId = props.getInt("id");
+    // Namespace -> Item
+    static final Registry<Item> REGISTRY = Registry.manual("items", json -> {
+        final int itemId = json.get("id").getAsInt();
 
         // Retrieve properties
         ItemImpl.PropertyType[] propertyTypes;
         {
-            Properties stateProperties = props.section("properties");
+            JsonObject stateProperties = json.getAsJsonObject("properties");
             if (stateProperties != null) {
                 final int stateCount = stateProperties.size();
                 propertyTypes = new ItemImpl.PropertyType[stateCount];
                 int i = 0;
-                for (var entry : stateProperties) {
+                for (var entry : stateProperties.entrySet()) {
                     final var k = entry.getKey();
+                    //noinspection unchecked
                     final var v = (List<String>) entry.getValue();
                     propertyTypes[i++] = new ItemImpl.PropertyType(k, v);
                 }
@@ -137,17 +79,19 @@ public class ItemRegistry {
         }
         PROPERTIES_TYPE.set(itemId, propertyTypes);
 
+        var entryDecoder = JsonOps.INSTANCE.withDecoder(Entry.CODEC);
+
         // Retrieve item states
         {
-            final Properties stateObject = props.section("states");
+            final JsonObject stateObject = json.getAsJsonObject("states");
             final int propertiesCount = stateObject.size();
             ItemImpl[] itemValues = new ItemImpl[propertiesCount];
             ItemImpl.PropertiesHolder[] propertiesKeys = new ItemImpl.PropertiesHolder[propertiesCount];
 
             int propertiesOffset = 0;
-            for (var stateEntry : stateObject) {
+            for (var stateEntry : stateObject.entrySet()) {
                 final String query = stateEntry.getKey();
-                final var stateOverride = (Map<String, Object>) stateEntry.getValue();
+                final var stateOverride = stateEntry.getValue().getAsJsonObject();
                 final var propertyMap = BlockUtils.parseProperties(query);
                 assert propertyTypes.length == propertyMap.size();
 
@@ -158,8 +102,15 @@ public class ItemRegistry {
                     propertiesArray[keyIndex] = valueIndex;
                 }
 
-                var mainProperties = net.minestom.server.registry.Registry.Properties.fromMap(new MergedMap<>(stateOverride, props.asMap()));
-                final ItemImpl item = new ItemImpl(new Entry(namespace, mainProperties), propertiesArray, 1);
+                // Parse the entry
+                var mainProperties = JsonUtil.merge(json, stateOverride);
+                Entry entry = entryDecoder
+                        .apply(mainProperties)
+                        .getOrThrow(false, ignored -> {
+                        })
+                        .getFirst();
+
+                final ItemImpl item = new ItemImpl(entry, propertiesArray, 1);
                 ITEM_STATE_MAP.set(item.stateId(), item);
                 propertiesKeys[propertiesOffset] = new ItemImpl.PropertiesHolder(propertiesArray);
                 itemValues[propertiesOffset++] = item;
@@ -169,18 +120,20 @@ public class ItemRegistry {
         }
 
         // Default state
-        final int defaultStateId = props.getInt("defaultStateId");
-        return ItemImpl.getState(defaultStateId);
-    };
+        final int defaultStateId = json.get("defaultStateId").getAsInt();
+        return Item.fromStateId(defaultStateId);
+    });
 
-    static final Registry.IdContainer<Item> CONTAINER = Registry.createIdContainer(RESOURCE, LOADER);
+    // Item id -> Item
+    static final ObjectArray<Item> ID_TO_ITEM = REGISTRY.unsafeIntegerIndex(Item::id);
+
+
 
     static {
         PROPERTIES_TYPE.trim();
         POSSIBLE_STATES.trim();
         ITEM_STATE_MAP.trim();
     }
-
 
     private static byte findKeyIndex(ItemImpl.PropertyType[] properties, String key, ItemImpl item) {
         for (byte i = 0; i < properties.length; i++) {

@@ -3,6 +3,7 @@ package unnamed.mmo.item.component;
 import com.mojang.serialization.Codec;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,16 +14,26 @@ import java.util.function.Function;
 import static net.minestom.server.registry.Registry.Properties;
 
 public interface ComponentHandler<C extends ItemComponent> extends Resource {
-
     Codec<ComponentHandler<?>> CODEC = Codec.STRING.xmap(ComponentRegistry.REGISTRY::get, ComponentHandler::name);
 
-    @NotNull EventNode<Event> eventNode();
+
+    // Descriptors
+
+    @Override
+    @NotNull NamespaceID namespace();
 
     @NotNull Class<C> componentType();
 
-    @NotNull Function<@NotNull Properties, @NotNull C> factory();
-
     @NotNull Codec<@NotNull C> codec();
+
+
+    // Implementation
+
+    default @Nullable EventNode<Event> eventNode() {
+        return null;
+    }
+
+    //todo introduce method for modifying lore, but need to figure out priorities here.
 
 
     // Static helpers
