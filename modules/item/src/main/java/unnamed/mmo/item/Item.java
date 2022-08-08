@@ -58,8 +58,7 @@ public interface Item extends Resource.Id {
     // Components
 
     default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
-        final String id = ComponentHandler.getComponentId(type);
-        return id == null ? null : getComponent(id);
+        return getComponent(ComponentHandler.from(type).name());
     }
 
     <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace);

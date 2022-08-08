@@ -117,4 +117,26 @@ public record ItemImpl(
 
     record PropertyType(String key, List<String> values) {
     }
+
+    static final class PropertiesHolder {
+        private final byte[] properties;
+        private final int hashCode;
+
+        public PropertiesHolder(byte[] properties) {
+            this.properties = properties;
+            this.hashCode = Arrays.hashCode(properties);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ItemImpl.PropertiesHolder that)) return false;
+            return Arrays.equals(properties, that.properties);
+        }
+
+        @Override
+        public int hashCode() {
+            return hashCode;
+        }
+    }
 }

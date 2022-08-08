@@ -16,5 +16,8 @@ class ComponentRegistry {
         return handlers;
     });
 
+    static final Registry.Index<String, ComponentHandler<?>> COMPONENT_ID_INDEX = REGISTRY.index(ComponentHandler::name);
+
     static final Registry.Index<Class<?>, ComponentHandler<?>> COMPONENT_CLASS_INDEX = REGISTRY.index(ComponentHandler::componentType);
+
 }
