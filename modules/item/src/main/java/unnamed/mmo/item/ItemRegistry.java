@@ -113,6 +113,7 @@ public class ItemRegistry {
     static final ObjectArray<ItemImpl.PropertyType[]> PROPERTIES_TYPE = ObjectArray.singleThread();
 
     // Item id -> Map<PropertiesValues, Item>
+    static final ObjectArray<Map<ItemImpl.PropertiesHolder, ItemImpl>> POSSIBLE_STATES = ObjectArray.singleThread();
 
     static Registry.Container.Loader<Item> LOADER = (namespace, props) -> {
         final int itemId = props.getInt("id");
@@ -141,6 +142,7 @@ public class ItemRegistry {
             final Properties stateObject = props.section("states");
             final int propertiesCount = stateObject.size();
             ItemImpl[] itemValues = new ItemImpl[propertiesCount];
+            ItemImpl.PropertiesHolder[] propertiesKeys = new ItemImpl.PropertiesHolder[propertiesCount];
 
             int propertiesOffset = 0;
             for (var stateEntry : stateObject) {
@@ -159,9 +161,11 @@ public class ItemRegistry {
                 var mainProperties = net.minestom.server.registry.Registry.Properties.fromMap(new MergedMap<>(stateOverride, props.asMap()));
                 final ItemImpl item = new ItemImpl(new Entry(namespace, mainProperties), propertiesArray, 1);
                 ITEM_STATE_MAP.set(item.stateId(), item);
+                propertiesKeys[propertiesOffset] = new ItemImpl.PropertiesHolder(propertiesArray);
                 itemValues[propertiesOffset++] = item;
             }
 
+            POSSIBLE_STATES.set(itemId, ArrayUtils.toMap(propertiesKeys, itemValues, propertiesOffset));
         }
 
         // Default state
@@ -173,6 +177,7 @@ public class ItemRegistry {
 
     static {
         PROPERTIES_TYPE.trim();
+        POSSIBLE_STATES.trim();
         ITEM_STATE_MAP.trim();
     }
 
