@@ -16,8 +16,4 @@ public record TestComponent(
             string("name", "unknown").forGetter(TestComponent::name)
     ).apply(i, TestComponent::new));
 
-    public TestComponent(Registry.Properties obj) {
-        //todo abstraction on data loading
-        this(obj.getString("name"));
-    }
 }

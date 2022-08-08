@@ -1,9 +1,8 @@
-package unnamed.mmo.registry2;
+package unnamed.mmo.registry;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
-import unnamed.mmo.registry.Resource;
 
 import java.util.Collection;
 import java.util.Map;

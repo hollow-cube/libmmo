@@ -3,17 +3,44 @@ Items are loaded from a JSON data file, the format is described below
 
 ### Format
 The format is shown below, I would suggest a simple tool to convert a slightly nicer format 
-and generate IDs/property map automatically. I made 
+and generate IDs/property map automatically.
 
 ```json5
-{
-  // Item namespace ID, one for each unique item.
-  "unnnamed:item": {
+[
+  {
+    // Item namespace ID, one for each unique item.
+    "namespace": "unnnamed:item", 
     // Numeric ID for this item
     "id": 25,
     // Item material
     //todo might want to decide this based on other factors
     "material": "minecraft:stick",
+    
+    // Component system
+    // Array with one entry for each component. Two components of the same type may not exist at the same time.
+    "components": [
+      {
+        // Component ID
+        "type": "unnamed:my_component",
+        // All other values are determined by the component requirements.
+        // See the section below on implementing components. A few samples are below
+      },
+      {
+        "type": "unnamed:fuel",
+        "burn_time": "200"
+      },
+      {
+        "type": "unnamed:sword",
+        "cooldown": 5,
+        "damage_type": "heavy",
+        "base_damage": 25
+      },
+      {
+        "type": "unnamed:rarity",
+        "value": "legendary"
+      }
+    ],
+    
     // State system
     // Default state id, at least one must be present and this should be its ID
     "defaultStateId": 100,
@@ -38,8 +65,20 @@ and generate IDs/property map automatically. I made
       },
     }
   }
-}
+]
 ```
+
+### Components
+An item component should handle behavior for an item type, be it interaction, lore changes, or anything else.
+* Create a class (or record) which implements `Component`
+* Create a `Codec<YourComponent>` (typically as a static field on the component class)
+  * See https://forge.gemwire.uk/wiki/Codecs
+* Create a class which implements `ComponentHandler<YourComponent>`, filling in the relevant methods
+* Annotate `YourComponentHandler` with `@AutoService(ComponentHandler.class)`.
+* Implement any content methods (`eventNode`, the lore one when added).
+
+### Development
+During development, sample items can be added to `development/src/main/resources/data/items.json`.
 
 ### Future Notes
 Below is a minimal item, except for the commented parts which have not currently been done but probably need to be.
@@ -48,19 +87,12 @@ Below is a minimal item, except for the commented parts which have not currently
   "unnnamed:item": {
     "id": 25,
     "material": "minecraft:stick",
+    
     // Max stack size, probably this should choose which material is used if not specified 
     // eg if stack size is 16 choose egg/ender pearl, another question is whether custom stack 
     // sizes actually makes sense at all given the client predictions issue.
     "stackSize": 32,
-    // A map from component ID to content (any json)
-    "components": {
-      // Turns this item into a pickaxe
-      "unnamed:pickaxe": {
-        "miningSpeed": 25,
-        "miningLevel": 2,
-      },
-      "unnamed:something": 25,
-    },
+    
     "defaultStateId": 100,
     "states": {
       "[]": {

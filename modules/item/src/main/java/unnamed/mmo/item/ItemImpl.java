@@ -90,29 +90,6 @@ public record ItemImpl(
     }
 
 
-    // Static helpers
-
-    static Item get(@NotNull String namespaceId) {
-        return ItemRegistry.CONTAINER.get(namespaceId);
-    }
-
-    static Item getSafe(@NotNull String namespace) {
-        return ItemRegistry.CONTAINER.getSafe(namespace);
-    }
-
-    static Item getId(int id) {
-        return ItemRegistry.CONTAINER.getId(id);
-    }
-
-    static Item getState(int id) {
-        return ItemRegistry.ITEM_STATE_MAP.get(id);
-    }
-
-    static Collection<Item> values() {
-        return ItemRegistry.CONTAINER.values();
-    }
-
-
     // Properties
 
     record PropertyType(String key, List<String> values) {

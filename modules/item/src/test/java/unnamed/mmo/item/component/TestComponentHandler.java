@@ -19,6 +19,33 @@ import static net.minestom.server.registry.Registry.Properties;
 
 @AutoService(ComponentHandler.class)
 public class TestComponentHandler implements ComponentHandler<TestComponent> {
+
+    @Override
+    public @NotNull NamespaceID namespace() {
+        return NamespaceID.from("test:component");
+    }
+
+    @Override
+    public @NotNull Class<TestComponent> componentType() {
+        return TestComponent.class;
+    }
+
+    @Override
+    public @NotNull Codec<@NotNull TestComponent> codec() {
+        return TestComponent.CODEC;
+    }
+
+
+    private final EventNode<Event> eventNode = EventNode.all("abc");
+
+    @Override
+    public @NotNull EventNode<Event> eventNode() {
+        return eventNode;
+    }
+
+
+    //todo test filter to avoid any events when the player does not have the item in hand. But some components might
+    // only care if its in inv, or armor, etc. So this wont really work. In the end, probably worth just having some utils.
     public static <C extends TestComponent> EventFilter<PlayerEvent, C> itemComponent(Class<C> type) {
         return EventFilter.from(PlayerEvent.class, type, event -> {
             final Player player = event.getPlayer();
@@ -32,33 +59,5 @@ public class TestComponentHandler implements ComponentHandler<TestComponent> {
             Item item = Item.fromItemStack(itemStack);
             return item.getComponent(type);
         });
-    }
-
-
-    private final EventNode<Event> eventNode = EventNode.all("abc");
-
-    @Override
-    public @NotNull EventNode<Event> eventNode() {
-        return eventNode;
-    }
-
-    @Override
-    public @NotNull Class<TestComponent> componentType() {
-        return TestComponent.class;
-    }
-
-    @Override
-    public @NotNull Function<@NotNull Properties, @NotNull TestComponent> factory() {
-        return TestComponent::new;
-    }
-
-    @Override
-    public @NotNull Codec<@NotNull TestComponent> codec() {
-        return TestComponent.CODEC;
-    }
-
-    @Override
-    public @NotNull NamespaceID namespace() {
-        return NamespaceID.from("test:component");
     }
 }

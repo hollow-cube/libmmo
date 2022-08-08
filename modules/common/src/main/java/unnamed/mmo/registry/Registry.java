@@ -1,168 +1,155 @@
 package unnamed.mmo.registry;
 
-import com.google.gson.ToNumberPolicy;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.collection.ObjectArray;
-import org.jetbrains.annotations.ApiStatus;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import unnamed.mmo.Env;
+import unnamed.mmo.util.DFUUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
-import static net.minestom.server.registry.Registry.Properties;
+public interface Registry<T extends Resource> {
 
-public class Registry {
+    // Factory
 
-    @TestOnly
-    static Path DATA_PATH = Path.of(System.getProperty("unnamed.data.dir", "data"));
-
-    public static <T extends Resource> Container<T> containerFromIterable(Resource.Type resource, Iterable<T> source) {
-        Map<String, T> resources = new HashMap<>();
-        for (T element : source)
-            resources.put(element.name(), element);
-        return new Registry.Container<>(resource, resources);
-    }
-
-    public static <T extends Resource> Container<T> createFromService(Resource.Type resource, Class<? super unnamed.mmo.item.component.ComponentHandler> serviceClass) {
-        Map<String, T> resources = new HashMap<>();
-        for (T element : ServiceLoader.load(serviceClass))
-            resources.put(element.name(), element);
-        return new Registry.Container<>(resource, resources);
-    }
-
-    @ApiStatus.Internal
-    public static <T extends Resource> Container<T> createContainer(Resource.Type resource, Container.Loader<T> loader) {
-        var entries = load(resource);
-        Map<String, T> namespaces = new HashMap<>(entries.size());
-        for (var entry : entries.entrySet()) {
-            final String namespace = entry.getKey();
-            final Properties properties = Properties.fromMap(entry.getValue());
-            final T value = loader.get(namespace, properties);
-            namespaces.put(value.name(), value);
+    static <T extends Resource> Registry<T> manual(@NotNull String name, Supplier<Collection<T>> supplier) {
+        Map<String, T> registry = new HashMap<>();
+        for (T element : supplier.get()) {
+            registry.put(element.name(), element);
         }
-        return new Container<>(resource, namespaces);
+
+        // Registries may not be empty in strict mode
+        Env.strictValidation(
+                "Empty registry for manual resource: " + name,
+                registry::isEmpty
+        );
+
+        return new MapRegistry<>(registry);
     }
 
-    @ApiStatus.Internal
-    public static <T extends Resource.Id> IdContainer<T> createIdContainer(Resource.Type resource, Container.Loader<T> loader) {
-        var entries = load(resource);
-        Map<String, T> namespaces = new HashMap<>(entries.size());
-        ObjectArray<T> ids = ObjectArray.singleThread(entries.size());
-        for (var entry : entries.entrySet()) {
-            final String namespace = entry.getKey();
-            final Properties properties = Properties.fromMap(entry.getValue());
-            final T value = loader.get(namespace, properties);
-            ids.set(value.id(), value);
-            namespaces.put(value.name(), value);
-        }
-        return new IdContainer<>(resource, namespaces, ids);
-    }
+    static <T extends Resource> Registry<T> manual(@NotNull String name, @NotNull Function<JsonObject, T> mapper) {
+        Map<String, T> registry = new HashMap<>();
 
-    private static Map<String, Map<String, Object>> load(Resource.Type resource) {
-        Map<String, Map<String, Object>> map = new HashMap<>();
+        JsonArray content = Resource.loadJsonArray(name + ".json");
+        for (JsonElement elem : content) {
+            Check.stateCondition(!elem.isJsonObject(), "Registry items must be json objects");
 
-        Path file = DATA_PATH.resolve(resource.name().toLowerCase() + ".json");
-        try (BufferedReader resourceStream = Files.newBufferedReader(file)) {
-            try (JsonReader reader = new JsonReader(resourceStream)) {
-                reader.beginObject();
-                while (reader.hasNext()) map.put(reader.nextName(), (Map<String, Object>) readObject(reader));
-                reader.endObject();
+            try {
+                T element = mapper.apply(elem.getAsJsonObject());
+                registry.put(element.name(), element);
+            } catch (Throwable e) {
+                Logger logger = LoggerFactory.getLogger(Registry.class);
+                logger.error("Failed to load registry item in {}: {}", name, elem, e);
+
+                Env.strictValidation("Registry item failure", () -> true);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return map;
+
+        // Registries may not be empty in strict mode
+        Env.strictValidation(
+                "Empty registry for resource: " + name,
+                registry::isEmpty
+        );
+
+        return new MapRegistry<>(registry);
     }
 
-    public static class Container<T extends Resource> {
-        private final Resource.Type resource;
-        private final Map<String, T> namespaces;
+    /**
+     * Create a registry from a codec directly. The registry item must have a "namespace" field for the ID.
+     *
+     * @param codec The codec to deserialize with
+     * @param name  The name of the data file to load from (.json is appended)
+     */
+    static <T extends Resource> Registry<T> codec(@NotNull String name, @NotNull Codec<T> codec) {
+        JsonArray content = Resource.loadJsonArray(name + ".json");
 
-        public Container(Resource.Type resource, Map<String, T> namespaces) {
-            this.resource = resource;
-            this.namespaces = Map.copyOf(namespaces);
+        // Create a modified encoder that converts to a map. See the description of ItemRegistry.Entry.CODEC
+        // for more notes on the technique used here.
+        Codec<Map<String, T>> mapCodec = Codec.pair(Codec.STRING.fieldOf("namespace").codec(), codec)
+                .listOf()
+                .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList);
+
+        Map<String, T> registry = null; // null is just to make javac happy, it can never happen.
+        try {
+            registry = JsonOps.INSTANCE
+                    .withDecoder(mapCodec)
+                    .apply(content)
+                    .getOrThrow(false, ignored -> {})
+                    .getFirst();
+        } catch (RuntimeException e) {
+            Logger logger = LoggerFactory.getLogger(Registry.class);
+            logger.error("Failed to create registry {}", name, e);
+
+            // This is a fatal error. We should never allow a server to start up with a broken registry.
+            System.exit(1);
         }
 
-        public T get(@NotNull String namespace) {
-            return namespaces.get(namespace);
-        }
+        // Registries may not be empty in strict mode
+        Env.strictValidation(
+                "Empty registry for resource: " + name,
+                registry::isEmpty
+        );
 
-        public T getSafe(@NotNull String namespace) {
-            return get(namespace.contains(":") ? namespace : "minecraft:" + namespace);
-        }
-
-        public Collection<T> values() {
-            return namespaces.values();
-        }
-
-        public <K, V> Map<K, V> index(Function<T, K> keyGetter, Function<T, V> valueGetter) {
-            return values().stream().collect(Collectors.toUnmodifiableMap(keyGetter, valueGetter));
-        }
-
-        public <K> Map<K, T> index(Function<T, K> keyGetter) {
-            return values().stream().collect(Collectors.toUnmodifiableMap(keyGetter, i -> i));
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Container<?> container)) return false;
-            return resource == container.resource;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(resource);
-        }
-
-        @FunctionalInterface
-        public interface Loader<T extends Resource> {
-            T get(String namespace, net.minestom.server.registry.Registry.Properties properties);
-        }
+        return new MapRegistry<>(registry);
     }
 
-    public static class IdContainer<T extends Resource.Id> extends Container<T> {
-        private final ObjectArray<T> ids;
 
-        public IdContainer(Resource.Type resource, Map<String, T> namespaces, ObjectArray<T> ids) {
-            super(resource, namespaces);
-            this.ids = ids;
-            ids.trim();
-        }
+    // Impl
 
-        public T getId(int id) {
-            return ids.get(id);
-        }
+    @Nullable T getRaw(String namespace);
+
+    default @UnknownNullability T get(String namespace) {
+        return getRaw(namespace.contains(":") ? namespace : "minecraft:" + namespace);
+    }
+
+    default @UnknownNullability T get(NamespaceID namespace) {
+        return getRaw(namespace.asString());
+    }
+
+    @NotNull Collection<T> values();
+
+
+    // Derivatives
+
+    interface Index<K, T extends Resource> {
+
+        @UnknownNullability T get(K key);
 
     }
 
-    public static Object readObject(JsonReader reader) throws IOException {
-        return switch (reader.peek()) {
-            case BEGIN_ARRAY -> {
-                List<Object> list = new ArrayList<>();
-                reader.beginArray();
-                while (reader.hasNext()) list.add(readObject(reader));
-                reader.endArray();
-                yield list;
-            }
-            case BEGIN_OBJECT -> {
-                Map<String, Object> map = new HashMap<>();
-                reader.beginObject();
-                while (reader.hasNext()) map.put(reader.nextName(), readObject(reader));
-                reader.endObject();
-                yield map;
-            }
-            case STRING -> reader.nextString();
-            case NUMBER -> ToNumberPolicy.LONG_OR_DOUBLE.readNumber(reader);
-            case BOOLEAN -> reader.nextBoolean();
-            default -> throw new IllegalStateException("Invalid peek: " + reader.peek());
-        };
+    @NotNull <K> Index<K, T> index(Function<T, K> mapper);
+
+
+    // Below here is kinda cursed, will fix eventually but works for now.
+
+    @FunctionalInterface
+    interface FunctionInt<T> {
+        //todo is there an existing version of this?
+        int apply(T t);
     }
 
+    default @NotNull ObjectArray<T> unsafeIntegerIndex(FunctionInt<T> getter) {
+        Collection<T> values = values();
+
+        ObjectArray<T> index = ObjectArray.singleThread(values.size());
+        for (T elem : values)
+            index.set(getter.apply(elem), elem);
+
+        index.trim();
+        return index;
+    }
 }
