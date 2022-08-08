@@ -1,4 +1,4 @@
-package unnamed.mmo.item.component;
+package unnamed.mmo.item;
 
 import com.mojang.serialization.Codec;
 import net.minestom.server.event.Event;
@@ -9,11 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.registry.Resource;
 
-import java.util.function.Function;
-
-import static net.minestom.server.registry.Registry.Properties;
-
-public interface ComponentHandler<C extends ItemComponent> extends Resource {
+public interface ComponentHandler<C extends Component> extends Resource {
     Codec<ComponentHandler<?>> CODEC = Codec.STRING.xmap(ComponentRegistry.REGISTRY::get, ComponentHandler::name);
 
 
@@ -42,12 +38,12 @@ public interface ComponentHandler<C extends ItemComponent> extends Resource {
         return ComponentRegistry.COMPONENT_ID_INDEX.get(namespace);
     }
 
-    static <C extends ItemComponent> @NotNull ComponentHandler<C> from(C component) {
+    static <C extends Component> @NotNull ComponentHandler<C> from(C component) {
         //noinspection unchecked
         return (ComponentHandler<C>) from(component.getClass());
     }
 
-    static <C extends ItemComponent> @NotNull ComponentHandler<C> from(Class<C> componentType) {
+    static <C extends Component> @NotNull ComponentHandler<C> from(Class<C> componentType) {
         var value = ComponentRegistry.COMPONENT_CLASS_INDEX.get(componentType);
         Check.notNull(value, "Missing component handler for component " + componentType);
         //noinspection unchecked

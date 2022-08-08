@@ -2,7 +2,6 @@ package unnamed.mmo.item;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -11,8 +10,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-import unnamed.mmo.item.component.ComponentHandler;
-import unnamed.mmo.item.component.ItemComponent;
 import unnamed.mmo.registry.Resource;
 
 import java.util.Collection;
@@ -57,11 +54,11 @@ public interface Item extends Resource.Id {
 
     // Components
 
-    default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
+    default <C extends Component> @Nullable C getComponent(Class<C> type) {
         return getComponent(ComponentHandler.from(type).name());
     }
 
-    <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace);
+    <C extends Component> @Nullable C getComponent(@NotNull String namespace);
 
 
     // ItemStack conversion
@@ -69,7 +66,7 @@ public interface Item extends Resource.Id {
     default @NotNull ItemStack asItemStack() {
         return ItemStack.builder(material())
                 .amount(amount())
-                .displayName(Component.text(translationKey()).decoration(TextDecoration.ITALIC, false))
+                .displayName(net.kyori.adventure.text.Component.text(translationKey()).decoration(TextDecoration.ITALIC, false))
                 .meta(meta -> meta.customModelData(stateId()))
                 .build();
     }

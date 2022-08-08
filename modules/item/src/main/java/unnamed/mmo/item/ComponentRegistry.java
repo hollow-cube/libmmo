@@ -1,4 +1,4 @@
-package unnamed.mmo.item.component;
+package unnamed.mmo.item;
 
 import unnamed.mmo.registry.Registry;
 

@@ -27,6 +27,11 @@ class MapRegistry<T extends Resource> implements Registry<T> {
     }
 
     @Override
+    public int size() {
+        return delegate.size();
+    }
+
+    @Override
     public @NotNull <K> Index<K, T> index(Function<T, K> mapper) {
         Map<K, T> index = values().stream().collect(Collectors.toMap(mapper, i -> i));
         return new MapIndex<>(index);

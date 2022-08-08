@@ -4,7 +4,6 @@ import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import unnamed.mmo.item.component.ItemComponent;
 
 import java.util.Map;
 
@@ -29,7 +28,7 @@ public record MockItem(
     }
 
     @Override
-    public <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace) {
+    public <C extends Component> @Nullable C getComponent(@NotNull String namespace) {
         return null;
     }
 }

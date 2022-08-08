@@ -122,6 +122,8 @@ public interface Registry<T extends Resource> {
 
     @NotNull Collection<T> values();
 
+    int size();
+
 
     // Derivatives
 
