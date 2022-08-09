@@ -10,7 +10,6 @@ import unnamed.mmo.blocks.data.CropBlockData;
 import unnamed.mmo.blocks.data.CropBlockDataSerializer;
 import unnamed.mmo.blocks.handlers.CropHandler;
 import unnamed.mmo.blocks.handlers.FarmlandHandler;
-import unnamed.mmo.blocks.handlers.TillHandler;
 
 public class BlockInteractionUtils {
     private static final String DOMAIN_NAME = "unnammedmmo";
@@ -21,7 +20,6 @@ public class BlockInteractionUtils {
 
 
     public static void registerHandlers() {
-        MinecraftServer.getBlockManager().registerHandler(TILL_HANDLER_ID, TillHandler::new);
         MinecraftServer.getBlockManager().registerHandler(FARMLAND_HANDLER_ID, FarmlandHandler::new);
         MinecraftServer.getBlockManager().registerHandler(CROP_HANDLER_ID, CropHandler::new);
     }
