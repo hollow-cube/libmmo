@@ -13,7 +13,7 @@ public class Env {
      * It should be used to check cases which are fine during development but are a fatal problem in production.
      * For example, if a registry is empty for any reason in production the server should not be allowed to start.
      */
-    public static final Boolean STRICT_MODE = System.getProperty("unnamed.strict", "false").equals("true");
+    public static final Boolean STRICT_MODE = Boolean.valueOf(System.getProperty("unnamed.strict", "false"));
 
 
     private static final Logger STRICT_LOGGER = LoggerFactory.getLogger("STRICT");

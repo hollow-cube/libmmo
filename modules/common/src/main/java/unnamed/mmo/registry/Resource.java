@@ -43,11 +43,6 @@ public interface Resource extends Keyed {
 
     }
 
-    //todo remove me
-    record Type(@NotNull String name) {
-
-    }
-
 
     Path DATA_PATH = Path.of(System.getProperty("unnamed.data.dir", "data"));
 
