@@ -138,13 +138,7 @@ public interface Registry<T extends Resource> {
 
     // Below here is kinda cursed, will fix eventually but works for now.
 
-    @FunctionalInterface
-    interface FunctionInt<T> {
-        //todo is there an existing version of this?
-        int apply(T t);
-    }
-
-    default @NotNull ObjectArray<T> unsafeIntegerIndex(FunctionInt<T> getter) {
+    default @NotNull ObjectArray<T> unsafeIntegerIndex(Function<T, Integer> getter) {
         Collection<T> values = values();
 
         ObjectArray<T> index = ObjectArray.singleThread(values.size());

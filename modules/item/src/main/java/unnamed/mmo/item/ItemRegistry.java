@@ -127,13 +127,6 @@ public class ItemRegistry {
     static final ObjectArray<Item> ID_TO_ITEM = REGISTRY.unsafeIntegerIndex(Item::id);
 
 
-
-    static {
-        PROPERTIES_TYPE.trim();
-        POSSIBLE_STATES.trim();
-        ITEM_STATE_MAP.trim();
-    }
-
     private static byte findKeyIndex(ItemImpl.PropertyType[] properties, String key, ItemImpl item) {
         for (byte i = 0; i < properties.length; i++) {
             if (properties[i].key().equals(key)) return i;
@@ -154,6 +147,12 @@ public class ItemRegistry {
         } else {
             throw new IllegalArgumentException("Unknown property value: " + value);
         }
+    }
+
+    static {
+        PROPERTIES_TYPE.trim();
+        POSSIBLE_STATES.trim();
+        ITEM_STATE_MAP.trim();
     }
 
 }

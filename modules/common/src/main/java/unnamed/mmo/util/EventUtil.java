@@ -4,7 +4,6 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.trait.CancellableEvent;
-import net.minestom.server.instance.InstanceContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
