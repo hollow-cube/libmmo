@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.registry.Resource;
 
-public interface ComponentHandler<C extends Component> extends Resource {
-    Codec<ComponentHandler<?>> CODEC = Codec.STRING.xmap(ComponentRegistry.REGISTRY::get, ComponentHandler::name);
+public interface ItemComponentHandler<C extends ItemComponent> extends Resource {
+    Codec<ItemComponentHandler<?>> CODEC = Codec.STRING.xmap(ItemComponentRegistry.REGISTRY::get, ItemComponentHandler::name);
 
 
     // Descriptors
@@ -34,20 +34,20 @@ public interface ComponentHandler<C extends Component> extends Resource {
 
     // Static helpers
 
-    static @Nullable ComponentHandler<?> fromNamespaceId(@NotNull String namespace) {
-        return ComponentRegistry.COMPONENT_ID_INDEX.get(namespace);
+    static @Nullable ItemComponentHandler<?> fromNamespaceId(@NotNull String namespace) {
+        return ItemComponentRegistry.COMPONENT_ID_INDEX.get(namespace);
     }
 
-    static <C extends Component> @NotNull ComponentHandler<C> from(C component) {
+    static <C extends ItemComponent> @NotNull ItemComponentHandler<C> from(C component) {
         //noinspection unchecked
-        return (ComponentHandler<C>) from(component.getClass());
+        return (ItemComponentHandler<C>) from(component.getClass());
     }
 
-    static <C extends Component> @NotNull ComponentHandler<C> from(Class<C> componentType) {
-        var value = ComponentRegistry.COMPONENT_CLASS_INDEX.get(componentType);
+    static <C extends ItemComponent> @NotNull ItemComponentHandler<C> from(Class<C> componentType) {
+        var value = ItemComponentRegistry.COMPONENT_CLASS_INDEX.get(componentType);
         Check.notNull(value, "Missing component handler for component " + componentType);
         //noinspection unchecked
-        return (ComponentHandler<C>) value;
+        return (ItemComponentHandler<C>) value;
 
     }
 
