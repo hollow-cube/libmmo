@@ -18,7 +18,7 @@ public class ItemManager implements Facet {
 
         // Component handlers
         var eventHandler = server.eventHandler();
-        for (ComponentHandler<?> handler : ComponentRegistry.REGISTRY.values()) {
+        for (ItemComponentHandler<?> handler : ItemComponentRegistry.REGISTRY.values()) {
 
             // Register event nodes
             EventNode<Event> eventNode = handler.eventNode();
@@ -26,7 +26,7 @@ public class ItemManager implements Facet {
                 eventHandler.addChild(eventNode);
             }
         }
-        logger.info("Loaded {} item components", ComponentRegistry.REGISTRY.size());
+        logger.info("Loaded {} item components", ItemComponentRegistry.REGISTRY.size());
 
     }
 

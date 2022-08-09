@@ -53,7 +53,7 @@ public record ItemImpl(
     }
 
     @Override
-    public <C extends Component> @Nullable C getComponent(@NotNull String namespace) {
+    public <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace) {
         //noinspection unchecked
         return (C) registry().components().get(namespace);
     }

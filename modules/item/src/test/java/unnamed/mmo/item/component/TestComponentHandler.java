@@ -11,11 +11,11 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.item.ComponentHandler;
+import unnamed.mmo.item.ItemComponentHandler;
 import unnamed.mmo.item.Item;
 
-@AutoService(ComponentHandler.class)
-public class TestComponentHandler implements ComponentHandler<TestComponent> {
+@AutoService(ItemComponentHandler.class)
+public class TestComponentHandler implements ItemComponentHandler<TestComponent> {
 
     @Override
     public @NotNull NamespaceID namespace() {

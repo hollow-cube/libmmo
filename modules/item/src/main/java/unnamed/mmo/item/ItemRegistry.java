@@ -24,7 +24,7 @@ public class ItemRegistry {
             int id,
             int stateId,
             Material material,
-            Map<String, Component> components
+            Map<String, ItemComponent> components
     ) {
 
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -36,7 +36,7 @@ public class ItemRegistry {
                 // on a `type` field within the object, but the ItemComponent is not guaranteed to expose
                 // the type field back. We still want a Map<_type, component> so we parse both the type
                 // field and component as a list of pairs. Then convert the list of pairs into a map.
-                Codec.pair(Codec.STRING.fieldOf("type").codec(), Component.CODEC)
+                Codec.pair(Codec.STRING.fieldOf("type").codec(), ItemComponent.CODEC)
                         .listOf()
                         .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList)
                         .fieldOf("components").forGetter(Entry::components)

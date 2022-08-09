@@ -54,11 +54,11 @@ public interface Item extends Resource.Id {
 
     // Components
 
-    default <C extends Component> @Nullable C getComponent(Class<C> type) {
-        return getComponent(ComponentHandler.from(type).name());
+    default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
+        return getComponent(ItemComponentHandler.from(type).name());
     }
 
-    <C extends Component> @Nullable C getComponent(@NotNull String namespace);
+    <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace);
 
 
     // ItemStack conversion
