@@ -10,7 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.registry.Resource;
 
 public interface ItemComponentHandler<C extends ItemComponent> extends Resource {
-    Codec<ItemComponentHandler<?>> CODEC = Codec.STRING.xmap(ItemComponentRegistry.REGISTRY::get, ItemComponentHandler::name);
+
+    // Cannot be a method ref because REGISTRY may be mid-initialization when this is initialized.
+    @SuppressWarnings("Convert2MethodRef")
+    Codec<ItemComponentHandler<?>> CODEC = Codec.STRING.xmap(namespace -> ItemComponentRegistry.REGISTRY.get(namespace), ItemComponentHandler::name);
 
 
     // Descriptors
