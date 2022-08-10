@@ -29,7 +29,7 @@ record ConstantNumberProvider(
 
 
     @AutoService(NumberProvider.Factory.class)
-    public static final class Factory extends NumberProvider.Factory<ConstantNumberProvider> {
+    public static final class Factory extends NumberProvider.Factory {
 
         public Factory() {
             super(

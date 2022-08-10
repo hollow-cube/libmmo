@@ -19,6 +19,7 @@ import unnamed.mmo.util.DFUUtil;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -30,6 +31,21 @@ public interface Registry<T extends Resource> {
         Map<String, T> registry = new HashMap<>();
         for (T element : supplier.get()) {
             registry.put(element.name(), element);
+        }
+
+        // Registries may not be empty in strict mode
+        Env.strictValidation(
+                "Empty registry for manual resource: " + name,
+                registry::isEmpty
+        );
+
+        return new MapRegistry<>(registry);
+    }
+
+    static <T extends Resource> Registry<T> service(@NotNull String name, Class<T> type) {
+        Map<String, T> registry = new HashMap<>();
+        for (T elem : ServiceLoader.load(type)) {
+            registry.put(elem.name(), elem);
         }
 
         // Registries may not be empty in strict mode
