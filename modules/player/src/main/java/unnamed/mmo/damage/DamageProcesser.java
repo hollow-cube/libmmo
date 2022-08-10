@@ -13,6 +13,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.attribute.ItemAttribute;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.potion.TimedPotion;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class DamageProcesser {
         MinecraftServer.getGlobalEventHandler().addListener(EntityAttackEvent.class, event -> processDamage(event.getEntity(), event.getTarget()));
     }
 
-    public static void processDamage(Entity source, Entity target) {
+    public static void processDamage(@NotNull Entity source, @NotNull Entity target) {
         if (target instanceof LivingEntity targetEntity) {
             if (source instanceof Player player) {
                 DamageType type = DamageType.fromPlayer(player);
@@ -70,15 +71,14 @@ public class DamageProcesser {
 
                 // Enemy Potion Effect multiplier
                 double resistanceMod = 1;
-                for(TimedPotion potionEffect : player.getActiveEffects()) {
-                    if(potionEffect.getPotion().effect() == PotionEffect.RESISTANCE) {
+                for (TimedPotion potionEffect : player.getActiveEffects()) {
+                    if (potionEffect.getPotion().effect() == PotionEffect.RESISTANCE) {
                         resistanceMod -= 0.2 * potionEffect.getPotion().amplifier();
                         // Bound resistance
                         resistanceMod = Math.max(0, resistanceMod);
                     }
                 }
                 info.getDamageValue().multiply(resistanceMod);
-
                 info.apply(targetEntity, player.getPosition().yaw());
             } else {
                 logger.warn("Non-player entity attacked a target! This is currently unsupported.");
@@ -88,7 +88,7 @@ public class DamageProcesser {
         }
     }
 
-    private static MultiPartValue getAttributeValue(LivingEntity entity, Attribute attribute, double baseAttributeValue) {
+    private static @NotNull MultiPartValue getAttributeValue(@NotNull LivingEntity entity, @NotNull Attribute attribute, double baseAttributeValue) {
         MultiPartValue value = new MultiPartValue(baseAttributeValue);
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack item = entity.getEquipment(slot);

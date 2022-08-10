@@ -2,7 +2,8 @@ package unnamed.mmo.damage;
 
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.damage.DamageType;
-import net.minestom.server.entity.damage.EntityDamage;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class DamageInfo {
 
@@ -15,27 +16,29 @@ public class DamageInfo {
         this(type, new MultiPartValue(1));
     }
 
-    public DamageInfo(DamageType type, MultiPartValue damageValue) {
+    public DamageInfo(@NotNull DamageType type, @NotNull MultiPartValue damageValue) {
         this.type = type;
         this.damageValue = damageValue;
         knockbackStrength = new MultiPartValue(0.4);
         fireTicks = 0;
     }
 
-    public MultiPartValue getDamageValue() {
+    public @NotNull MultiPartValue getDamageValue() {
         return damageValue;
     }
 
-    public MultiPartValue getKnockbackStrength() {
+    public @NotNull MultiPartValue getKnockbackStrength() {
         return knockbackStrength;
     }
 
+    @Contract(mutates = "this")
     public void setFireTicks(int fireTicks) {
         this.fireTicks = fireTicks;
     }
 
     // TODO: Perhaps make Knockback a vector instead of a MultiPartValue to more easily handle cases when there is no attacker?
-    public void apply(LivingEntity entity, double attackerYaw) {
+    @Contract(mutates = "param1")
+    public void apply(@NotNull LivingEntity entity, double attackerYaw) {
         // Deal damage
         // Why are attributes in double amounts, but damage is in float?
         entity.damage(type, (float) damageValue.getFinalValue());

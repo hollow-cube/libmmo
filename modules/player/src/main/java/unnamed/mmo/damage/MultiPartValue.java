@@ -1,6 +1,8 @@
 package unnamed.mmo.damage;
 
 import net.minestom.server.attribute.AttributeOperation;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 // Mostly ripped from my other projects
 public class MultiPartValue {
@@ -17,6 +19,7 @@ public class MultiPartValue {
         this.multiplierTotal = 1;
     }
 
+    @Contract(mutates = "this")
     public void addBase(double amount) {
         this.boost += amount;
     }
@@ -25,6 +28,7 @@ public class MultiPartValue {
      * Multiplies the total value by the amount
      * @param amount The amount to multiply the value by
      */
+    @Contract(mutates = "this")
     public void multiply(double amount) {
         multiplierTotal *= amount;
     }
@@ -34,7 +38,8 @@ public class MultiPartValue {
      * @param amount The amount to modify by
      * @param operation The operation by which to modify the value
      */
-    public void modifyValue(double amount, AttributeOperation operation) {
+    @Contract(mutates = "this")
+    public void modifyValue(double amount, @NotNull AttributeOperation operation) {
         switch (operation) {
             case ADDITION -> addBase(amount);
             case MULTIPLY_BASE -> multiplierBase += amount;
@@ -50,7 +55,8 @@ public class MultiPartValue {
         return (base + boost) * multiplierBase * multiplierTotal;
     }
 
-    public void combine(MultiPartValue other) {
+    @Contract(mutates = "this")
+    public void combine(@NotNull MultiPartValue other) {
         addBase(other.base + other.boost);
         this.multiplierBase += other.multiplierBase;
         multiply(other.multiplierTotal);
