@@ -11,6 +11,8 @@ import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.item.Enchantment;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.attribute.ItemAttribute;
+import net.minestom.server.potion.PotionEffect;
+import net.minestom.server.potion.TimedPotion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,65 +25,80 @@ public class DamageProcesser {
     }
 
     public static void processDamage(Entity source, Entity target) {
-        if (target instanceof LivingEntity livingEntity) {
+        if (target instanceof LivingEntity targetEntity) {
             if (source instanceof Player player) {
                 DamageType type = DamageType.fromPlayer(player);
-                // Set variables
-                double damage = 1; // Base damage
-                double multiplyBase = 1; // For operation 1 (Multiply_Base)
-                double multiplyAmount = 1; // For Operation 2 (Multiply)
-                int fireTicks = 0;
-                float kbStrength = 0.4f;
-
+                DamageInfo info = new DamageInfo(type, getAttributeValue(player, Attribute.ATTACK_DAMAGE, 1));
+                // Handle Items - Attack damage attribute was handled by getAttributeValue previously
+                // Only apply enchants on main hand
+                ItemStack itemStack = player.getItemInMainHand();
+                if (itemStack.meta().getEnchantmentMap().containsKey(Enchantment.SHARPNESS)) {
+                    info.getDamageValue().addBase(0.5 + 0.5 * itemStack.meta().getEnchantmentMap().get(Enchantment.SHARPNESS));
+                }
+                if (itemStack.meta().getEnchantmentMap().containsKey(Enchantment.FIRE_ASPECT)) {
+                    info.setFireTicks(80 * itemStack.meta().getEnchantmentMap().get(Enchantment.FIRE_ASPECT));
+                }
+                if (itemStack.meta().getEnchantmentMap().containsKey(Enchantment.KNOCKBACK)) {
+                    info.getKnockbackStrength().addBase(0.5 * itemStack.meta().getEnchantmentMap().get(Enchantment.KNOCKBACK));
+                }
                 // More knockback if sprinting
-                if(player.isSprinting()) {
-                    kbStrength *= 1.15;
+                if (player.isSprinting()) {
+                    info.getKnockbackStrength().multiply(1.15);
                 }
-                for (EquipmentSlot slot : EquipmentSlot.values()) {
-                    ItemStack item = player.getEquipment(slot);
-                    // Attributes
-                    for (ItemAttribute attribute : item.meta().getAttributes()) {
-                        if(attribute.attribute() == Attribute.ATTACK_DAMAGE) {
-                            switch (attribute.operation()) {
-                                case ADDITION -> damage += attribute.amount();
-                                case MULTIPLY_BASE -> multiplyBase += attribute.amount();
-                                case MULTIPLY_TOTAL -> multiplyAmount *= attribute.amount();
-                            }
-                        }
+                // Handle Potion effects
+                int potionModifier = 0;
+                for (TimedPotion potionEffect : player.getActiveEffects()) {
+                    if (potionEffect.getPotion().effect() == PotionEffect.WEAKNESS) {
+                        potionModifier -= 4 * potionEffect.getPotion().amplifier();
+                    } else if (potionEffect.getPotion().effect() == PotionEffect.STRENGTH) {
+                        potionModifier += 3 * potionEffect.getPotion().amplifier();
                     }
-                    // Only apply enchants on main hand
-                    if (slot == EquipmentSlot.MAIN_HAND) {
-                        if(item.meta().getEnchantmentMap().containsKey(Enchantment.SHARPNESS)) {
-                            damage += 0.5 + 0.5 * item.meta().getEnchantmentMap().get(Enchantment.SHARPNESS);
-                        }
-                        if(item.meta().getEnchantmentMap().containsKey(Enchantment.FIRE_ASPECT)) {
-                            fireTicks = 80 * item.meta().getEnchantmentMap().get(Enchantment.FIRE_ASPECT);
-                        }
-                        if(item.meta().getEnchantmentMap().containsKey(Enchantment.KNOCKBACK)) {
-                            kbStrength += 0.5f * item.meta().getEnchantmentMap().get(Enchantment.KNOCKBACK);
-                        }
+                }
+                info.getDamageValue().addBase(potionModifier);
+
+                // Enemy Armor Multiplier
+                double armorValue = getAttributeValue(targetEntity, Attribute.ARMOR, 0).getFinalValue();
+                double armorToughnessValue = getAttributeValue(targetEntity, Attribute.ARMOR_TOUGHNESS, 0).getFinalValue();
+                // Formula from https://minecraft.fandom.com/wiki/Armor#Damage_protection
+                info.getDamageValue().multiply(
+                    1 -
+                               Math.min(20,
+                                   Math.max(armorValue / 5,
+                                           armorValue - (4 * info.getDamageValue().getFinalValue()) / (armorToughnessValue + 8)))
+                                       / 25
+                );
+
+                // Enemy Potion Effect multiplier
+                double resistanceMod = 1;
+                for(TimedPotion potionEffect : player.getActiveEffects()) {
+                    if(potionEffect.getPotion().effect() == PotionEffect.RESISTANCE) {
+                        resistanceMod -= 0.2 * potionEffect.getPotion().amplifier();
+                        // Bound resistance
+                        resistanceMod = Math.max(0, resistanceMod);
                     }
-                    // Apply attributes
-                    damage = damage * multiplyBase;
-                    damage = damage * multiplyAmount;
                 }
-                // TODO - Handle defending entity armor
+                info.getDamageValue().multiply(resistanceMod);
 
-                
-                // Why are attributes in double amounts, but damage is in float?
-                livingEntity.damage(type, (float) damage);
-                if(fireTicks > 0) {
-                    livingEntity.setFireForDuration(fireTicks);
-                }
-
-                // Apply knockback - don't need to handle kb resistance, since that is already done in livingEntity.takeKnockback
-                double yawRadians = player.getPosition().yaw() * Math.PI / 180;
-                livingEntity.takeKnockback(kbStrength, Math.sin(yawRadians), -Math.cos(yawRadians));
+                info.apply(targetEntity, player.getPosition().yaw());
             } else {
                 logger.warn("Non-player entity attacked a target! This is currently unsupported.");
             }
         } else {
             logger.warn("Non-living entity was attacked?!?");
         }
+    }
+
+    private static MultiPartValue getAttributeValue(LivingEntity entity, Attribute attribute, double baseAttributeValue) {
+        MultiPartValue value = new MultiPartValue(baseAttributeValue);
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack item = entity.getEquipment(slot);
+            // Attributes
+            for (ItemAttribute itemAttribute : item.meta().getAttributes()) {
+                if (itemAttribute.attribute() == attribute) {
+                    value.modifyValue(itemAttribute.amount(), itemAttribute.operation());
+                }
+            }
+        }
+        return value;
     }
 }
