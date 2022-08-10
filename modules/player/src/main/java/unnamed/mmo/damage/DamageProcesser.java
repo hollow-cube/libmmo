@@ -32,7 +32,7 @@ public class DamageProcesser {
                 DamageInfo info = new DamageInfo(type, getAttributeValue(player, Attribute.ATTACK_DAMAGE, 1));
                 // Handle Items - Attack damage attribute was handled by getAttributeValue previously
                 // Only apply enchants on main hand
-                ItemStack itemStack = player.getItemInMainHand();
+                /*ItemStack itemStack = player.getItemInMainHand();
                 if (itemStack.meta().getEnchantmentMap().containsKey(Enchantment.SHARPNESS)) {
                     info.getDamageValue().addBase(0.5 + 0.5 * itemStack.meta().getEnchantmentMap().get(Enchantment.SHARPNESS));
                 }
@@ -41,13 +41,13 @@ public class DamageProcesser {
                 }
                 if (itemStack.meta().getEnchantmentMap().containsKey(Enchantment.KNOCKBACK)) {
                     info.getKnockbackStrength().addBase(0.5 * itemStack.meta().getEnchantmentMap().get(Enchantment.KNOCKBACK));
-                }
+                }*/
                 // More knockback if sprinting
                 if (player.isSprinting()) {
                     info.getKnockbackStrength().multiply(1.15);
                 }
                 // Handle Potion effects
-                int potionModifier = 0;
+                /*int potionModifier = 0;
                 for (TimedPotion potionEffect : player.getActiveEffects()) {
                     if (potionEffect.getPotion().effect() == PotionEffect.WEAKNESS) {
                         potionModifier -= 4 * potionEffect.getPotion().amplifier();
@@ -55,7 +55,7 @@ public class DamageProcesser {
                         potionModifier += 3 * potionEffect.getPotion().amplifier();
                     }
                 }
-                info.getDamageValue().addBase(potionModifier);
+                info.getDamageValue().addBase(potionModifier);*/
 
                 // Enemy Armor Multiplier
                 double armorValue = getAttributeValue(targetEntity, Attribute.ARMOR, 0).getFinalValue();
@@ -70,7 +70,7 @@ public class DamageProcesser {
                 );
 
                 // Enemy Potion Effect multiplier
-                double resistanceMod = 1;
+                /*double resistanceMod = 1;
                 for (TimedPotion potionEffect : player.getActiveEffects()) {
                     if (potionEffect.getPotion().effect() == PotionEffect.RESISTANCE) {
                         resistanceMod -= 0.2 * potionEffect.getPotion().amplifier();
@@ -78,7 +78,7 @@ public class DamageProcesser {
                         resistanceMod = Math.max(0, resistanceMod);
                     }
                 }
-                info.getDamageValue().multiply(resistanceMod);
+                info.getDamageValue().multiply(resistanceMod);*/
                 info.apply(targetEntity, player.getPosition().yaw());
             } else {
                 logger.warn("Non-player entity attacked a target! This is currently unsupported.");
@@ -94,7 +94,7 @@ public class DamageProcesser {
             ItemStack item = entity.getEquipment(slot);
             // Attributes
             for (ItemAttribute itemAttribute : item.meta().getAttributes()) {
-                if (itemAttribute.attribute() == attribute) {
+                if (itemAttribute.attribute().equals(attribute)) {
                     value.modifyValue(itemAttribute.amount(), itemAttribute.operation());
                 }
             }
