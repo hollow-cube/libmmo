@@ -20,7 +20,7 @@ import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
-import unnamed.mmo.damage.DamageProcesser;
+import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.ItemManager;
 
 import java.util.concurrent.ForkJoinPool;
@@ -70,7 +70,7 @@ public class Main {
                 ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
 
         BlockInteracter.registerEvents();
-        DamageProcesser.registerEvents();
+        DamageProcessor.init();
 
         server.start("0.0.0.0", 25565);
     }

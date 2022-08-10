@@ -8,25 +8,29 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.event.entity.EntityAttackEvent;
-import net.minestom.server.item.Enchantment;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.attribute.ItemAttribute;
-import net.minestom.server.potion.PotionEffect;
-import net.minestom.server.potion.TimedPotion;
+import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unnamed.mmo.damage.iticks.ImmunityTickImpl;
+import unnamed.mmo.damage.iticks.ImmunityTicks;
 
-public class DamageProcesser {
+public class DamageProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(DamageProcesser.class);
+    private static final Logger logger = LoggerFactory.getLogger(DamageProcessor.class);
+    private static final ImmunityTicks iTickManager = new ImmunityTickImpl();
 
-    public static void registerEvents() {
+    public static void init() {
         MinecraftServer.getGlobalEventHandler().addListener(EntityAttackEvent.class, event -> processDamage(event.getEntity(), event.getTarget()));
+        MinecraftServer.getSchedulerManager().scheduleTask(iTickManager::update, TaskSchedule.immediate(), TaskSchedule.tick(1));
     }
 
     public static void processDamage(@NotNull Entity source, @NotNull Entity target) {
         if (target instanceof LivingEntity targetEntity) {
+            if (iTickManager.isEntityImmune(targetEntity)) return;
+
             if (source instanceof Player player) {
                 DamageType type = DamageType.fromPlayer(player);
                 DamageInfo info = new DamageInfo(type, getAttributeValue(player, Attribute.ATTACK_DAMAGE, 1));
@@ -80,6 +84,7 @@ public class DamageProcesser {
                 }
                 info.getDamageValue().multiply(resistanceMod);*/
                 info.apply(targetEntity, player.getPosition().yaw());
+                iTickManager.setImmunityTicks(targetEntity, info.getImmunityTicks());
             } else {
                 logger.warn("Non-player entity attacked a target! This is currently unsupported.");
             }

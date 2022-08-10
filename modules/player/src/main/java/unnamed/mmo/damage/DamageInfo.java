@@ -11,6 +11,7 @@ public class DamageInfo {
     private final MultiPartValue knockbackStrength;
     private int fireTicks;
     private final DamageType type;
+    private int immunityTicks;
 
     public DamageInfo(DamageType type) {
         this(type, new MultiPartValue(1));
@@ -21,6 +22,7 @@ public class DamageInfo {
         this.damageValue = damageValue;
         knockbackStrength = new MultiPartValue(0.4);
         fireTicks = 0;
+        immunityTicks = 10;
     }
 
     public @NotNull MultiPartValue getDamageValue() {
@@ -34,6 +36,15 @@ public class DamageInfo {
     @Contract(mutates = "this")
     public void setFireTicks(int fireTicks) {
         this.fireTicks = fireTicks;
+    }
+
+    @Contract(mutates = "this")
+    public void setImmunityTicks(int immunityTicks) {
+        this.immunityTicks = immunityTicks;
+    }
+
+    public int getImmunityTicks() {
+        return immunityTicks;
     }
 
     // TODO: Perhaps make Knockback a vector instead of a MultiPartValue to more easily handle cases when there is no attacker?
