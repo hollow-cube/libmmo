@@ -20,11 +20,16 @@ import unnamed.mmo.damage.iticks.ImmunityTicks;
 public class DamageProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DamageProcessor.class);
+    // Probably don't want everything to be static here, change?
     private static final ImmunityTicks iTickManager = new ImmunityTickImpl();
+    private static final AttackCooldown attackCooldownManager = new AttackCooldown();
 
     public static void init() {
         MinecraftServer.getGlobalEventHandler().addListener(EntityAttackEvent.class, event -> processDamage(event.getEntity(), event.getTarget()));
-        MinecraftServer.getSchedulerManager().scheduleTask(iTickManager::update, TaskSchedule.immediate(), TaskSchedule.tick(1));
+        MinecraftServer.getSchedulerManager().scheduleTask(() -> {
+            iTickManager.update();
+            attackCooldownManager.update();
+        }, TaskSchedule.immediate(), TaskSchedule.tick(1));
     }
 
     public static void processDamage(@NotNull Entity source, @NotNull Entity target) {
@@ -83,8 +88,12 @@ public class DamageProcessor {
                     }
                 }
                 info.getDamageValue().multiply(resistanceMod);*/
+                // Attack cooldown modifier
+                info.getDamageValue().multiply(attackCooldownManager.getCooldownDamageMultiplier(player));
                 info.apply(targetEntity, player.getPosition().yaw());
                 iTickManager.setImmunityTicks(targetEntity, info.getImmunityTicks());
+                attackCooldownManager.resetCooldown(player);
+
             } else {
                 logger.warn("Non-player entity attacked a target! This is currently unsupported.");
             }
