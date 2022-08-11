@@ -9,7 +9,7 @@ public class LootPredicates {
     }
 
     public static LootPredicate fail() {
-        return ignored -> true;
+        return ignored -> false;
     }
 
 }
