@@ -47,7 +47,7 @@ public record LootPool(
             int roll = (int) (context.random() * totalWeight);
             for (LootEntry.Option option : options) {
                 roll -= option.weight();
-                if (roll < 0) {
+                if (roll <= 0) {
                     output.addAll(option.loot());
                     break;
                 }

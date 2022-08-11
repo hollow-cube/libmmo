@@ -10,6 +10,7 @@ public interface LootModifier {
 
     Codec<LootModifier> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
 
+    //todo there is a contract here that apply MUST return the same type. Perhaps should validate this, or introduce some generic to help perhaps
     @NotNull Object apply(@NotNull Object input);
 
 
