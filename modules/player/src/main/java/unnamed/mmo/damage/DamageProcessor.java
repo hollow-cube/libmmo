@@ -14,14 +14,14 @@ import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unnamed.mmo.damage.iticks.ImmunityTickImpl;
 import unnamed.mmo.damage.iticks.ImmunityTicks;
+import unnamed.mmo.damage.iticks.ImmunityTicksPlayerImpl;
 
 public class DamageProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DamageProcessor.class);
     // Probably don't want everything to be static here, change?
-    private static final ImmunityTicks iTickManager = new ImmunityTickImpl();
+    private static final ImmunityTicks iTickManager = new ImmunityTicksPlayerImpl();
     private static final AttackCooldown attackCooldownManager = new AttackCooldown();
 
     public static void init() {
