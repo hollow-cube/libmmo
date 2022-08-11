@@ -1,4 +1,6 @@
 package unnamed.mmo.loot.context;
 
-public interface GenerationContext {
+import unnamed.mmo.data.NumberSource;
+
+public interface GenerationContext extends NumberSource {
 }

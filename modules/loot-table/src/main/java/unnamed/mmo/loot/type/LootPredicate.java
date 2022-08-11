@@ -3,13 +3,14 @@ package unnamed.mmo.loot.type;
 import com.mojang.serialization.Codec;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.loot.context.GenerationContext;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.ResourceFactory;
 
 public interface LootPredicate {
     Codec<LootPredicate> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
 
-    boolean test(Object entry);
+    boolean test(@NotNull GenerationContext context);
 
 
     abstract class Factory extends ResourceFactory<LootPredicate> {

@@ -11,10 +11,11 @@ import unnamed.mmo.registry.Resource;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record LootTable(
         @NotNull NamespaceID namespace,
-        @NotNull List<LootModifier<?>> modifiers,
+        @NotNull List<LootModifier> modifiers,
         @NotNull List<LootPool> pools
 ) implements Resource {
 
@@ -29,9 +30,18 @@ public record LootTable(
         pools = List.copyOf(pools);
     }
 
-    public @NotNull List<LootType> generate(@NotNull GenerationContext context) {
-        return List.of();
+    public @NotNull List<@NotNull Object> generate(@NotNull GenerationContext context) {
+        return pools.stream()
+                .map(pool -> pool.generate(context))
+                .flatMap(List::stream)
+                .map(this::applyModifiers)
+                .collect(Collectors.toList());
     }
 
+    private @NotNull Object applyModifiers(@NotNull Object input) {
+        for (LootModifier modifier : modifiers())
+            input = modifier.apply(input);
+        return input;
+    }
 
 }
