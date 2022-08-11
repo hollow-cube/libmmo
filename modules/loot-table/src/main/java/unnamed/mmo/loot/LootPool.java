@@ -11,7 +11,7 @@ import unnamed.mmo.loot.type.LootPredicate;
 import java.util.List;
 
 public record LootPool(
-        @NotNull List<LootPredicate<?>> conditions,
+        @NotNull List<LootPredicate> conditions,
         @NotNull List<LootModifier<?>> modifiers,
         @NotNull List<LootEntry<?>> entries,
         @NotNull NumberProvider rolls

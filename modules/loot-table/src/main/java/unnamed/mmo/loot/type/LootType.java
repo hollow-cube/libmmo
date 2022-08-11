@@ -1,4 +1,8 @@
 package unnamed.mmo.loot.type;
 
-public interface LootType<T> {
+import unnamed.mmo.registry.Resource;
+
+public interface LootType<T> extends Resource {
+
+
 }
