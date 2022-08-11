@@ -26,10 +26,7 @@ public class DamageProcessor {
 
     public static void init() {
         MinecraftServer.getGlobalEventHandler().addListener(EntityAttackEvent.class, event -> processDamage(event.getEntity(), event.getTarget()));
-        MinecraftServer.getSchedulerManager().scheduleTask(() -> {
-            iTickManager.update();
-            attackCooldownManager.update();
-        }, TaskSchedule.immediate(), TaskSchedule.tick(1));
+        MinecraftServer.getSchedulerManager().scheduleTask(iTickManager::update, TaskSchedule.immediate(), TaskSchedule.tick(1));
     }
 
     public static void processDamage(@NotNull Entity source, @NotNull Entity target) {
