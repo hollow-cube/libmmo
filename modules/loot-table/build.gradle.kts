@@ -1,4 +1,5 @@
 
 dependencies {
-    implementation(":modules:common")
+    implementation(project(":modules:common"))
+    implementation(project(":modules:item"))
 }

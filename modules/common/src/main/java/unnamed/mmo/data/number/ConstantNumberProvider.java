@@ -30,7 +30,6 @@ record ConstantNumberProvider(
 
     @AutoService(NumberProvider.Factory.class)
     public static final class Factory extends NumberProvider.Factory {
-
         public Factory() {
             super(
                     NamespaceID.from("unnamed:constant"),
@@ -38,7 +37,6 @@ record ConstantNumberProvider(
                     ConstantNumberProvider.CODEC
             );
         }
-
     }
 
 }
