@@ -70,8 +70,6 @@ public interface NumberProvider {
             super(namespace, type, codec);
         }
 
-        // Static helpers
-
         static @NotNull Factory from(@NotNull NumberProvider provider) {
             return TYPE_REGISTRY.get(provider.getClass());
         }

@@ -1,9 +1,16 @@
 package unnamed.mmo.loot.type;
 
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.NotNull;
 
-public interface LootEntry<T extends LootType> {
+import java.util.List;
+
+public interface LootEntry<T> {
 
     Codec<LootEntry<?>> CODEC = ;
+
+    int weight();
+
+    @NotNull List<LootPredicate<T>> conditions();
 
 }
