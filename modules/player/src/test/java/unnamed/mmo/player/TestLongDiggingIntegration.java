@@ -1,5 +1,6 @@
 package unnamed.mmo.player;
 
+import com.google.common.truth.Truth;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.block.BlockFace;
@@ -9,9 +10,6 @@ import net.minestom.server.test.Env;
 import net.minestom.server.test.EnvTest;
 import org.junit.jupiter.api.Test;
 import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
-import unnamed.mmo.player.event.PlayerLongDiggingTickEvent;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -27,7 +25,7 @@ public class TestLongDiggingIntegration {
         // Ensure proper event is triggered
         var listener = env.listen(PlayerLongDiggingStartEvent.class);
         listener.followup(event -> {
-            assertThat(event.getPlayer()).isEqualTo(player);
+            Truth.assertThat(event.getPlayer()).isEqualTo(player);
         });
 
         var startDiggingPacket = new ClientPlayerDiggingPacket(ClientPlayerDiggingPacket.Status.STARTED_DIGGING,
@@ -46,8 +44,7 @@ public class TestLongDiggingIntegration {
 
         // Start digging with 12 health, dealing 1 damage per tick
         var listener = env.listen(PlayerLongDiggingStartEvent.class);
-        listener.followup(event -> event.setDiggingBlock("abc", 12));
-        env.listen(PlayerLongDiggingTickEvent.class).followup(event -> event.setDamage(1));
+        listener.followup(event -> event.setDiggingBlock(12, () -> 1));
 
         var animationCollector = connection.trackIncoming(BlockBreakAnimationPacket.class);
 
