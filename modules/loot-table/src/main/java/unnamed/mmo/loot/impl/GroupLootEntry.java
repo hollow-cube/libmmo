@@ -1,10 +1,7 @@
-package unnamed.mmo.loot.type.impl;
+package unnamed.mmo.loot.impl;
 
 import com.google.auto.service.AutoService;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
