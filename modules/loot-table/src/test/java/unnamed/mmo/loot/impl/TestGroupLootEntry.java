@@ -1,6 +1,7 @@
-package unnamed.mmo.loot.type.impl;
+package unnamed.mmo.loot.impl;
 
 import org.junit.jupiter.api.Test;
+import unnamed.mmo.loot.impl.GroupLootEntry;
 import unnamed.mmo.loot.test.StringLootType;
 
 import java.util.List;
