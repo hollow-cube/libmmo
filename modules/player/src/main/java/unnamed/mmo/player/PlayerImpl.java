@@ -12,14 +12,15 @@ import net.minestom.server.network.packet.server.play.BlockBreakAnimationPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
-import unnamed.mmo.player.event.PlayerLongDiggingTickEvent;
 
 import java.util.UUID;
+import java.util.function.IntSupplier;
 
 public class PlayerImpl extends Player {
 
     // Long digging state
     private Point diggingBlock = null;
+    private IntSupplier diggingDamageFn = null;
     private int diggingLastStage = 0;
     private int diggingBlockHealth = 0;
     private int diggingBlockMaxHealth = 0;
@@ -58,8 +59,9 @@ public class PlayerImpl extends Player {
                 MinecraftServer.getGlobalEventHandler().call(event);
 
                 // Setup internal state for digging
-                if (event.getBreakId() != null) {
+                if (event.getMaxHealth() != 0) {
                     diggingBlock = packet.blockPosition();
+                    diggingDamageFn = event.getDamageFunction();
                     diggingBlockHealth = event.getMaxHealth();
                     diggingBlockMaxHealth = event.getMaxHealth();
                     diggingLastStage = 0;
@@ -80,11 +82,9 @@ public class PlayerImpl extends Player {
     private void tickLongDigging() {
         if (diggingBlock == null) return;
 
-        Block block = getInstance().getBlock(diggingBlock);
-        var event = new PlayerLongDiggingTickEvent(this, block);
-        MinecraftServer.getGlobalEventHandler().call(event);
+        int damage = diggingDamageFn.getAsInt();
 
-        diggingBlockHealth = Math.max(0, diggingBlockHealth - event.getDamage());
+        diggingBlockHealth = Math.max(0, diggingBlockHealth - damage);
         if (diggingBlockHealth == 0) {
             // Break the block & reset
             getInstance().breakBlock(this, diggingBlock);
@@ -116,7 +116,6 @@ public class PlayerImpl extends Player {
 
         // New stage, send packet
         var packet = new BlockBreakAnimationPacket(getEntityId() + 1, diggingBlock, stage);
-        //todo should this just be sent to self? or all viewers
         sendPacket(packet);
     }
 }
