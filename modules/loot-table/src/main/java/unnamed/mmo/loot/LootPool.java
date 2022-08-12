@@ -33,7 +33,7 @@ public record LootPool(
         }
 
         // Generate available entries
-        List<LootEntry.Option> options = entries()
+        var options = entries()
                 .stream()
                 .map(entry -> entry.generate(context))
                 .flatMap(List::stream)
@@ -45,7 +45,7 @@ public record LootPool(
         List<@NotNull Object> output = new ArrayList<>();
         for (int i = 0; i < rolls().nextLong(context); i++) {
             int roll = (int) (context.random() * totalWeight);
-            for (LootEntry.Option option : options) {
+            for (LootEntry.Option<?> option : options) {
                 roll -= option.weight();
                 if (roll <= 0) {
                     output.addAll(option.loot());

@@ -13,10 +13,10 @@ public interface LootEntry<T> {
 
     Codec<LootEntry<?>> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
 
-    @NotNull List<@NotNull Option> generate(@NotNull GenerationContext context);
+    @NotNull List<@NotNull Option<T>> generate(@NotNull GenerationContext context);
 
-    record Option(
-            @NotNull List<Object> loot,
+    record Option<T>(
+            @NotNull List<T> loot,
             int weight
     ) { }
 

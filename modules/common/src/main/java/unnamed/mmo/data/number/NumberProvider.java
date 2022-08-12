@@ -22,9 +22,9 @@ import unnamed.mmo.util.ExtraCodecs;
  * </ol>
  * <p>
  * Would like to look into a simplification of this process & removal of the Factory class. I would prefer if it was something like the following
- * <pre><code>
+ * <pre>{@code
  *     // This, where the annotation generates an entry for the superclass
- *     \@BasicRegistryItem("minecraft:constant")
+ *     @BasicRegistryItem("minecraft:constant")
  *     public record ConstantNumberProvider(
  *         Number value
  *     ) implements NumberProvider {
@@ -35,7 +35,7 @@ import unnamed.mmo.util.ExtraCodecs;
  *         Descriptor DESCRIPTOR = new Descriptor("minecraft:constant", CODEC){}
  *
  *     }
- * </code></pre>
+ * }</pre>
  *
  * @see ConstantNumberProvider
  */
