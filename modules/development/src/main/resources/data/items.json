@@ -3,14 +3,12 @@
     "namespace": "unnamed:diamond_pickaxe",
     "id": 0,
     "material": "minecraft:diamond_pickaxe",
-
     "components": [
       {
         "type": "unnamed:pickaxe",
         "miningSpeed": 5
       }
     ],
-
     "defaultStateId": 0,
     "states": {
       "[]": {
