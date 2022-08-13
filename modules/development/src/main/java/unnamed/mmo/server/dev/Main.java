@@ -28,6 +28,8 @@ import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.player.PlayerImpl;
+import unnamed.mmo.server.dev.tool.DebugTool;
+import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
 import java.util.UUID;
@@ -66,6 +68,9 @@ public class Main {
 
             //todo this needs to be done elsewhere
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));
+
+            //todo a command for this
+            player.getInventory().addItemStack(DebugToolManager.createTool("unnamed:hello"));
         });
 
         BaseCommandRegister.registerCommands();
@@ -83,6 +88,10 @@ public class Main {
         //todo properly implement a config system & use facets better
         ItemManager itemManager = new ItemManager();
         itemManager.hook(MinecraftServer.process());
+
+        //todo stupid facet implementation
+        DebugToolManager debugToolManager = new DebugToolManager();
+        debugToolManager.hook(MinecraftServer.process());
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
                 ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
