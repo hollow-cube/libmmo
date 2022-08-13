@@ -53,11 +53,12 @@ public class Main {
         BaseCommandRegister.registerCommands();
 
         // For now, manually register chat (with conn to mongo :/ need a config system)
-        MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .build());
-        ChatStorage chatStorage = ChatStorage.mongo(mongoClient);
+//        MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
+//                .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))
+//                .uuidRepresentation(UuidRepresentation.STANDARD)
+//                .build());
+//        ChatStorage chatStorage = ChatStorage.mongo(mongoClient);
+        ChatStorage chatStorage = ChatStorage.noop();
         ChatManager chatManager = new ChatManager(chatStorage);
         chatManager.hook(MinecraftServer.process());
 

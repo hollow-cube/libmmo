@@ -9,10 +9,10 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 
-public class GiveCommand extends Command {
+public class VanillaGiveCommand extends Command {
 
-    public GiveCommand() {
-        super("give");
+    public VanillaGiveCommand() {
+        super("vgive");
 
         ArgumentItemStack itemArg = ArgumentType.ItemStack("item");
         ArgumentInteger amountArg = ArgumentType.Integer("amount");

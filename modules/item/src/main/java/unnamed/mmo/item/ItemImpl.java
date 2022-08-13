@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
+import static unnamed.mmo.item.ItemRegistry.*;
+
 public record ItemImpl(
         @NotNull ItemRegistry.Entry registry,
         byte @NotNull [] propertiesArray,
@@ -34,7 +36,7 @@ public record ItemImpl(
 
     @Override
     public @Unmodifiable @NotNull Map<String, String> properties() {
-        final PropertyType[] propertyTypes = ItemRegistry.PROPERTIES_TYPE.get(id());
+        final PropertyType[] propertyTypes = PROPERTIES_TYPE.get(id());
         assert propertyTypes != null;
         final int length = propertyTypes.length;
         String[] keys = new String[length];
@@ -45,6 +47,38 @@ public record ItemImpl(
             values[i] = property.values().get(propertiesArray[i]);
         }
         return Map.class.cast(Object2ObjectMaps.unmodifiable(new Object2ObjectArrayMap<>(keys, values, length)));
+    }
+
+    @Override
+    public @NotNull Item withProperty(@NotNull String property, @NotNull String value) {
+        final PropertyType[] propertyTypes = PROPERTIES_TYPE.get(id());
+        assert propertyTypes != null;
+        final byte keyIndex = findKeyIndex(propertyTypes, property, this);
+        final byte valueIndex = findValueIndex(propertyTypes[keyIndex], value, this);
+        var properties = this.propertiesArray.clone();
+        properties[keyIndex] = valueIndex;
+        return compute(properties);
+    }
+
+    @Override
+    public @NotNull Item withProperties(@NotNull Map<@NotNull String, @NotNull String> properties) {
+        if (properties.isEmpty()) return this;
+        final PropertyType[] propertyTypes = PROPERTIES_TYPE.get(id());
+        assert propertyTypes != null;
+        byte[] result = this.propertiesArray.clone();
+        for (var entry : properties.entrySet()) {
+            final byte keyIndex = findKeyIndex(propertyTypes, entry.getKey(), this);
+            final byte valueIndex = findValueIndex(propertyTypes[keyIndex], entry.getValue(), this);
+            result[keyIndex] = valueIndex;
+        }
+        return compute(result);
+    }
+
+    private Item compute(byte[] properties) {
+        if (Arrays.equals(propertiesArray, properties)) return this;
+        final ItemImpl item = POSSIBLE_STATES.get(id()).get(new ItemImpl.PropertiesHolder(properties));
+        assert item != null;
+        return new ItemImpl(item.registry(), item.propertiesArray, amount);
     }
 
     @Contract(pure = true)

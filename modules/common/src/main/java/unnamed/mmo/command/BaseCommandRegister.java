@@ -9,6 +9,6 @@ public class BaseCommandRegister {
         CommandManager commandManager = MinecraftServer.getCommandManager();
         commandManager.register(new StopCommand());
         commandManager.register(new GameModeCommand());
-        commandManager.register(new GiveCommand());
+        commandManager.register(new VanillaGiveCommand());
     }
 }

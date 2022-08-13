@@ -7,6 +7,7 @@ import net.minestom.server.event.EventNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unnamed.mmo.item.command.GiveCommand;
 import unnamed.mmo.server.Facet;
 
 @AutoService(Facet.class)
@@ -15,6 +16,9 @@ public class ItemManager implements Facet {
 
     @Override
     public void hook(@NotNull ServerProcess server) {
+
+        // Commands
+        server.command().register(new GiveCommand());
 
         // Component handlers
         var eventHandler = server.eventHandler();

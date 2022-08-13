@@ -36,6 +36,9 @@ public interface Item extends Resource.Id {
 
     @Unmodifiable @NotNull Map<String, String> properties();
 
+    @NotNull Item withProperty(@NotNull String property, @NotNull String value);
+
+    @NotNull Item withProperties(@NotNull Map<@NotNull String, @NotNull String> properties);
 
     @Contract(pure = true)
     default @NotNull String translationKey() {

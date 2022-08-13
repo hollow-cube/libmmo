@@ -1,3 +1,46 @@
 [
+  {
+    "namespace": "unnamed:stick",
+    "id": 0,
+    "material": "minecraft:stick",
 
+    "defaultStateId": 0,
+    "states": {
+      "[]": {
+        "stateId": 0
+      }
+    }
+  },
+  {
+    "namespace": "unnamed:any_hoe",
+    "id": 1,
+
+    "defaultStateId": 1,
+    "properties": {
+      "type": [
+        "wood",
+        "stone",
+        "iron",
+        "diamond"
+      ]
+    },
+    "states": {
+      "[type=wood]": {
+        "stateId": 1,
+        "material": "minecraft:wooden_hoe"
+      },
+      "[type=stone]": {
+        "stateId": 2,
+        "material": "minecraft:stone_hoe"
+      },
+      "[type=iron]": {
+        "stateId": 3,
+        "material": "minecraft:iron_hoe"
+      },
+      "[type=diamond]": {
+        "stateId": 4,
+        "material": "minecraft:diamond_hoe"
+      }
+    }
+  }
 ]

@@ -1,5 +1,6 @@
 package unnamed.mmo.item;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -31,7 +32,7 @@ public class ItemRegistry {
                 ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(Entry::namespace),
                 Codec.INT.fieldOf("id").forGetter(Entry::id),
                 Codec.INT.fieldOf("stateId").forGetter(Entry::stateId),
-                ExtraCodecs.MATERIAL.fieldOf("material").forGetter(Entry::material),
+                ExtraCodecs.MATERIAL.optionalFieldOf("material", Material.LEATHER_HORSE_ARMOR).forGetter(Entry::material),
                 // This is a little cursed so I will explain. Registry dispatch (see link) only works
                 // on a `type` field within the object, but the ItemComponent is not guaranteed to expose
                 // the type field back. We still want a Map<_type, component> so we parse both the type
@@ -39,7 +40,7 @@ public class ItemRegistry {
                 Codec.pair(Codec.STRING.fieldOf("type").codec(), ItemComponent.CODEC)
                         .listOf()
                         .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList)
-                        .fieldOf("components").forGetter(Entry::components)
+                        .optionalFieldOf("components", Map.of()).forGetter(Entry::components)
         ).apply(i, Entry::new));
 
     }
@@ -69,8 +70,9 @@ public class ItemRegistry {
                 for (var entry : stateProperties.entrySet()) {
                     final var k = entry.getKey();
                     //noinspection unchecked
-                    final var v = (List<String>) entry.getValue();
-                    propertyTypes[i++] = new ItemImpl.PropertyType(k, v);
+                    final var v = entry.getValue().getAsJsonArray();
+                    final var vList = JsonUtil.asList(v, JsonElement::getAsString);
+                    propertyTypes[i++] = new ItemImpl.PropertyType(k, vList);
                 }
             } else {
                 propertyTypes = new ItemImpl.PropertyType[0];
@@ -127,7 +129,7 @@ public class ItemRegistry {
     static final ObjectArray<Item> ID_TO_ITEM = REGISTRY.unsafeIntegerIndex(Item::id);
 
 
-    private static byte findKeyIndex(ItemImpl.PropertyType[] properties, String key, ItemImpl item) {
+    static byte findKeyIndex(ItemImpl.PropertyType[] properties, String key, ItemImpl item) {
         for (byte i = 0; i < properties.length; i++) {
             if (properties[i].key().equals(key)) return i;
         }
@@ -138,7 +140,7 @@ public class ItemRegistry {
         }
     }
 
-    private static byte findValueIndex(ItemImpl.PropertyType propertyType, String value, ItemImpl item) {
+    static byte findValueIndex(ItemImpl.PropertyType propertyType, String value, ItemImpl item) {
         final List<String> values = propertyType.values();
         final byte index = (byte) values.indexOf(value);
         if (index != -1) return index;
