@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,9 @@ public final class ExtraCodecs {
 
     public static final Codec<NamespaceID> NAMESPACE_ID = Codec.STRING.xmap(NamespaceID::from, NamespaceID::asString);
 
-    public static final Codec<Material> MATERIAL = Codec.STRING.xmap(Material::fromNamespaceId, Material::toString);
+    public static final Codec<Material> MATERIAL = Codec.STRING.xmap(Material::fromNamespaceId, Material::name);
+
+    public static final Codec<Block> BLOCK = Codec.STRING.xmap(Block::fromNamespaceId, Block::name);
 
     public static @NotNull MapCodec<String> string(@NotNull String name, @Nullable String defaultValue) {
         return Codec.STRING.optionalFieldOf(name, defaultValue);
