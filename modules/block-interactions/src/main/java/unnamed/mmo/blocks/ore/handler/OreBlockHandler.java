@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.loot.LootTable;
+import unnamed.mmo.server.instance.TickTrackingInstance;
 import unnamed.mmo.util.BlockUtil;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Stateless singleton block handler for all ore blocks.
@@ -82,6 +85,7 @@ public class OreBlockHandler implements BlockHandler {
         // Generate loot
         //todo use a real context
         final var loot = ore.lootTable().generate(() -> 1);
+        ((PlayerDestroy) destroy).getPlayer().sendMessage("Broke the " + ore);
 
         //todo apply loot
         // this is a little bit challenging, we want to apply the loot entries based on
@@ -109,6 +113,26 @@ public class OreBlockHandler implements BlockHandler {
 
         // Only tick once a second.
         // This could be adjusted in the future if necessary.
+        final Instance instance = tick.getInstance();
+        long currentTick = ((TickTrackingInstance) instance).getTick();
+        if (currentTick % 20 != 0)
+            return;
+
+        final Point pos = tick.getBlockPosition();
+        final Ore ore = Ore.fromBlock(block);
+        if (ore == null) {
+            // Block handler should not be present if the ore tag is not present. Remove it and log error.
+            LOGGER.error("Handler present on a block without ore tag: {} at {} in {}", block, pos, instance);
+            instance.setBlock(pos, block.withHandler(null));
+            return;
+        }
+
+        // 25% chance every time it ticks, so once per second.
+        if (ThreadLocalRandom.current().nextInt(4) != 0)
+            return;
+
+        // Set the block back to the original
+        instance.setBlock(pos, BlockUtil.withType(block, ore.oreBlock()));
     }
 
     @Override

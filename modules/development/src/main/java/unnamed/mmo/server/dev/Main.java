@@ -17,6 +17,7 @@ import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
+import net.minestom.server.world.DimensionType;
 import org.bson.UuidRepresentation;
 import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.blocks.ore.Ore;
@@ -27,7 +28,9 @@ import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.player.PlayerImpl;
+import unnamed.mmo.server.instance.TickTrackingInstance;
 
+import java.util.UUID;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +44,8 @@ public class Main {
 
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
-        Instance instance = instanceManager.createInstanceContainer();
+        Instance instance = new TickTrackingInstance(UUID.randomUUID(), DimensionType.OVERWORLD);
+        instanceManager.registerInstance(instance);
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.STONE));
 
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();

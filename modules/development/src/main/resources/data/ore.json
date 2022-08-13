@@ -1,6 +1,8 @@
 [
   {
     "namespace": "unnamed:gold_ore",
-    "health": 100
+    "oreBlock": "minecraft:gold_ore",
+    "health": 100,
+    "lootTable": "unnamed:empty"
   }
 ]
