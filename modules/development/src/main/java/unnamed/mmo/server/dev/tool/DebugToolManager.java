@@ -14,6 +14,8 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.server.Facet;
 
@@ -24,6 +26,8 @@ import java.util.UUID;
 
 @AutoService(Facet.class)
 public class DebugToolManager implements Facet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DebugToolManager.class);
+
     private static final Registry<DebugTool> REGISTRY = Registry.service("debug_tool", DebugTool.class);
 
     private static final Tag<String> DEBUG_TOOL_TAG = Tag.String("debug_tool");
@@ -53,6 +57,8 @@ public class DebugToolManager implements Facet {
         eventNode.addListener(PlayerDisconnectEvent.class, this::disconnect);
 
         server.eventHandler().addChild(eventNode);
+
+        LOGGER.info("Loaded {} debug tools", REGISTRY.size());
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {
