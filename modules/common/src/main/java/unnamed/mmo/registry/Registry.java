@@ -129,10 +129,12 @@ public interface Registry<T extends Resource> {
     @Nullable T getRaw(String namespace);
 
     default @UnknownNullability T get(String namespace) {
+        if (namespace == null) return null;
         return getRaw(namespace.contains(":") ? namespace : "minecraft:" + namespace);
     }
 
     default @UnknownNullability T get(NamespaceID namespace) {
+        if (namespace == null) return null;
         return getRaw(namespace.asString());
     }
 
