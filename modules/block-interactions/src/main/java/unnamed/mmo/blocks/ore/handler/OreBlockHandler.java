@@ -87,21 +87,6 @@ public class OreBlockHandler implements BlockHandler {
         final var loot = ore.lootTable().generate(() -> 1);
         ((PlayerDestroy) destroy).getPlayer().sendMessage("Broke the " + ore);
 
-        //todo apply loot
-        // this is a little bit challenging, we want to apply the loot entries based on
-        // a registered handler for the given type, except in this case we want to
-        // override this to handle items explicitly.
-
-        // The item override is just to give the items some velocity on a block face
-        //  this could be handled within the item drop handler, using some context
-        //  information.
-
-        // Context in this case
-        // this: entity breaking the block
-        // pos: the position of the block
-
-
-
     }
 
     @Override
