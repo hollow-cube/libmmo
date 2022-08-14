@@ -24,6 +24,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface Registry<T extends Resource> {
+    //todo registry should implement Codec i think
 
     // Factory
 

@@ -16,6 +16,7 @@ import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.BlockInteractionUtils;
 import unnamed.mmo.blocks.data.CropBlockData;
+import unnamed.mmo.blocks.util.BlockUtil;
 import unnamed.mmo.util.ParticleUtils;
 
 import java.util.Map;
@@ -92,7 +93,7 @@ public class FarmlandHandler implements BlockHandler {
         for(int x = point.blockX() - waterRange; x <= point.blockX() + waterRange; x++) {
             for(int y = point.blockY(); y < point.blockY() + 2; y++) { // Checks at farmland y level and 1 above
                 for(int z = point.blockZ() - waterRange; z <= point.blockZ() + waterRange; z++) {
-                    if (instance.getBlock(x, y, z).id() == Block.WATER.id()) { //TODO: Waterlogged blocks should count as well
+                    if (BlockUtil.isWater(instance.getBlock(x, y, z))) {
                         return true;
                     }
                 }
