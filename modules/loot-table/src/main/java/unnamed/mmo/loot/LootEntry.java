@@ -1,9 +1,9 @@
-package unnamed.mmo.loot.type;
+package unnamed.mmo.loot;
 
 import com.mojang.serialization.Codec;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.context.GenerationContext;
+import unnamed.mmo.loot.context.LootContext;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.ResourceFactory;
 
@@ -13,7 +13,7 @@ public interface LootEntry<T> {
 
     Codec<LootEntry<?>> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
 
-    @NotNull List<@NotNull Option<T>> generate(@NotNull GenerationContext context);
+    @NotNull List<@NotNull Option<T>> generate(@NotNull LootContext context);
 
     record Option<T>(
             @NotNull List<T> loot,

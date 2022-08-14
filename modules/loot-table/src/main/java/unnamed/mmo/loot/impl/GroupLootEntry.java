@@ -5,9 +5,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.context.GenerationContext;
-import unnamed.mmo.loot.type.LootEntry;
-import unnamed.mmo.loot.type.LootPredicate;
+import unnamed.mmo.loot.context.LootContext;
+import unnamed.mmo.loot.LootEntry;
+import unnamed.mmo.loot.LootPredicate;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public record GroupLootEntry(
     ).apply(i, GroupLootEntry::new));
 
     @Override
-    public @NotNull List<@NotNull Option<Object>> generate(@NotNull GenerationContext context) {
+    public @NotNull List<@NotNull Option<Object>> generate(@NotNull LootContext context) {
         // Ensure all conditions match
         for (LootPredicate condition : conditions()) {
             if (!condition.test(context)) return List.of();
