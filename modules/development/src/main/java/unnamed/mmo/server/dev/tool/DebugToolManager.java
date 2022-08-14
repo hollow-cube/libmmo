@@ -2,6 +2,7 @@ package unnamed.mmo.server.dev.tool;
 
 import com.google.auto.service.AutoService;
 import net.minestom.server.ServerProcess;
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
@@ -62,6 +63,8 @@ public class DebugToolManager implements Facet {
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {
+        if (event.getHand() != Player.Hand.MAIN) return;
+
         final Player player = event.getPlayer();
         final ItemStack itemStack = event.getItemStack();
         final DebugTool tool = REGISTRY.get(itemStack.getTag(DEBUG_TOOL_TAG));
@@ -74,6 +77,8 @@ public class DebugToolManager implements Facet {
     }
 
     private void useItemOnBlock(@NotNull PlayerUseItemOnBlockEvent event) {
+        if (event.getHand() != Player.Hand.MAIN) return;
+
         final Player player = event.getPlayer();
         final ItemStack itemStack = event.getItemStack();
         final DebugTool tool = REGISTRY.get(itemStack.getTag(DEBUG_TOOL_TAG));
@@ -86,6 +91,8 @@ public class DebugToolManager implements Facet {
     }
 
     private void useItemOnEntity(@NotNull PlayerEntityInteractEvent event) {
+        if (event.getHand() != Player.Hand.MAIN) return;
+
         final Player player = event.getPlayer();
         final ItemStack itemStack = player.getItemInHand(event.getHand());
         final DebugTool tool = REGISTRY.get(itemStack.getTag(DEBUG_TOOL_TAG));
@@ -104,7 +111,10 @@ public class DebugToolManager implements Facet {
         final DebugTool tool = REGISTRY.get(itemStack.getTag(DEBUG_TOOL_TAG));
         if (tool == null || debounce(player)) return;
 
-        final ItemStack newItemStack = tool.leftClicked(player, itemStack, null, null);
+        final Point targetBlock = player.getTargetBlockPosition(3);
+        //todo ray trace for target entity
+
+        final ItemStack newItemStack = tool.leftClicked(player, itemStack, targetBlock, null);
         if (itemStack != newItemStack) {
             player.setItemInHand(event.getHand(), itemStack);
         }
@@ -174,11 +184,16 @@ public class DebugToolManager implements Facet {
     }
 
 
+    /**
+     * Debounces clicks. This is mostly relevant to the left click handling using the hand animation packet.
+     *
+     * @return True if the action should be ignored
+     */
     private boolean debounce(@NotNull Player player) {
         long now = System.currentTimeMillis();
         long nextClick = debounce.getOrDefault(player.getUuid(), 0L);
         if (nextClick > now) return true;
-        debounce.put(player.getUuid(), 500L);
+        debounce.put(player.getUuid(), 500 + now);
         return false;
     }
 

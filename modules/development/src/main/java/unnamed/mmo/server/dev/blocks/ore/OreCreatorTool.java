@@ -72,8 +72,7 @@ public class OreCreatorTool implements DebugTool {
         Ore.REGISTRY.values().stream()
                 .sorted(Comparator.comparing(Ore::name))
                 .forEach(ore -> {
-                    //todo is there a better Block->Material conversion
-                    Material oreMaterial = Material.fromNamespaceId(ore.oreBlock().namespace());
+                    Material oreMaterial = ore.oreBlock().registry().material();
                     if (oreMaterial == null) oreMaterial = Material.STONE;
                     final ItemStack oreItem = ItemStack.builder(oreMaterial)
                             .displayName(ComponentUtil.fromStringSafe(ore.name()))

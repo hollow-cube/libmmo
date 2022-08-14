@@ -16,6 +16,8 @@ import unnamed.mmo.registry.Resource;
  * <ul>
  *     <li>Entering/exiting hand is a bit unreliable (but can be improved)</li>
  *     <li>Left clicked entity is never present (but should be added in the future)</li>
+ *     <li>Only main hand events are supported. This is because hand animation is being
+ *         used for left clicking and we currently do not trigger it for off hand.</li>
  * </ul>
  */
 public interface DebugTool extends Resource {
