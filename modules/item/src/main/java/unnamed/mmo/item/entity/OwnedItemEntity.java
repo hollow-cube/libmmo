@@ -43,9 +43,8 @@ public class OwnedItemEntity extends ItemEntity {
         }
 
         private void handleMerge(@NotNull EntityItemMergeEvent event) {
-            if (!(event.getEntity() instanceof OwnedItemEntity entity))
-                return;
-            if (!(event.getMerged() instanceof OwnedItemEntity merged))
+            if (!(event.getEntity() instanceof OwnedItemEntity entity) ||
+                    !(event.getMerged() instanceof OwnedItemEntity merged))
                 return;
             if (entity.owner.equals(merged.owner))
                 event.setCancelled(true);
