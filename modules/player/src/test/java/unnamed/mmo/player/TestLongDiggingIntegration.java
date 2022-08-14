@@ -20,7 +20,6 @@ public class TestLongDiggingIntegration {
     public void testStartDiggingEventNoLongDigging(Env env) {
         var instance = env.createFlatInstance();
         var player = env.createPlayer(PlayerImpl::new, instance, new Pos(0, 42, 0));
-        player.setInstance(instance).join();
 
         // Ensure proper event is triggered
         var listener = env.listen(PlayerLongDiggingStartEvent.class);
@@ -40,7 +39,6 @@ public class TestLongDiggingIntegration {
         var instance = env.createFlatInstance();
         var connection = env.createConnection();
         var player = connection.connect(PlayerImpl::new, instance, new Pos(0, 42, 0)).join();
-        player.setInstance(instance).join();
 
         // Start digging with 12 health, dealing 1 damage per tick
         var listener = env.listen(PlayerLongDiggingStartEvent.class);

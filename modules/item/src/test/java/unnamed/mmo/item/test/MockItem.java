@@ -1,9 +1,11 @@
-package unnamed.mmo.item;
+package unnamed.mmo.item.test;
 
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import unnamed.mmo.item.Item;
+import unnamed.mmo.item.ItemComponent;
 
 import java.util.Map;
 

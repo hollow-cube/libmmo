@@ -7,6 +7,7 @@ import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.registry.Registry;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public final class LootResultImpl implements LootResult {
     private static final Registry<DefaultDistributor<?>> DISTRIBUTOR_REGISTRY = Registry.manual("loot_distributors", () -> {
@@ -30,13 +31,21 @@ public final class LootResultImpl implements LootResult {
     }
 
     @Override
+    public int size() {
+        return results.size();
+    }
+
+    @Override
     public <T> void override(@NotNull Class<T> type, @NotNull Distributor<T> distributor) {
         overrides.put(type, distributor);
     }
 
     @Override
-    public void apply(@NotNull LootContext context) {
-        for (Object result : results) {
+    public @NotNull CompletableFuture<Void> apply(@NotNull LootContext context) {
+        var tasks = new CompletableFuture[size()];
+        for (int i = 0; i < tasks.length; i++) {
+            final Object result = results.get(i);
+
             //noinspection unchecked
             Distributor<Object> distributor = (Distributor<Object>) findDistributor(result.getClass());
             if (distributor == null) {
@@ -44,8 +53,10 @@ public final class LootResultImpl implements LootResult {
                 throw new RuntimeException("No distributor for type " + result.getClass());
             }
 
-            distributor.apply(context, result);
+            tasks[i] = distributor.apply(context, result);
         }
+
+        return CompletableFuture.allOf(tasks);
     }
 
     @SuppressWarnings("unchecked")

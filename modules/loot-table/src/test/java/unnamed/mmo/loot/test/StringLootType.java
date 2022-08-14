@@ -10,6 +10,7 @@ import unnamed.mmo.loot.LootModifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -69,10 +70,11 @@ public class StringLootType {
         }
 
         @Override
-        public void apply(@NotNull LootContext context, @NotNull String s) {
+        public @NotNull CompletableFuture<Void> apply(@NotNull LootContext context, @NotNull String s) {
             // Cannot use the same string twice
             assertThat(DISTRIBUTED_STRINGS).doesNotContain(s);
             DISTRIBUTED_STRINGS.add(s);
+            return CompletableFuture.completedFuture(null);
         }
     }
 

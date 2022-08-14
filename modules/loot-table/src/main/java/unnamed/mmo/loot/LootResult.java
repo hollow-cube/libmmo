@@ -5,20 +5,23 @@ import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.registry.Resource;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 
 public interface LootResult {
 
     @NotNull Collection<Object> results();
 
+    int size();
+
     <T> void override(@NotNull Class<T> type, @NotNull Distributor<T> distributor);
 
-    void apply(@NotNull LootContext context);
+    @NotNull CompletableFuture<Void> apply(@NotNull LootContext context);
 
 
     @FunctionalInterface
     interface Distributor<T> {
 
-        void apply(@NotNull LootContext context, @NotNull T t);
+        @NotNull CompletableFuture<Void> apply(@NotNull LootContext context, @NotNull T t);
 
     }
 

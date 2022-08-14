@@ -6,6 +6,7 @@ import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
+import net.minestom.server.utils.debug.DebugUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import unnamed.mmo.item.Item;
 import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.loot.LootResult;
 import unnamed.mmo.loot.LootContext;
+
+import java.util.concurrent.CompletableFuture;
 
 @AutoService(LootResult.DefaultDistributor.class)
 public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
@@ -29,11 +32,11 @@ public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
     }
 
     @Override
-    public void apply(@NotNull LootContext context, @NotNull Item item) {
+    public @NotNull CompletableFuture<Void> apply(@NotNull LootContext context, @NotNull Item item) {
         final Entity entity = context.get(LootContext.THIS_ENTITY);
         if (entity == null) {
             LOGGER.error("No `this` entity for item distributor. context={}", context);
-            return;
+            return CompletableFuture.completedFuture(null);
         }
 
         final ItemStack itemStack = item.asItemStack();
@@ -46,14 +49,15 @@ public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
         pos = new Vec(pos.blockX() + 0.5f, pos.blockY() + 0.5f, pos.blockZ() + 0.5f);
 
         // Spawn the entity at the location
-        itemEntity.setInstance(entity.getInstance(), pos);
-
-        // Spawn with a velocity in the hinted direction, if present
-        Vec direction = context.get(LootContext.DIRECTION);
-        if (direction != null) {
-            direction = direction.normalize().mul(3f);
-            itemEntity.setVelocity(direction);
-        }
+        return itemEntity.setInstance(entity.getInstance(), pos)
+                .thenAccept(unused -> {
+                    // Spawn with a velocity in the hinted direction, if present
+                    Vec direction = context.get(LootContext.DIRECTION);
+                    if (direction != null) {
+                        direction = direction.normalize().mul(3f);
+                        itemEntity.setVelocity(direction);
+                    }
+                });
     }
 
 }
