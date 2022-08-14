@@ -1,9 +1,9 @@
 package unnamed.mmo.loot.test;
 
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.context.GenerationContext;
-import unnamed.mmo.loot.type.LootEntry;
-import unnamed.mmo.loot.type.LootModifier;
+import unnamed.mmo.loot.context.LootContext;
+import unnamed.mmo.loot.LootEntry;
+import unnamed.mmo.loot.LootModifier;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class StringLootType {
     ) implements LootEntry<String> {
 
         @Override
-        public @NotNull List<@NotNull Option<String>> generate(@NotNull GenerationContext context) {
+        public @NotNull List<@NotNull Option<String>> generate(@NotNull LootContext context) {
             if (multiple) return List.of(new Option<>(strings(), weight));
             return strings().stream().map(s -> new Option<>(List.of(s), weight)).toList();
         }

@@ -1,4 +1,4 @@
-package unnamed.mmo.loot.type;
+package unnamed.mmo.loot;
 
 import com.mojang.serialization.Codec;
 import net.minestom.server.utils.NamespaceID;

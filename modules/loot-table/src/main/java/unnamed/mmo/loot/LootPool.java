@@ -4,10 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.data.number.NumberProvider;
-import unnamed.mmo.loot.context.GenerationContext;
-import unnamed.mmo.loot.type.LootEntry;
-import unnamed.mmo.loot.type.LootModifier;
-import unnamed.mmo.loot.type.LootPredicate;
+import unnamed.mmo.loot.context.LootContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +23,7 @@ public record LootPool(
             NumberProvider.CODEC.fieldOf("rolls").forGetter(LootPool::rolls)
     ).apply(i, LootPool::new));
 
-    public @NotNull List<@NotNull Object> generate(@NotNull GenerationContext context) {
+    public @NotNull List<@NotNull Object> generate(@NotNull LootContext context) {
         // Ensure all conditions match
         for (LootPredicate condition : conditions()) {
             if (!condition.test(context)) return List.of();

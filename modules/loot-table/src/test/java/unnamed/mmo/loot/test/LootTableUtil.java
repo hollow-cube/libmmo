@@ -2,13 +2,16 @@ package unnamed.mmo.loot.test;
 
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.data.number.NumberProvider;
 import unnamed.mmo.loot.LootPool;
 import unnamed.mmo.loot.LootTable;
-import unnamed.mmo.loot.context.GenerationContext;
-import unnamed.mmo.loot.type.LootEntry;
-import unnamed.mmo.loot.type.LootModifier;
-import unnamed.mmo.loot.type.LootPredicate;
+import unnamed.mmo.loot.context.ContextKey;
+import unnamed.mmo.loot.context.LootContext;
+import unnamed.mmo.loot.LootEntry;
+import unnamed.mmo.loot.LootModifier;
+import unnamed.mmo.loot.LootPredicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +26,9 @@ public class LootTableUtil {
         return new LootPoolBuilder();
     }
 
-    public static GenerationContext context(double... values) {
+    public static LootContext context(double... values) {
         Check.argCondition(values.length == 0, "Empty context");
-        return new GenerationContext() {
+        return new LootContext() {
             int i = 0;
 
             @Override
@@ -34,6 +37,11 @@ public class LootTableUtil {
                 if (i < values.length - 1)
                     i++;
                 return value;
+            }
+
+            @Override
+            public <T> @Nullable T get(@NotNull ContextKey<T> key) {
+                return null;
             }
         };
     }
