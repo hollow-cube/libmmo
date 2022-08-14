@@ -14,9 +14,9 @@ public class TestLootTable {
     public void testEmpty() {
         var table = table().build();
 
-        List<Object> result = table.generate(context(1));
+        var result = table.generate(context(1));
 
-        assertThat(result)
+        assertThat(result.results())
                 .isEmpty();
     }
 
@@ -28,9 +28,9 @@ public class TestLootTable {
                         .build())
                 .build();
 
-        List<Object> result = table.generate(context(1));
+        var result = table.generate(context(1));
 
-        assertThat(result)
+        assertThat(result.results())
                 .containsExactly("a");
     }
 
@@ -45,9 +45,9 @@ public class TestLootTable {
                         .build())
                 .build();
 
-        List<Object> result = table.generate(context(1));
+        var result = table.generate(context(1));
 
-        assertThat(result)
+        assertThat(result.results())
                 .containsExactly("a", "b");
     }
 
@@ -63,9 +63,9 @@ public class TestLootTable {
                         .build())
                 .build();
 
-        List<Object> result = table.generate(context(1));
+        var result = table.generate(context(1));
 
-        assertThat(result)
+        assertThat(result.results())
                 .containsExactly("zzz", "zzz");
     }
 
