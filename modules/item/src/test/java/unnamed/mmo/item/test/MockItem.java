@@ -30,6 +30,7 @@ public record MockItem(
     }
 
     @Override
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace) {
         return null;
     }

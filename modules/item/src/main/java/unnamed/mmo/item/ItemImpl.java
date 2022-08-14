@@ -57,6 +57,7 @@ public record ItemImpl(
     }
 
     @Override
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace) {
         //noinspection unchecked
         return (C) registry().components().get(namespace);

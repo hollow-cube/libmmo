@@ -15,7 +15,8 @@ public class TestUtils {
             System.gc();
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ignore) {
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

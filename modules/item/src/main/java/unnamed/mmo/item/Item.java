@@ -25,9 +25,11 @@ public interface Item extends Resource.Id {
             //todo better error if null item? not sure how we should handle deserializing a bad item.
             .withAmount(amount)));
 
+    @Override
     @Contract(pure = true)
     @NotNull NamespaceID namespace();
 
+    @Override
     @Contract(pure = true)
     int id();
 
@@ -58,7 +60,9 @@ public interface Item extends Resource.Id {
         return getComponent(ItemComponentHandler.from(type).name());
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace);
+    //todo might want to consider removing these methods and their type parameter issues
 
 
     // ItemStack conversion
