@@ -1,6 +1,7 @@
 package unnamed.mmo.blocks.ore.handler;
 
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
@@ -11,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.loot.LootTable;
+import unnamed.mmo.loot.context.ContextKey;
+import unnamed.mmo.loot.context.ContextKeys;
+import unnamed.mmo.loot.context.LootContext;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 import unnamed.mmo.util.BlockUtil;
 
@@ -83,10 +87,15 @@ public class OreBlockHandler implements BlockHandler {
         instance.setBlock(pos, BlockUtil.withType(block, REPLACEMENT_BLOCK));
 
         // Generate loot
-        //todo use a real context
-        final var loot = ore.lootTable().generate(() -> 1);
-        ((PlayerDestroy) destroy).getPlayer().sendMessage("Broke the " + ore);
-
+        final Player player = ((PlayerDestroy) destroy).getPlayer();
+        final var context = LootContext.builder("mining")
+                .key(ContextKeys.THIS_ENTITY, player)
+                .key(ContextKeys.POSITION, pos)
+                //todo direction hint
+                .build();
+        final var loot = ore.lootTable().generate(context);
+        // Distribute loot
+        loot.apply(context);
     }
 
     @Override
