@@ -6,8 +6,17 @@ import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.ResourceFactory;
 
+import java.util.Collection;
+
 public interface LootPredicate {
     Codec<LootPredicate> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
+
+    static boolean all(@NotNull LootContext context, @NotNull Collection<LootPredicate> conditions) {
+        for (LootPredicate condition : conditions) {
+            if (!condition.test(context)) return false;
+        }
+        return true;
+    }
 
     boolean test(@NotNull LootContext context);
 

@@ -24,9 +24,8 @@ public record LootPool(
 
     public @NotNull List<@NotNull Object> generate(@NotNull LootContext context) {
         // Ensure all conditions match
-        for (LootPredicate condition : conditions()) {
-            if (!condition.test(context)) return List.of();
-        }
+        if (!LootPredicate.all(context, conditions()))
+            return List.of();
 
         // Generate available entries
         var options = entries()
