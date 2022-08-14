@@ -52,8 +52,7 @@ public interface LootContext extends NumberSource {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Key<?> that = (Key<?>) o;
+            if (!(o instanceof Key<?> that)) return false;
             return name.equals(that.name);
         }
 

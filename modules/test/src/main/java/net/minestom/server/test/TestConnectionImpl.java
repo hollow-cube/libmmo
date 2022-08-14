@@ -19,14 +19,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 final class TestConnectionImpl implements TestConnection {
-    private final Env env;
     private final ServerProcess process;
     private final PlayerConnectionImpl playerConnection = new PlayerConnectionImpl();
 
     private final List<IncomingCollector<ServerPacket>> incomingTrackers = new CopyOnWriteArrayList<>();
 
     TestConnectionImpl(Env env) {
-        this.env = env;
         this.process = env.process();
     }
 

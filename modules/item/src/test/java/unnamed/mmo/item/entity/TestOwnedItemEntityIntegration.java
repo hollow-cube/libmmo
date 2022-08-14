@@ -97,10 +97,10 @@ public class TestOwnedItemEntityIntegration {
         var uuid = UUID.randomUUID();
 
         var itemEntity1 = new OwnedItemEntity(uuid, itemStack);
-        itemEntity1.setInstance(instance, new Pos(0, 42, 0));
+        itemEntity1.setInstance(instance, new Pos(0, 42, 0)).join();
 
         var itemEntity2 = new OwnedItemEntity(uuid, itemStack);
-        itemEntity2.setInstance(instance, new Pos(0, 42, 0));
+        itemEntity2.setInstance(instance, new Pos(0, 42, 0)).join();
 
         env.tick();
 
@@ -122,10 +122,10 @@ public class TestOwnedItemEntityIntegration {
         var itemStack = ItemStack.of(Material.COAL);
 
         var itemEntity1 = new OwnedItemEntity(UUID.randomUUID(), itemStack);
-        itemEntity1.setInstance(instance, new Pos(0, 42, 0));
+        itemEntity1.setInstance(instance, new Pos(0, 42, 0)).join();
 
         var itemEntity2 = new OwnedItemEntity(UUID.randomUUID(), itemStack);
-        itemEntity2.setInstance(instance, new Pos(0, 42, 0));
+        itemEntity2.setInstance(instance, new Pos(0, 42, 0)).join();
 
         env.tick();
 

@@ -45,7 +45,7 @@ public class TestComponentHandler implements ItemComponentHandler<TestComponent>
     // only care if its in inv, or armor, etc. So this wont really work. In the end, probably worth just having some utils.
     public static <C extends TestComponent> EventFilter<PlayerEvent, C> itemComponent(Class<C> type) {
         return EventFilter.from(PlayerEvent.class, type, event -> {
-            final Player player = event.getPlayer();
+//            final Player player = event.getPlayer();
 
             // Find the target item based on the event type
             final ItemStack itemStack;
