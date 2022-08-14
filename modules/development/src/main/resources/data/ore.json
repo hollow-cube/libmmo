@@ -3,6 +3,6 @@
     "namespace": "unnamed:gold_ore",
     "oreBlock": "minecraft:gold_ore",
     "health": 100,
-    "lootTable": "unnamed:empty"
+    "lootTable": "unnamed:gold_ore"
   }
 ]

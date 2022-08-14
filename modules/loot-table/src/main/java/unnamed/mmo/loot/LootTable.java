@@ -4,7 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.loot.impl.LootResultImpl;
+import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
 import unnamed.mmo.util.ExtraCodecs;
 
@@ -17,11 +19,7 @@ public record LootTable(
         @NotNull List<LootPool> pools
 ) implements Resource {
 
-    public static final Codec<LootTable> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(LootTable::namespace),
-            LootModifier.CODEC.listOf().fieldOf("modifiers").forGetter(LootTable::modifiers),
-            LootPool.CODEC.listOf().fieldOf("pools").forGetter(LootTable::pools)
-    ).apply(i, LootTable::new));
+    public static final LootTable EMPTY = new LootTable(NamespaceID.from("unnamed:empty"), List.of(), List.of());
 
     public LootTable {
         modifiers = List.copyOf(modifiers);
@@ -40,6 +38,25 @@ public record LootTable(
         for (LootModifier modifier : modifiers())
             input = modifier.apply(input);
         return input;
+    }
+
+
+    // Registry
+
+    public static final Codec<LootTable> CODEC = RecordCodecBuilder.create(i -> i.group(
+            ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(LootTable::namespace),
+            LootModifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(LootTable::modifiers),
+            LootPool.CODEC.listOf().optionalFieldOf("pools", List.of()).forGetter(LootTable::pools)
+    ).apply(i, LootTable::new));
+
+    public static final Registry<LootTable> REGISTRY = Registry.codec("loot_table", CODEC);
+
+    public static @Nullable LootTable fromNamespaceId(@NotNull NamespaceID namespace) {
+        return REGISTRY.get(namespace);
+    }
+
+    public static @Nullable LootTable fromNamespaceId(@NotNull String namespace) {
+        return REGISTRY.get(namespace);
     }
 
 }
