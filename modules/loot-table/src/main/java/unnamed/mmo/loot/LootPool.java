@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.data.number.NumberProvider;
-import unnamed.mmo.loot.context.LootContext;
 
 import java.util.ArrayList;
 import java.util.List;

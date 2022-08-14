@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.loot.LootResult;
-import unnamed.mmo.loot.context.ContextKeys;
-import unnamed.mmo.loot.context.LootContext;
+import unnamed.mmo.loot.LootContext;
 
 @AutoService(LootResult.DefaultDistributor.class)
 public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
@@ -31,7 +30,7 @@ public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
 
     @Override
     public void apply(@NotNull LootContext context, @NotNull Item item) {
-        final Entity entity = context.get(ContextKeys.THIS_ENTITY);
+        final Entity entity = context.get(LootContext.THIS_ENTITY);
         if (entity == null) {
             LOGGER.error("No `this` entity for item distributor. context={}", context);
             return;
@@ -41,7 +40,7 @@ public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
         final OwnedItemEntity itemEntity = new OwnedItemEntity(entity.getUuid(), itemStack);
 
         // Spawn at the hinted location, or the entity location if not provided.
-        Point pos = context.get(ContextKeys.POSITION);
+        Point pos = context.get(LootContext.POSITION);
         if (pos == null) pos = entity.getPosition();
         // Set the location to the center of the block
         pos = new Vec(pos.blockX() + 0.5f, pos.blockY() + 0.5f, pos.blockZ() + 0.5f);
@@ -50,7 +49,7 @@ public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
         itemEntity.setInstance(entity.getInstance(), pos);
 
         // Spawn with a velocity in the hinted direction, if present
-        Vec direction = context.get(ContextKeys.DIRECTION);
+        Vec direction = context.get(LootContext.DIRECTION);
         if (direction != null) {
             direction = direction.normalize().mul(3f);
             itemEntity.setVelocity(direction);

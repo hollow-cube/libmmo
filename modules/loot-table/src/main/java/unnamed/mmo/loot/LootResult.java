@@ -2,7 +2,6 @@ package unnamed.mmo.loot;
 
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.context.LootContext;
 import unnamed.mmo.registry.Resource;
 
 import java.util.Collection;
