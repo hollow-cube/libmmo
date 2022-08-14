@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.Ore;
+import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.loot.LootTable;
 import unnamed.mmo.loot.context.ContextKey;
 import unnamed.mmo.loot.context.ContextKeys;
@@ -89,8 +90,8 @@ public class OreBlockHandler implements BlockHandler {
         // Generate loot
         final Player player = ((PlayerDestroy) destroy).getPlayer();
         final var context = LootContext.builder("mining")
-                .key(ContextKeys.THIS_ENTITY, player)
-                .key(ContextKeys.POSITION, pos)
+                .key(LootContext.THIS_ENTITY, player)
+                .key(LootContext.POSITION, pos)
                 //todo direction hint
                 .build();
         final var loot = ore.lootTable().generate(context);
