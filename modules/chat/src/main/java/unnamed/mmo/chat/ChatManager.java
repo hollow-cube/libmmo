@@ -18,9 +18,6 @@ import java.time.Instant;
 
 @AutoService(Facet.class)
 public class ChatManager implements Facet {
-    //todo generally not a fan of this class. Need to come up with a bit of a better standard for these "manager" classes
-    //     perhaps using SPI would be nice. Need to be careful about testability though
-    //     See Facet, i made some notes there
 
     //todo where does this come from?
     private static final String SERVER_NAME = "test_server";
