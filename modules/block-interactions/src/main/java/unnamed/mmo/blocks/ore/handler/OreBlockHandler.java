@@ -16,6 +16,7 @@ import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 import unnamed.mmo.util.BlockUtil;
+import unnamed.mmo.util.FutureUtil;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -96,7 +97,7 @@ public class OreBlockHandler implements BlockHandler {
                 .build();
         final var loot = ore.lootTable().generate(context);
         // Distribute loot
-        loot.apply(context);
+        loot.apply(context).exceptionally(FutureUtil::handleException);
     }
 
     @Override

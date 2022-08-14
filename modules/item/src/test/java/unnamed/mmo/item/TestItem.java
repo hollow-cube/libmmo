@@ -6,9 +6,11 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
 import org.junit.jupiter.api.Test;
+import unnamed.mmo.item.test.MockItem;
 
 import java.util.Map;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestItem {
@@ -36,6 +38,12 @@ public class TestItem {
 
     @Test
     public void testFromItemStack() {
-        //todo(matt) relies on loaded item data, need to handle this better (eg load data just for these tests)
+        var itemStack = ItemStack.of(Material.GOLD_INGOT)
+                .withMeta(meta -> meta.customModelData(1));
+
+        var item = Item.fromItemStack(itemStack);
+
+        var expected = Item.fromNamespaceId("test:item");
+        assertThat(item).isEqualTo(expected);
     }
 }
