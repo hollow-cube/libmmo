@@ -26,9 +26,8 @@ public record GroupLootEntry(
     @Override
     public @NotNull List<@NotNull Option<Object>> generate(@NotNull LootContext context) {
         // Ensure all conditions match
-        for (LootPredicate condition : conditions()) {
-            if (!condition.test(context)) return List.of();
-        }
+        if (!LootPredicate.all(context, conditions()))
+            return List.of();
 
         // Collect all results
         //noinspection unchecked
