@@ -3,7 +3,6 @@ package unnamed.mmo.loot;
 import com.mojang.serialization.Codec;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.context.LootContext;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.ResourceFactory;
 

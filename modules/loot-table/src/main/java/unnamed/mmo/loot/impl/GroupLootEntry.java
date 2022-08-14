@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.context.LootContext;
+import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.loot.LootEntry;
 import unnamed.mmo.loot.LootPredicate;
 import unnamed.mmo.util.ExtraCodecs;

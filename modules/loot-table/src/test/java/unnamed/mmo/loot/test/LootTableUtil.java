@@ -7,8 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.data.number.NumberProvider;
 import unnamed.mmo.loot.LootPool;
 import unnamed.mmo.loot.LootTable;
-import unnamed.mmo.loot.context.ContextKey;
-import unnamed.mmo.loot.context.LootContext;
+import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.loot.LootEntry;
 import unnamed.mmo.loot.LootModifier;
 import unnamed.mmo.loot.LootPredicate;
@@ -40,7 +39,7 @@ public class LootTableUtil {
             }
 
             @Override
-            public <T> @Nullable T get(@NotNull ContextKey<T> key) {
+            public <T> @Nullable T get(@NotNull LootContext.Key<T> key) {
                 return null;
             }
         };
