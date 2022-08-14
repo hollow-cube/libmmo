@@ -12,10 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.loot.LootContext;
-import unnamed.mmo.loot.LootTable;
-import unnamed.mmo.loot.context.ContextKey;
-import unnamed.mmo.loot.context.ContextKeys;
-import unnamed.mmo.loot.context.LootContext;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 import unnamed.mmo.util.BlockUtil;
 
@@ -93,6 +89,8 @@ public class OreBlockHandler implements BlockHandler {
                 .key(LootContext.THIS_ENTITY, player)
                 .key(LootContext.POSITION, pos)
                 //todo direction hint
+                // This needs blockFace to be passed into destroy event. Will do in fork eventually
+                // and PR if we can agree
                 .build();
         final var loot = ore.lootTable().generate(context);
         // Distribute loot

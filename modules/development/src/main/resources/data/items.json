@@ -17,5 +17,17 @@
         "stateId": 0
       }
     }
+  },
+  {
+    "namespace": "unnamed:gold_ingot",
+    "id": 1,
+    "material": "minecraft:gold_ingot",
+
+    "defaultStateId": 1,
+    "states": {
+      "[]": {
+        "stateId": 1
+      }
+    }
   }
 ]

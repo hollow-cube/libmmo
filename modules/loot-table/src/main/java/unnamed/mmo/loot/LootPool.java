@@ -16,10 +16,10 @@ public record LootPool(
 ) {
 
     public static final Codec<LootPool> CODEC = RecordCodecBuilder.create(i -> i.group(
-            LootPredicate.CODEC.listOf().fieldOf("conditions").forGetter(LootPool::conditions),
-            LootModifier.CODEC.listOf().fieldOf("modifiers").forGetter(LootPool::modifiers),
-            LootEntry.CODEC.listOf().fieldOf("entries").forGetter(LootPool::entries),
-            NumberProvider.CODEC.fieldOf("rolls").forGetter(LootPool::rolls)
+            LootPredicate.CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(LootPool::conditions),
+            LootModifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(LootPool::modifiers),
+            LootEntry.CODEC.listOf().optionalFieldOf("entries", List.of()).forGetter(LootPool::entries),
+            NumberProvider.CODEC.optionalFieldOf("rolls", NumberProvider.constant(1)).forGetter(LootPool::rolls)
     ).apply(i, LootPool::new));
 
     public @NotNull List<@NotNull Object> generate(@NotNull LootContext context) {

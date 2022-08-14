@@ -39,7 +39,7 @@ public class ItemRegistry {
                 Codec.pair(Codec.STRING.fieldOf("type").codec(), ItemComponent.CODEC)
                         .listOf()
                         .xmap(DFUUtil::pairListToMap, DFUUtil::mapToPairList)
-                        .fieldOf("components").forGetter(Entry::components)
+                        .optionalFieldOf("components", Map.of()).forGetter(Entry::components)
         ).apply(i, Entry::new));
 
     }

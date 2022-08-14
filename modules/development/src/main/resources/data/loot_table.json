@@ -1,0 +1,16 @@
+[
+  {
+    "namespace": "unnamed:gold_ore",
+    "pools": [
+      {
+        "rolls": 1,
+        "entries": [
+          {
+            "type": "unnamed:item",
+            "item": "unnamed:gold_ingot"
+          }
+        ]
+      }
+    ]
+  }
+]
