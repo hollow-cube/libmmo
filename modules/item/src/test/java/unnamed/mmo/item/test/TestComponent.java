@@ -1,4 +1,4 @@
-package unnamed.mmo.item.component;
+package unnamed.mmo.item.test;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

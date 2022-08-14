@@ -4,6 +4,7 @@ import net.minestom.server.ServerProcess;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventListener;
+import net.minestom.server.utils.debug.DebugUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 final class EnvImpl implements Env {
+
+    static {
+        DebugUtils.INSIDE_TEST = true;
+    }
+
     private final ServerProcess process;
     private final List<FlexibleListenerImpl<?>> listeners = new CopyOnWriteArrayList<>();
 

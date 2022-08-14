@@ -8,12 +8,14 @@ import net.minestom.server.event.EventFilter;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.network.PlayerProvider;
+import net.minestom.server.utils.debug.DebugUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.function.BooleanSupplier;
 
 public interface Env {
+
     @NotNull ServerProcess process();
 
     @NotNull TestConnection createConnection();
@@ -50,6 +52,7 @@ public interface Env {
     default @NotNull Instance createFlatInstance() {
         var instance = process().instance().createInstanceContainer();
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.STONE));
+//        instance.loadChunk(0, 0).join(); //todo this line breaks tests that need a player... somehow...
         return instance;
     }
 }

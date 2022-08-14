@@ -1,7 +1,7 @@
 package unnamed.mmo.item;
 
 import org.junit.jupiter.api.Test;
-import unnamed.mmo.item.component.TestComponent;
+import unnamed.mmo.item.test.TestComponent;
 
 import static com.google.common.truth.Truth.assertThat;
 

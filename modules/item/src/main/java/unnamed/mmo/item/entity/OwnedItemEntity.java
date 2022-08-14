@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityItemMergeEvent;
 import net.minestom.server.event.item.PickupItemEvent;
@@ -36,8 +37,21 @@ public class OwnedItemEntity extends ItemEntity {
             if (!(event.getItemEntity() instanceof OwnedItemEntity itemEntity))
                 return;
 
-            final LivingEntity entity = event.getLivingEntity();
-            if (!entity.getUuid().equals(itemEntity.owner)) {
+            // Only players can pick up items for now, eventually entities may be allowed
+            if (!(event.getEntity() instanceof Player player)) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // Ensure owner is the one picking up the item
+            if (!player.getUuid().equals(itemEntity.owner)) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // Add item to the player if possible
+            boolean added = player.getInventory().addItemStack(event.getItemStack());
+            if (!added) {
                 event.setCancelled(true);
             }
         }
@@ -46,7 +60,7 @@ public class OwnedItemEntity extends ItemEntity {
             if (!(event.getEntity() instanceof OwnedItemEntity entity) ||
                     !(event.getMerged() instanceof OwnedItemEntity merged))
                 return;
-            if (entity.owner.equals(merged.owner))
+            if (!entity.owner.equals(merged.owner))
                 event.setCancelled(true);
         }
     }
