@@ -14,22 +14,11 @@ import java.util.Queue;
 
 public class JsonUtil {
 
-    @Contract("_ -> new")
-    public static @NotNull JsonObject merge(@NotNull JsonObject... objects) {
-        //todo this will not be functional right now, need to do a deep merge.
-        // for example objects in the components array within states must be merged correctly.
-        JsonObject out = new JsonObject();
-        for (JsonObject obj : objects) {
-            for (var entry : obj.entrySet()) {
-                out.add(entry.getKey(), entry.getValue());
-            }
-        }
-        return out;
-    }
-
-
-    //todo document that this merges by the type key.
-
+    /**
+     * Merge two {@link JsonElement}s recursively, combining arrays based on the "type" field.
+     * <p>
+     * The resulting json element is not necessarily a deep copy if the returned item has not been modified.
+     */
     @Contract("_, _ -> new")
     public static @UnknownNullability JsonElement merge(@Nullable JsonElement left, @Nullable JsonElement right) {
         if (left == null) return right;
@@ -63,6 +52,7 @@ public class JsonUtil {
     public static @NotNull JsonArray merge(@NotNull JsonArray left, @NotNull JsonArray right) {
         JsonArray merged = new JsonArray();
 
+        //todo lots of duplication, very yikes
         Map<String, JsonElement> temp = new HashMap<>();
         for (JsonElement elem : left) {
             // If it isnt an object, we cannot merge. Move on
@@ -70,14 +60,44 @@ public class JsonUtil {
                 merged.add(elem);
                 continue;
             }
-
             JsonObject obj = elem.getAsJsonObject();
-
-
-
+            // If it has a type field, we can merge. Otherwise, just add it.
+            if (obj.has("type")) {
+                temp.put(obj.get("type").getAsString(), elem);
+            } else {
+                merged.add(elem);
+            }
         }
 
-        //todo this is more challenging. It needs to merge by type field.
+        for (JsonElement elem : right) {
+            // If it isnt an object, we cannot merge. Move on
+            if (!elem.isJsonObject()) {
+                merged.add(elem);
+                continue;
+            }
+            JsonObject obj = elem.getAsJsonObject();
+
+            // If there is not a string type, we cannot merge. Move on
+            JsonElement type = obj.get("type");
+            if (!type.isJsonPrimitive()) {
+                merged.add(elem);
+                continue;
+            }
+
+            // If there is already an element of the same type, merge them.
+            // Otherwise just add the element to temp map
+            if (temp.containsKey(type.getAsString())) {
+                temp.put(type.getAsString(), merge(temp.get(type.getAsString()), elem));
+            } else {
+                temp.put(type.getAsString(), elem);
+            }
+        }
+
+        // Copy all entries from temp map into temp
+        for (var entry : temp.entrySet()) {
+            merged.add(entry.getValue());
+        }
+
         return merged;
     }
 
