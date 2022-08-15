@@ -1,0 +1,16 @@
+{
+  "example-quest": {
+    "objectives": [
+      {
+        "name": "start-adventure"
+      },
+      {
+        "name": "kill-mob",
+        "parameters": [
+          "zombie",
+          10
+        ]
+      }
+    ]
+  }
+}
