@@ -4,4 +4,4 @@ import unnamed.mmo.quest.objective.QuestObjective;
 
 import java.util.List;
 
-public record Quest(QuestObjectiveMode mode, List<QuestObjective> objectives) {}
+public record Quest(QuestObjective objective) {}

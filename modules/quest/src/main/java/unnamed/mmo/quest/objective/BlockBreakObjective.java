@@ -1,29 +1,36 @@
 package unnamed.mmo.quest.objective;
 
+import com.mojang.serialization.Codec;
+import net.minestom.server.event.EventListener;
+import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.tag.Tag;
+import unnamed.mmo.quest.QuestContext;
 
-public class BlockBreakObjective implements QuestObjective {
+import java.util.concurrent.CompletableFuture;
 
-    private final int blockId;
-    private final int count;
-    private int current;
+public record BlockBreakObjective(int blockId, int count) implements QuestObjective {
 
-    public BlockBreakObjective(Block block, int count) {
-        blockId = block.id();
-        this.count = count;
-        current = 0;
-    }
+    private static final Codec<Integer> COUNT = Codec.INT.orElse(0);
 
     @Override
-    public void onBlockBreak(Block block) {
-        if(block.id() == blockId) {
-            current++;
-        }
-    }
+    public CompletableFuture<Void> onStart(QuestContext context) {
+        CompletableFuture<Void> complete = new CompletableFuture<>();
 
-    @Override
-    public boolean isObjectiveComplete() {
-        return current >= count;
-    }
+        context.player().eventNode().addListener(EventListener.builder(PlayerBlockBreakEvent.class)
+                .expireWhen(event -> complete.isDone())
+                .filter(event -> event.getBlock().id() == blockId)
+                .handler(event -> {
+                    int current = context.get(COUNT);
+                    current++;
+                    if (current == count()) {
+                        complete.complete(null);
+                        return;
+                    }
+                    context.set(COUNT, current);
+                })
+                .build());
 
+        return complete;
+    }
 }
