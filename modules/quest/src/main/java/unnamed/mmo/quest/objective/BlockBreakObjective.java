@@ -1,7 +1,5 @@
 package unnamed.mmo.quest.objective;
 
-import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.instance.block.Block;
 
 public class BlockBreakObjective extends QuestObjective {
