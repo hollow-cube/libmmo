@@ -1,14 +1,9 @@
 package unnamed.mmo.quest.objective;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minestom.server.event.EventListener;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.tag.Tag;
 import unnamed.mmo.quest.QuestContext;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public record ListObjective(QuestObjective... objectives) implements QuestObjective {
 

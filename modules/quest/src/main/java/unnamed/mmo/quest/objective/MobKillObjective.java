@@ -1,29 +1,36 @@
 package unnamed.mmo.quest.objective;
 
+import com.mojang.serialization.Codec;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.event.EventListener;
+import unnamed.mmo.damage.EntityKilledByEntityEvent;
+import unnamed.mmo.quest.QuestContext;
 
-public class MobKillObjective implements QuestObjective {
+import java.util.concurrent.CompletableFuture;
 
-    private final EntityType killType;
-    private final int count;
-    private int current;
+public record MobKillObjective(EntityType type, int count) implements QuestObjective {
 
-    public MobKillObjective(EntityType type, int count) {
-        killType = type;
-        this.count = count;
-        current = 0;
-    }
+    private static final Codec<Integer> COUNT = Codec.INT.orElse(0);
 
     @Override
-    public void onMobKill(LivingEntity entity) {
-        if(entity.getEntityType() == killType) {
-            current++;
-        }
-    }
+    public CompletableFuture<Void> onStart(QuestContext context) {
+        CompletableFuture<Void> complete = new CompletableFuture<>();
 
-    @Override
-    public boolean isObjectiveComplete() {
-        return current >= count;
+        context.player().eventNode().addListener(EventListener.builder(EntityKilledByEntityEvent.class)
+                .expireWhen(event -> complete.isDone())
+                .filter(event -> event.getEntity().getEntityType() == type &&
+                event.getEntity().getUuid() == context.player().getUuid())
+                .handler(event -> {
+                    int current = context.get(COUNT);
+                    current++;
+                    if (current == count()) {
+                        complete.complete(null);
+                        return;
+                    }
+                    context.set(COUNT, current);
+                })
+                .build());
+
+        return complete;
     }
 }

@@ -3,8 +3,6 @@ package unnamed.mmo.quest.objective;
 import com.mojang.serialization.Codec;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.instance.block.Block;
-import net.minestom.server.tag.Tag;
 import unnamed.mmo.quest.QuestContext;
 
 import java.util.concurrent.CompletableFuture;

@@ -1,26 +1,26 @@
 package unnamed.mmo.quest.objective;
 
-import unnamed.mmo.quest.QuestProgress;
+import net.minestom.server.event.EventListener;
+import unnamed.mmo.quest.ProgressAttainedEvent;
+import unnamed.mmo.quest.QuestContext;
 
-public class ProgressObjective implements QuestObjective {
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
-    private final QuestProgress progressFlag;
-    private boolean achieved;
-
-    public ProgressObjective(QuestProgress progress) {
-        this.progressFlag = progress;
-    }
+public record ProgressObjective(String flag) implements QuestObjective {
 
 
     @Override
-    public void onProgressComplete(QuestProgress progress) {
-        if(progress == progressFlag) {
-            achieved = true;
-        }
-    }
+    public CompletableFuture<Void> onStart(QuestContext context) {
+        CompletableFuture<Void> complete = new CompletableFuture<>();
 
-    @Override
-    public boolean isObjectiveComplete() {
-        return achieved;
+        context.player().eventNode().addListener(EventListener.builder(ProgressAttainedEvent.class)
+                .expireWhen(event -> complete.isDone())
+                .filter(event -> event.getPlayer() == context.player() &&
+                        Objects.equals(event.getProgressId(), flag))
+                .handler(event -> complete.complete(null))
+                .build());
+
+        return complete;
     }
 }
