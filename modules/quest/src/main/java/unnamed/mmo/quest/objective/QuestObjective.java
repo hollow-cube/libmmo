@@ -2,12 +2,15 @@ package unnamed.mmo.quest.objective;
 
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.instance.block.Block;
+import unnamed.mmo.quest.QuestProgress;
 
-public abstract class QuestObjective {
+public interface QuestObjective {
 
-    void onMobKill(LivingEntity entity) {}
+    default void onMobKill(LivingEntity entity) {}
 
-    void onBlockBreak(Block block) {}
+    default void onBlockBreak(Block block) {}
 
-    boolean isObjectiveComplete() { return false; }
+    default void onProgressComplete(QuestProgress progress) {}
+
+    boolean isObjectiveComplete();
 }

@@ -25,6 +25,23 @@ Each Objective object is defined as follows:
     "type": Type of Objective
     [optional] "parameterName": argument
 }
+
+Current Supported Types:
+multi - for containing a list of subobjectives
+    Parameters Required:
+        "mode" - "sequence" or "parallel"
+        "objectives" - array of objectives
+progress - intended as a flag of story progress
+    Parameters Required:
+        id - name of enum that exists in QuestProgress
+kill_mob - kill a certain entity x times
+    Parameters Required
+        id - name of enum that exists in EntityType
+        count - number of that mob to kill
+block_break - break a certain block x times
+    Parameters Required:
+        id - name of Enum (not really an enum but close enough) that exists in Block
+        count - number of that block to break
 If an objective requires certain parameters, those parameters are represented by key-value pairs that map the objective name
 to the argument it will be at
 

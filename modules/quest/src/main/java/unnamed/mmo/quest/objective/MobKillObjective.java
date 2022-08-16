@@ -3,7 +3,7 @@ package unnamed.mmo.quest.objective;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
 
-public class MobKillObjective extends QuestObjective {
+public class MobKillObjective implements QuestObjective {
 
     private final EntityType killType;
     private final int count;
@@ -16,14 +16,14 @@ public class MobKillObjective extends QuestObjective {
     }
 
     @Override
-    void onMobKill(LivingEntity entity) {
+    public void onMobKill(LivingEntity entity) {
         if(entity.getEntityType() == killType) {
             current++;
         }
     }
 
     @Override
-    boolean isObjectiveComplete() {
+    public boolean isObjectiveComplete() {
         return current >= count;
     }
 }

@@ -3,12 +3,28 @@
     "mode": "sequence",
     "objectives": [
       {
-        "type": "start_adventure"
+        "type": "progress",
+        "id": "start_adventure"
       },
       {
         "type": "kill_mob",
         "id": "zombie",
         "count": 10
+      },
+      {
+        "type": "multi",
+        "mode": "sequence",
+        "objectives": [
+          {
+            "type": "progress",
+            "id": "complete-tutorial"
+          },
+          {
+            "type": "kill_mob",
+            "id": "pig",
+            "count": 4
+          }
+        ]
       }
     ]
   }
