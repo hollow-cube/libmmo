@@ -7,7 +7,6 @@ import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.ResourceFactory;
 
 public sealed interface Task permits AbstractTask {
-    Codec<Task> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
 
     @NotNull State getState();
 
@@ -15,25 +14,29 @@ public sealed interface Task permits AbstractTask {
 
     void tick(@NotNull Brain brain);
 
-    @NotNull Task deepCopy();
-
     enum State {
         INIT, RUNNING, COMPLETE, FAILED
     }
 
-    class Factory extends ResourceFactory<Task> {
+    interface Spec {
+        Codec<Spec> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
+
+        @NotNull Task create();
+    }
+
+    class Factory extends ResourceFactory<Task.Spec> {
         static final Registry<Factory> REGISTRY = Registry.service("task_factory", Factory.class);
         static final Registry.Index<Class<?>, Factory> TYPE_REGISTRY = REGISTRY.index(Factory::type);
 
         @SuppressWarnings("Convert2MethodRef")
         public static final Codec<Factory> CODEC = Codec.STRING.xmap(ns -> REGISTRY.get(ns), Factory::name);
 
-        public Factory(String namespace, Class<? extends Task> type, Codec<? extends Task> codec) {
+        public Factory(String namespace, Class<? extends Task.Spec> type, Codec<? extends Task.Spec> codec) {
             super(namespace, type, codec);
         }
 
-        static @NotNull Factory from(@NotNull Task task) {
-            return TYPE_REGISTRY.get(task.getClass());
+        static @NotNull Factory from(@NotNull Spec spec) {
+            return TYPE_REGISTRY.get(spec.getClass());
         }
     }
 }

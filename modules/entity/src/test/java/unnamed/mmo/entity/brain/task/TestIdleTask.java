@@ -10,7 +10,8 @@ public class TestIdleTask {
 
     @Test
     public void testHappyCase() {
-        var task = new IdleTask(NumberProvider.constant(5));
+        var spec = new IdleTask.Spec(NumberProvider.constant(5));
+        var task = new IdleTask(spec);
         // Entity should do nothing, so we can happily use any old entity.
         var brain = new MockBrain();
 

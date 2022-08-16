@@ -6,47 +6,40 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.entity.brain.Brain;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static unnamed.mmo.util.ExtraCodecs.lazy;
 
 public class SequenceTask extends AbstractTask {
-    public static final Codec<SequenceTask> CODEC = RecordCodecBuilder.create(i -> i.group(
-            lazy(() -> Task.CODEC).listOf().fieldOf("children").forGetter(SequenceTask::children)
-    ).apply(i, SequenceTask::new));
 
+    private final Spec spec;
     private final List<Task> children;
+    private int current = 0;
 
-    // Running state
-    private Iterator<Task> taskIter = Collections.emptyIterator();
-    private Task current = null;
-
-    public SequenceTask(@NotNull List<Task> children) {
-        this.children = List.copyOf(children);
-    }
-
-    public @NotNull List<Task> children() {
-        return children;
+    public SequenceTask(@NotNull Spec spec) {
+        this.spec = spec;
+        this.children = spec.children()
+                .stream()
+                .map(Task.Spec::create)
+                .toList();
     }
 
     @Override
     public void start(@NotNull Brain brain) {
         super.start(brain);
 
-        taskIter = children().iterator();
-        if (!taskIter.hasNext()) {
+        reset();
+        if (!hasNext()) {
             end(false);
             return;
         }
 
-        current = taskIter.next();
-        current.start(brain);
+        current().start(brain);
     }
 
     @Override
     public void tick(@NotNull Brain brain) {
+        final Task current = current();
         current.tick(brain);
 
         // Do nothing if current task is still running
@@ -59,26 +52,50 @@ public class SequenceTask extends AbstractTask {
         }
 
         // If there are no more tasks, exit
-        if (!taskIter.hasNext()) {
+        if (!hasNext()) {
             end(true);
             return;
         }
 
         // Next task
-        current = taskIter.next();
-        current.start(brain);
+        next().start(brain);
     }
 
-    @Override
-    public @NotNull Task deepCopy() {
-        return new SequenceTask(children().stream().map(Task::deepCopy).toList());
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean hasNext() {
+        return current < children.size() - 1;
     }
 
+    private Task current() {
+        return children.get(current);
+    }
+
+    private Task next() {
+        return children.get(++current);
+    }
+
+    private void reset() {
+        this.current = 0;
+    }
+
+
+    public record Spec(
+            List<Task.Spec> children
+    ) implements Task.Spec {
+        public static final Codec<Spec> CODEC = RecordCodecBuilder.create(i -> i.group(
+                lazy(() -> Task.Spec.CODEC).listOf().fieldOf("children").forGetter(Spec::children)
+        ).apply(i, Spec::new));
+
+        @Override
+        public @NotNull Task create() {
+            return new SequenceTask(this);
+        }
+    }
 
     @AutoService(Task.Factory.class)
     public static final class Factory extends Task.Factory {
         public Factory() {
-            super("unnamed:sequence", SequenceTask.class, SequenceTask.CODEC);
+            super("unnamed:sequence", Spec.class, Spec.CODEC);
         }
     }
 }

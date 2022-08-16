@@ -7,7 +7,6 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.test.Env;
 import net.minestom.server.test.EnvTest;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import sexy.kostya.enodia.EnodiaPF;
 import sexy.kostya.enodia.movement.MovementProcessor;
@@ -16,8 +15,7 @@ import sexy.kostya.enodia.pathfinding.PathfindingCapabilities;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
 
 @EnvTest
 public class TestEnodiaPF {
@@ -50,8 +48,7 @@ public class TestEnodiaPF {
             return !entity.getPosition().sameBlock(new Vec(0, 40, 0));
         }, Duration.ofMillis(100));
 
-        assertTrue(result);
-
+        assertThat(result).isTrue();
     }
 
     static class EnodiaEntity extends Entity {

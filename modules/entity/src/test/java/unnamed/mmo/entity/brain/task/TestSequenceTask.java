@@ -12,7 +12,8 @@ import static unnamed.mmo.entity.brain.task.test.TaskSubject.assertThat;
 public class TestSequenceTask {
     @Test
     public void testEmptySequence() {
-        Task task = new SequenceTask(List.of());
+        var spec = new SequenceTask.Spec(List.of());
+        var task = new SequenceTask(spec);
         var brain = new MockBrain();
 
         task.start(brain);
@@ -26,7 +27,8 @@ public class TestSequenceTask {
     public void testSingleTaskSuccess() {
         var brain = new MockBrain();
         var mock1 = new MockTask(true);
-        var task = new SequenceTask(List.of(mock1));
+        var spec = new SequenceTask.Spec(List.of(mock1.spec()));
+        var task = new SequenceTask(spec);
 
         task.start(brain);
         task.tick(brain);
@@ -41,7 +43,8 @@ public class TestSequenceTask {
         var brain = new MockBrain();
         var mock1 = new MockTask(true);
         var mock2 = new MockTask(true);
-        var task = new SequenceTask(List.of(mock1, mock2));
+        var spec = new SequenceTask.Spec(List.of(mock1.spec(), mock2.spec()));
+        var task = new SequenceTask(spec);
         task.start(brain);
 
         task.tick(brain);
