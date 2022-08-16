@@ -10,26 +10,27 @@ can be stored in the same file, with unique names as their identifiers.
 The JSON Data of a quest is as follows:
 
 {
+    "mode": "parallel"
     "objectives": [
         JSON Objects
     ]
 }
 
+There is an "mode" key, which can either be "sequence", or "parallel". If the mode is sequence, the objectives
+must be completed in order, while in parallel all objectives can be worked on at the same time
 There is an "objectives" key inside the quest object, with an array of JSON objects as its parameter.
 
 Each Objective object is defined as follows:
 {
-    "name": Name of Objective
-    "parameters": [
-        Optional list of requirements, if this objective has any.
-    ]
+    "type": Type of Objective
+    [optional] "parameterName": argument
 }
+If an objective requires certain parameters, those parameters are represented by key-value pairs that map the objective name
+to the argument it will be at
 
 Example of a "Kill 10 Zombies" objective:
 {
-    "name": "kill_mob",
-    "parameters": [
-        "zombie",
-        10
-    ]
+    "type": "kill_mob",
+    "id": "zombie"
+    "count": 10
 }

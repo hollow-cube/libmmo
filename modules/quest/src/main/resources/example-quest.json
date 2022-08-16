@@ -1,15 +1,14 @@
 {
   "example-quest": {
+    "mode": "sequence",
     "objectives": [
       {
-        "name": "start-adventure"
+        "type": "start_adventure"
       },
       {
-        "name": "kill-mob",
-        "parameters": [
-          "zombie",
-          10
-        ]
+        "type": "kill_mob",
+        "id": "zombie",
+        "count": 10
       }
     ]
   }
