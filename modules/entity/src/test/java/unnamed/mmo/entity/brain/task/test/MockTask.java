@@ -17,8 +17,11 @@ public class MockTask extends AbstractTask {
         end(pass);
     }
 
-    @Override
-    public @NotNull Task deepCopy() {
-        return new MockTask(pass);
+    public @NotNull Spec spec() {
+        return () -> MockTask.this;
     }
+
+
+
+
 }

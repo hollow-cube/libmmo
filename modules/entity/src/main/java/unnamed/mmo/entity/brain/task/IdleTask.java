@@ -9,21 +9,11 @@ import unnamed.mmo.data.number.NumberProvider;
 import unnamed.mmo.entity.brain.Brain;
 
 public class IdleTask extends AbstractTask {
-    public static final Codec<IdleTask> CODEC = RecordCodecBuilder.create(i -> i.group(
-            NumberProvider.CODEC.fieldOf("time").forGetter(IdleTask::time)
-    ).apply(i, IdleTask::new));
-
-    private final NumberProvider time;
-
-    // Running state
+    private final Spec spec;
     private int sleepTime = 0;
 
-    public IdleTask(@NotNull NumberProvider time) {
-        this.time = time;
-    }
-
-    public NumberProvider time() {
-        return time;
+    public IdleTask(@NotNull Spec spec) {
+        this.spec = spec;
     }
 
     @Override
@@ -31,7 +21,7 @@ public class IdleTask extends AbstractTask {
         super.start(brain);
 
         //todo get number source from entity or something, this is inconvenient to test
-        sleepTime = (int) time.nextLong(NumberSource.threadLocalRandom());
+        sleepTime = (int) spec.time().nextLong(NumberSource.threadLocalRandom());
     }
 
     @Override
@@ -42,16 +32,25 @@ public class IdleTask extends AbstractTask {
         }
     }
 
-    @Override
-    public @NotNull Task deepCopy() {
-        return new IdleTask(time);
-    }
 
+    public record Spec(
+            @NotNull NumberProvider time
+    ) implements Task.Spec {
+
+        public static final Codec<Spec> CODEC = RecordCodecBuilder.create(i -> i.group(
+                NumberProvider.CODEC.fieldOf("time").forGetter(Spec::time)
+        ).apply(i, Spec::new));
+
+        @Override
+        public @NotNull Task create() {
+            return new IdleTask(this);
+        }
+    }
 
     @AutoService(Task.Factory.class)
     public static final class Factory extends Task.Factory {
         public Factory() {
-            super("unnamed:idle", IdleTask.class, IdleTask.CODEC);
+            super("unnamed:idle", Spec.class, Spec.CODEC);
         }
     }
 
