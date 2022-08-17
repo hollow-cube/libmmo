@@ -27,5 +27,17 @@
         "stateId": 1
       }
     }
+  },
+  {
+    "namespace": "unnamed:fishing_rod",
+    "id": 2,
+    "material": "minecraft:fishing_rod",
+
+    "defaultStateId": 2,
+    "states": {
+      "[]": {
+        "stateId": 2
+      }
+    }
   }
 ]

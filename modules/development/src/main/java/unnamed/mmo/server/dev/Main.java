@@ -12,6 +12,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.MojangAuth;
+import net.minestom.server.extras.lan.OpenToLAN;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
@@ -42,6 +43,7 @@ public class Main {
         MinecraftServer server = MinecraftServer.init();
 
         MojangAuth.init();
+        OpenToLAN.open();
         MinecraftServer.getConnectionManager().setPlayerProvider(PlayerImpl::new);
 
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
@@ -65,6 +67,7 @@ public class Main {
             // Testing
             event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("unnamed:gold_ore").asBlock());
             player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_pickaxe").asItemStack());
+            player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:fishing_rod").asItemStack());
 
             //todo this needs to be done elsewhere
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));
