@@ -1,9 +1,5 @@
 package unnamed.mmo.server.dev;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
@@ -19,17 +15,15 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.world.DimensionType;
-import org.bson.UuidRepresentation;
 import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
-import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
+import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.player.PlayerImpl;
-import unnamed.mmo.server.dev.tool.DebugTool;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
@@ -67,7 +61,7 @@ public class Main {
             // Testing
             event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("unnamed:gold_ore").asBlock());
             player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_pickaxe").asItemStack());
-            player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:fishing_rod").asItemStack());
+            player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:basic_fishing_rod").asItemStack());
 
             //todo this needs to be done elsewhere
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));

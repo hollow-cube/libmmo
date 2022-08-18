@@ -29,10 +29,15 @@
     }
   },
   {
-    "namespace": "unnamed:fishing_rod",
+    "namespace": "unnamed:basic_fishing_rod",
     "id": 2,
     "material": "minecraft:fishing_rod",
-
+    "components": [
+      {
+        "type": "unnamed:fishing_rod",
+        "strength": 13
+      }
+    ],
     "defaultStateId": 2,
     "states": {
       "[]": {

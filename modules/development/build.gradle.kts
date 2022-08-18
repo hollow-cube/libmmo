@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":modules:block-interactions"))
     implementation(project(":modules:item"))
     implementation(project(":modules:player"))
+    implementation(project(":modules:fishing"))
 
     implementation("org.mongodb:mongodb-driver-sync:4.7.1")
 }
