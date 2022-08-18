@@ -15,9 +15,12 @@ public class FillCommand extends Command {
 
         addSyntax((sender, context) -> {
             if (sender instanceof Player player) {
-                var from = context.get(fromArg).from(player);
-                var to = context.get(toArg).from(player);
+                var fromValue = context.get(fromArg).from(player);
+                var toValue = context.get(toArg).from(player);
                 var block = context.get(blockArg);
+
+                var from = fromValue.min(toValue);
+                var to = toValue.max(fromValue);
 
                 // Set all blocks in the range [from, to]
                 for (int x = (int) from.x(); x <= to.x(); x++) {
