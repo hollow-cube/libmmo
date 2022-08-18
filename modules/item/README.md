@@ -76,6 +76,7 @@ An item component should handle behavior for an item type, be it interaction, lo
 * Create a class which implements `ComponentHandler<YourComponent>`, filling in the relevant methods
 * Annotate `YourComponentHandler` with `@AutoService(ComponentHandler.class)`.
 * Implement any content methods (`eventNode`, the lore one when added).
+* If it isn't already, add the project module to the development module, else it will not be automatically added. 
 
 ### Development
 During development, sample items can be added to `development/src/main/resources/data/items.json`.
