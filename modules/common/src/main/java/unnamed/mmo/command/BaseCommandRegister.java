@@ -11,5 +11,6 @@ public class BaseCommandRegister {
         commandManager.register(new GameModeCommand());
         commandManager.register(new GiveCommand());
         commandManager.register(new SetBlockCommand());
+        commandManager.register(new FillCommand());
     }
 }
