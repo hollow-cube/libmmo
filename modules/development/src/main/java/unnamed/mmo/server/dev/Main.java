@@ -24,6 +24,7 @@ import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
+import unnamed.mmo.entity.UnnamedEntity;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.ItemManager;
@@ -71,6 +72,12 @@ public class Main {
 
             //todo a command for this
             player.getInventory().addItemStack(DebugToolManager.createTool("unnamed:hello"));
+
+
+            //todo test entity
+            UnnamedEntity entity = new UnnamedEntity();
+            entity.setInstance(instance, new Pos(0, 40, 0))
+                    .thenAccept(unused -> System.out.println("Spawned"));
         });
 
         BaseCommandRegister.registerCommands();

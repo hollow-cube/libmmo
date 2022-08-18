@@ -1,0 +1,20 @@
+[
+  // Single objective, kill mob
+  {
+    "type": "kill_mob",
+    "data": 5,
+  },
+
+  // Sequence objective
+  {
+    "data": {},
+    "children": {
+      "0": {
+        "data": 5,
+      },
+      "1": {
+        "data": 2,
+      },
+    }
+  }
+]

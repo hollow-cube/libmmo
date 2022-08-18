@@ -6,15 +6,16 @@ import unnamed.mmo.entity.brain.task.AbstractTask;
 import unnamed.mmo.entity.brain.task.Task;
 
 public class MockTask extends AbstractTask {
-    private final boolean pass;
+    private final Boolean pass;
 
-    public MockTask(boolean pass) {
+    public MockTask(Boolean pass) {
         this.pass = pass;
     }
 
     @Override
     public void tick(@NotNull Brain brain) {
-        end(pass);
+        if (pass != null)
+            end(pass);
     }
 
     public @NotNull Spec spec() {
