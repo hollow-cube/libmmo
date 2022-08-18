@@ -1,13 +1,16 @@
 package unnamed.mmo.quest;
 
-import com.mojang.serialization.Codec;
 import net.minestom.server.entity.Player;
+import unnamed.mmo.quest.objective.QuestObjective;
+import unnamed.mmo.quest.objective.QuestRegistry;
 
 public interface QuestContext {
     Player player();
-    Quest quest();
+    QuestRegistry.Quest quest();
 
+    QuestContext addChildContext(QuestObjective objective, QuestContext context);
 
-    <T> T get(Codec<T> codec);
-    <T> void set(Codec<T> codec, T value);
+    void set(T thing, blah);
+
+    T get(???);
 }

@@ -8,8 +8,6 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public record ProgressObjective(String flag) implements QuestObjective {
-
-
     @Override
     public CompletableFuture<Void> onStart(QuestContext context) {
         CompletableFuture<Void> complete = new CompletableFuture<>();

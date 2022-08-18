@@ -1,6 +1,7 @@
-{
-  "example-quest": {
-    "mode": "sequence",
+[
+  {
+    "name": "example-quest",
+    "type": "list",
     "objectives": [
       {
         "type": "progress",
@@ -13,7 +14,6 @@
       },
       {
         "type": "multi",
-        "mode": "sequence",
         "objectives": [
           {
             "type": "progress",
@@ -28,4 +28,4 @@
       }
     ]
   }
-}
+]
