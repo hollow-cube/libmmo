@@ -3,18 +3,21 @@ package unnamed.mmo.fishing.item;
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import net.kyori.adventure.sound.Sound;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.metadata.other.FishingHookMeta;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import unnamed.mmo.blocks.util.BlockUtil;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemComponentHandler;
 
@@ -32,6 +35,7 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
 
     public FishingRodHandler() {
         eventNode.addListener(PlayerUseItemEvent.class, this::useItemOnAir);
+        eventNode.addListener(PlayerChangeHeldSlotEvent.class, this::changeHeldSlot);
     }
 
     @Override
@@ -54,6 +58,24 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
         return eventNode;
     }
 
+    private void bobberTick(@NotNull Entity bobberEntity, boolean wasInWater) {
+        if (bobberEntity.isRemoved() || bobberEntity.getInstance() == null) return;
+
+        var position = bobberEntity.getPosition();
+
+        var inWater = BlockUtil.isWater(bobberEntity.getInstance().getBlock(position));
+
+        if (inWater && !wasInWater) {
+            bobberEntity.getInstance().playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_SPLASH, Sound.Source.PLAYER, 0.5f, 1f), position.x(), position.y(), position.z());
+        }
+
+        if (inWater) {
+            bobberEntity.setVelocity(bobberEntity.getVelocity().add(0, 0.68, 0));
+        }
+
+        MinecraftServer.getSchedulerManager().scheduleNextTick(() -> bobberTick(bobberEntity, inWater));
+    }
+
     private void summonBobber(@NotNull Instance instance, @NotNull Player player, @NotNull FishingRod rod) {
 
         FISHING_HOOKS.put(player, new ArrayList<>());
@@ -68,13 +90,33 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
             // Need to connect it to the owner's fishing rod
             bobberMeta.setOwnerEntity(player);
 
-            bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0)).thenRun(() ->
-                bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()))
-            );
+            bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0)).thenRun(() -> {
+                bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()));
+                bobberTick(bobber, false);
+            });
         }
 
         var position = player.getPosition();
-        instance.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_THROW, Sound.Source.PLAYER, 1f, 1f), position.x(), position.y(), position.z());
+        instance.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_THROW, Sound.Source.PLAYER, 1f, 0.5f), position.x(), position.y(), position.z());
+    }
+
+    private void removeBobbers(Player player, Instance instance) {
+        for (var hook : FISHING_HOOKS.get(player)) {
+            // Remove all fishing hooks
+            hook.remove();
+        }
+
+        var position = player.getPosition();
+        instance.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 1f), position.x(), position.y(), position.z());
+
+        // Remove fishing hooks from the map
+        FISHING_HOOKS.remove(player);
+    }
+
+    private void changeHeldSlot(@NotNull PlayerChangeHeldSlotEvent event) {
+        if (event.getSlot() != event.getPlayer().getHeldSlot()) {
+            removeBobbers(event.getPlayer(), event.getInstance());
+        }
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {
@@ -87,16 +129,7 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
         if (rod == null) return; // No fishing rod in hand
 
         if (FISHING_HOOKS.get(event.getPlayer()) != null) { // Fishing rod is already thrown
-            for (var hook : FISHING_HOOKS.get(event.getPlayer())) {
-                // Remove all fishing hooks
-                hook.remove();
-            }
-
-            var position = event.getPlayer().getPosition();
-            event.getInstance().playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 1f), position.x(), position.y(), position.z());
-
-            // Remove fishing hooks from the map
-            FISHING_HOOKS.remove(event.getPlayer());
+            removeBobbers(event.getPlayer(), event.getInstance());
         } else {
             summonBobber(event.getInstance(), event.getPlayer(), rod);
         }
