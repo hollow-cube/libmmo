@@ -2,7 +2,9 @@ package unnamed.mmo.entity.brain.navigator;
 
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import sexy.kostya.enodia.EnodiaPF;
@@ -25,11 +27,17 @@ final class EnodiaNavigator implements Navigator {
     private static final PathfindingCapabilities DEFAULT_CAPABILITIES = PathfindingCapabilities.Companion.getDefault();
     private static final MovementImportance DEFAULT_IMPORTANCE = MovementImportance.Companion.getUNIMPORTANT();
 
-    private final MovementProcessor enodia;
+    private final Entity entity;
+    private MovementProcessor enodia;
 
-    EnodiaNavigator(@NotNull Brain brain) {
-        //todo other capabilities
-        this.enodia = MOVEMENT_HUB.createMovementProcessor(brain.entity(), DEFAULT_CAPABILITIES);
+    EnodiaNavigator(@NotNull Entity entity) {
+        this.entity = entity;
+        this.enodia = null;
+    }
+
+    @Override
+    public void setInstance(@NotNull Instance instance) {
+        enodia = MOVEMENT_HUB.createMovementProcessor(entity, DEFAULT_CAPABILITIES);
     }
 
     @Override
@@ -43,4 +51,18 @@ final class EnodiaNavigator implements Navigator {
         return enodia.goTo(point, DEFAULT_IMPORTANCE, 2);
     }
 
+    @Override
+    public boolean isActive() {
+        if (enodia == null) {
+            return false;
+        }
+        return enodia.isActive();
+    }
+
+    @Override
+    public void tick(long time) {
+        if (enodia != null) {
+            enodia.tick(time);
+        }
+    }
 }

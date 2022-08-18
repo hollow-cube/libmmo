@@ -45,10 +45,12 @@ public class TestEnodiaPF {
 
         boolean result = env.tickWhile(() -> {
             System.out.println(entity.getPosition());
-            return !entity.getPosition().sameBlock(new Vec(0, 40, 0));
+//            return !entity.getPosition().sameBlock(new Vec(0, 40, 0));
+            return entity.movementProcessor.isActive();
         }, Duration.ofMillis(100));
 
         assertThat(result).isTrue();
+        assertThat(entity.movementProcessor.isActive()).isFalse();
     }
 
     static class EnodiaEntity extends Entity {

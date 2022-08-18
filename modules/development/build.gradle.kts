@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":modules:item"))
     implementation(project(":modules:player"))
     implementation(project(":modules:quest"))
+    implementation(project(":modules:entity"))
 
     implementation("org.mongodb:mongodb-driver-sync:4.7.1")
 }

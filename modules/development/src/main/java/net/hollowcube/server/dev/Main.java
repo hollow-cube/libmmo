@@ -31,6 +31,21 @@ import net.hollowcube.item.Item;
 import net.hollowcube.server.Facet;
 import net.hollowcube.server.ServerWrapper;
 import net.hollowcube.server.dev.command.BaseCommandRegister;
+import unnamed.mmo.blocks.BlockInteracter;
+import unnamed.mmo.blocks.ore.Ore;
+import unnamed.mmo.chat.ChatManager;
+import unnamed.mmo.chat.storage.ChatStorage;
+import unnamed.mmo.command.BaseCommandRegister;
+import unnamed.mmo.entity.UnnamedEntity;
+import unnamed.mmo.item.Item;
+import unnamed.mmo.damage.DamageProcessor;
+import unnamed.mmo.item.Item;
+import unnamed.mmo.item.ItemManager;
+import unnamed.mmo.item.entity.OwnedItemEntity;
+import unnamed.mmo.player.PlayerImpl;
+import unnamed.mmo.quest.QuestFacet;
+import unnamed.mmo.server.dev.tool.DebugToolManager;
+import unnamed.mmo.server.instance.TickTrackingInstance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,6 +93,12 @@ public class Main {
 
             //todo a command for this
             player.getInventory().addItemStack(DebugToolManager.createTool("unnamed:hello"));
+
+
+            //todo test entity
+            UnnamedEntity entity = new UnnamedEntity();
+            entity.setInstance(instance, new Pos(0, 40, 0))
+                    .thenAccept(unused -> System.out.println("Spawned"));
         });
 
         BaseCommandRegister.registerCommands(); //todo this should be in a facet?
