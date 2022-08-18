@@ -18,8 +18,15 @@ import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemComponentHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.WeakHashMap;
+
 @AutoService(ItemComponentHandler.class)
 public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
+
+    // Weakly keep track of the fishing hooks -- weak to handle cases of players leaving or entities being destroyed
+    private static final WeakHashMap<Player, List<Entity>> FISHING_HOOKS = new WeakHashMap<>();
 
     private final EventNode<Event> eventNode = EventNode.all("unnamed:fishing_rod/item_component_handler");
 
@@ -48,8 +55,13 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
     }
 
     private void summonBobber(@NotNull Instance instance, @NotNull Player player, @NotNull FishingRod rod) {
+
+        FISHING_HOOKS.put(player, new ArrayList<>());
+
         for (int i = 0; i < rod.bobberCount(); i++) {
             var bobber = new Entity(EntityType.FISHING_BOBBER);
+
+            FISHING_HOOKS.get(player).add(bobber);
 
             var bobberMeta = (FishingHookMeta) bobber.getEntityMeta();
 
@@ -57,20 +69,33 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
             bobberMeta.setOwnerEntity(player);
 
             bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0));
-
-            bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()));
+                    bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()));
         }
 
         player.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_THROW, Sound.Source.PLAYER, 1f, 1f));
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {
-        var item = Item.fromItemStack(event.getPlayer().getItemInMainHand());
+        var itemStack = event.getPlayer().getItemInHand(event.getHand());
+
+        var item = Item.fromItemStack(itemStack);
 
         var rod = item.getComponent(FishingRod.class);
 
         if (rod == null) return; // No fishing rod in hand
 
-        summonBobber(event.getInstance(), event.getPlayer(), rod);
+        if (FISHING_HOOKS.get(event.getPlayer()) != null) { // Fishing rod is already thrown
+            for (var hook : FISHING_HOOKS.get(event.getPlayer())) {
+                // Remove all fishing hooks
+                hook.remove();
+            }
+
+            event.getPlayer().playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 1f));
+
+            // Remove fishing hooks from the map
+            FISHING_HOOKS.remove(event.getPlayer());
+        } else {
+            summonBobber(event.getInstance(), event.getPlayer(), rod);
+        }
     }
 }
