@@ -47,18 +47,19 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
         return eventNode;
     }
 
-    private void summonBobber(@NotNull Instance instance, @NotNull Player player, FishingRod rod) {
-        for (int i = 0; )
-        var bobber = new Entity(EntityType.FISHING_BOBBER);
+    private void summonBobber(@NotNull Instance instance, @NotNull Player player, @NotNull FishingRod rod) {
+        for (int i = 0; i < rod.bobberCount(); i++) {
+            var bobber = new Entity(EntityType.FISHING_BOBBER);
 
-        var bobberMeta = (FishingHookMeta) bobber.getEntityMeta();
+            var bobberMeta = (FishingHookMeta) bobber.getEntityMeta();
 
-        // Need to connect it to the owner's fishing rod
-        bobberMeta.setOwnerEntity(player);
+            // Need to connect it to the owner's fishing rod
+            bobberMeta.setOwnerEntity(player);
 
-        bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0));
+            bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0));
 
-        bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()));
+            bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()));
+        }
 
         player.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_THROW, Sound.Source.PLAYER, 1f, 1f));
     }

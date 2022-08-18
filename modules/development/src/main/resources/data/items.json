@@ -35,7 +35,8 @@
     "components": [
       {
         "type": "unnamed:fishing_rod",
-        "strength": 13
+        "strength": 13,
+        "bobberCount": 1
       }
     ],
     "defaultStateId": 2,
