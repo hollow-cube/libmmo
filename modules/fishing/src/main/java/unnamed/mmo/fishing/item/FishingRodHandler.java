@@ -68,11 +68,13 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
             // Need to connect it to the owner's fishing rod
             bobberMeta.setOwnerEntity(player);
 
-            bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0));
-                    bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()));
+            bobber.setInstance(instance, player.getPosition().add(0.0, player.getEyeHeight(), 0.0)).thenRun(() ->
+                bobber.setVelocity(player.getPosition().direction().normalize().mul(rod.strength()))
+            );
         }
 
-        player.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_THROW, Sound.Source.PLAYER, 1f, 1f));
+        var position = player.getPosition();
+        instance.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_THROW, Sound.Source.PLAYER, 1f, 1f), position.x(), position.y(), position.z());
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {
@@ -90,7 +92,8 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
                 hook.remove();
             }
 
-            event.getPlayer().playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 1f));
+            var position = event.getPlayer().getPosition();
+            event.getInstance().playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 1f), position.x(), position.y(), position.z());
 
             // Remove fishing hooks from the map
             FISHING_HOOKS.remove(event.getPlayer());
