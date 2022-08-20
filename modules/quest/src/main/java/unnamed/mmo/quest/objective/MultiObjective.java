@@ -1,7 +1,6 @@
 package unnamed.mmo.quest.objective;
 
 import unnamed.mmo.quest.QuestContext;
-import unnamed.mmo.quest.QuestContextImpl;
 
 import java.util.concurrent.CompletableFuture;
 

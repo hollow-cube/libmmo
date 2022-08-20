@@ -4,5 +4,11 @@
     "oreBlock": "minecraft:gold_ore",
     "health": 100,
     "lootTable": "unnamed:gold_ore"
+  },
+  {
+    "namespace": "unnamed:diamond_ore",
+    "oreBlock": "minecraft:diamond_ore",
+    "health": 50,
+    "lootTable": "unnamed:gold_ore"
   }
 ]

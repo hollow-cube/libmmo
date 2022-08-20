@@ -1,0 +1,10 @@
+[
+  {
+    "namespace": "unnamed:test_1",
+    "objective": {
+      "type": "unnamed:mine_ore",
+      "ore": "unnamed:gold_ore",
+      "count": 3
+    }
+  }
+]

@@ -1,88 +1,76 @@
 package unnamed.mmo.quest;
 
 import com.google.gson.JsonParser;
-import com.mojang.serialization.*;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.objective.QuestObjective;
-import unnamed.mmo.quest.objective.QuestRegistry;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.quest.storage.ObjectiveData;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static unnamed.mmo.util.ExtraCodecs.lazy;
-
+import java.util.stream.Collectors;
 
 public class QuestContextImpl implements QuestContext {
-    public static final Codec<QuestContextImpl> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ExtraCodecs.NAMESPACE_ID.fieldOf("type").forGetter(QuestContextImpl::type),
-            Codec.PASSTHROUGH.fieldOf("data").forGetter(QuestContextImpl::data),
-            Codec.unboundedMap(Codec.STRING, lazy(() -> QuestContextImpl.CODEC)).fieldOf("children").forGetter(QuestContextImpl::children)
-    ).apply(i, QuestContextImpl::new));
 
-    private final NamespaceID type;
-    private final Map<String, QuestContextImpl> children;
-    private Dynamic<?> data;
+    private final Player player;
+    private final ObjectiveData data;
 
-    private Object dataCache = null;
-    // The presence of this object indicates that `data` must be overridden.
-    private Codec<Object> dataCodec = null;
+    private final Map<String, QuestContextImpl> children = new HashMap<>();
+    private Codec<Object> objCodec = null;
+    private Object objData = null;
 
-    public QuestContextImpl(@NotNull NamespaceID type, @NotNull Dynamic<?> data, @NotNull Map<String, QuestContextImpl> children) {
-        this.type = type;
+    public QuestContextImpl(@NotNull Player player, @NotNull ObjectiveData data) {
+        this.player = player;
         this.data = data;
-        this.children = new HashMap<>();
-        this.children.putAll(children);
-    }
 
-    public @NotNull NamespaceID type() {
-        return type;
-    }
-
-    public @NotNull Dynamic<?> data() {
-        if (dataCodec != null) {
-            //todo this is pretty cursed
-            var a = dataCodec.encodeStart(JsonOps.INSTANCE, dataCache);
-            data = new Dynamic<>(JsonOps.INSTANCE, a.result().get());
-            dataCodec = null;
+        // Actively load all children
+        for (var entry : data.children().entrySet()) {
+            children.put(entry.getKey(), new QuestContextImpl(player, entry.getValue()));
         }
-        return data;
     }
 
-    public @NotNull Map<String, QuestContextImpl> children() {
-        return children;
+    @Override
+    public @NotNull Player player() {
+        return this.player;
     }
 
 
     @Override
     public <T> @NotNull T get(Codec<T> codec) {
-        if (dataCache == null)
-            dataCache = codec.decode(data);
-        return (T) dataCache;
+        if (objData == null) {
+            objData = codec.decode(JsonOps.INSTANCE, JsonParser.parseString(data.data()))
+                    //todo safety
+                    .result().get().getFirst();
+        }
+        return (T) objData;
     }
 
     @Override
     public <T> void set(@NotNull Codec<T> codec, T value) {
-        dataCodec = (Codec<Object>) codec;
-        dataCache = value;
+        objCodec = (Codec<Object>) codec;
+        objData = value;
     }
 
     @Override
     public @NotNull QuestContext child(@NotNull String name, @NotNull QuestObjective objective) {
         NamespaceID type = QuestObjective.Factory.TYPE_REGISTRY.get(objective.getClass()).namespace();
-//        QuestContextImpl child = children.computeIfAbsent(name, s -> new QuestContextImpl(type, ))
-        return null;
+        return children.computeIfAbsent(name, s -> new QuestContextImpl(player, new ObjectiveData(type, Map.of(), "")));
     }
 
-    public static void main(String[] args) {
-        var json = JsonParser.parseString("""
-                1
-                """);
-        var dynamic = new Dynamic<>(JsonOps.INSTANCE, json);
-        var result = Codec.STRING.orElse("a").decode(dynamic).result().get();
-        System.out.println(result);
+
+    @Override
+    public @NotNull ObjectiveData serialize() {
+        return new ObjectiveData(
+                data.type(),
+                children.entrySet().stream()
+                        .map(entry -> new Pair<>(entry.getKey(), entry.getValue().serialize()))
+                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),
+                //todo safety
+                objCodec.encodeStart(JsonOps.INSTANCE, objData).result().get().toString()
+        );
     }
 }

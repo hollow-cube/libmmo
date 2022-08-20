@@ -162,6 +162,13 @@ public interface Registry<T extends Resource> {
         return getRaw(namespace.asString());
     }
 
+    default @NotNull T required(String namespace) {
+        T result = get(namespace);
+        Check.notNull(result, "Missing required registry entry: " + namespace);
+        return result;
+    }
+
+
     @NotNull Collection<T> values();
 
     int size();

@@ -38,8 +38,7 @@ public record BlockBreakObjective(int blockId, int count) implements QuestObject
 
         return complete;
     }
-    @AutoService(QuestObjective.Factory.class)
-    static class Factory extends QuestObjective.Factory {
+    public static class Factory extends QuestObjective.Factory {
         public Factory() {
             super(NamespaceID.from("unnammedmmo", "block-break-objective"), BlockBreakObjective.class, codec);
         }

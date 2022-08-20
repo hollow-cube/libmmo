@@ -22,7 +22,7 @@ public interface QuestObjective {
 
         public static Registry.Index<Class<?>, Factory> TYPE_REGISTRY = REGISTRY.index(Factory::type);
 
-        static final Codec<Factory> CODEC = Codec.STRING.xmap(namespace -> REGISTRY.get(namespace), Factory::name);
+        static final Codec<Factory> CODEC = Codec.STRING.xmap(namespace -> REGISTRY.required(namespace), Factory::name);
 
         public Factory(NamespaceID namespace, Class<? extends QuestObjective> type, Codec<? extends QuestObjective> codec) {
             super(namespace, type, codec);
