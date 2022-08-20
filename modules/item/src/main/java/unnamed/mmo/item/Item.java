@@ -3,20 +3,21 @@ package unnamed.mmo.item;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.item.attribute.ItemAttribute;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import unnamed.mmo.lang.LanguageProvider;
 import unnamed.mmo.registry.Resource;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public interface Item extends Resource.Id {
@@ -87,8 +88,11 @@ public interface Item extends Resource.Id {
 
         return builder
                 .amount(amount())
-                .displayName(net.kyori.adventure.text.Component.text(translationKey()).decoration(TextDecoration.ITALIC, false))
-                .meta(meta -> meta.customModelData(stateId()))
+                .displayName(LanguageProvider.get(translationKey()))
+                .meta(meta -> {
+                    meta.customModelData(stateId());
+                    meta.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES);
+                })
                 .build();
     }
 
