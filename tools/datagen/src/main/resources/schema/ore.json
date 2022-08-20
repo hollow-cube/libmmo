@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Ore",
+  "description": "A single ore definition",
+  "type": "object",
+  "required": ["namespace", "oreBlock", "health", "lootTable"],
+  "properties": {
+    "namespace": {
+      "$ref": "common.json#/definitions/NamespaceId"
+    },
+    "oreBlock": {
+      "$ref": "common.json#/definitions/NamespaceId"
+    },
+    "health": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lootTable": {
+      "$ref": "common.json#/definitions/NamespaceId"
+    }
+  }
+}

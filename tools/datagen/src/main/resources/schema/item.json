@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Item",
+  "description": "A single item definition",
+
+  "allOf": [
+    {
+      "$ref": "#/definitions/TopLevelProps"
+    },
+    {
+      "$ref": "#/definitions/BaseItem"
+    }
+  ],
+
+  "definitions": {
+    "TopLevelProps": {
+      "type": "object",
+
+      "required": ["namespace"],
+      "properties": {
+        "namespace": {
+          "$ref": "common.json#/definitions/NamespaceId"
+        }
+      }
+    },
+    "BaseItem": {
+      "type": "object",
+
+      "material": {
+        "$ref": "common.json#/definitions/NamespaceId"
+      },
+      "properties": {
+        "components": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "[a-zA-Z:/]+": {
+
+            }
+          }
+        },
+        "states": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "\\[[a-zA-Z]+]": {
+                "$ref": "#/definitions/BaseItem"
+            }
+          }
+        }
+      }
+    }
+  }
+}
