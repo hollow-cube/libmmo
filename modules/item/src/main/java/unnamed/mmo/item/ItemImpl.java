@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public record ItemImpl(
         @NotNull ItemRegistry.Entry registry,
@@ -54,6 +55,11 @@ public record ItemImpl(
     @Contract(pure = true)
     public @NotNull Material material() {
         return registry().material();
+    }
+
+    @Override
+    public @NotNull Stream<ItemComponent> components() {
+        return registry().components().values().stream();
     }
 
     @Override

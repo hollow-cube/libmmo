@@ -7,6 +7,10 @@
       {
         "type": "unnamed:pickaxe",
         "miningSpeed": 5
+      },
+      {
+        "type": "unnamed:rarity",
+        "value": "common"
       }
     ],
     "defaultStateId": 0,

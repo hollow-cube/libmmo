@@ -1,5 +1,6 @@
 package unnamed.mmo.item;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -13,8 +14,10 @@ import org.jetbrains.annotations.Unmodifiable;
 import unnamed.mmo.registry.Resource;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public interface Item extends Resource.Id {
 
@@ -56,6 +59,11 @@ public interface Item extends Resource.Id {
 
     // Components
 
+    /**
+     * Returns all of the {@link ItemComponent}s on this item.
+     */
+    @NotNull Stream<ItemComponent> components();
+
     default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
         return getComponent(ItemComponentHandler.from(type).name());
     }
@@ -68,7 +76,16 @@ public interface Item extends Resource.Id {
     // ItemStack conversion
 
     default @NotNull ItemStack asItemStack() {
-        return ItemStack.builder(material())
+        final var builder = ItemStack.builder(material());
+
+        // Apply each component handler to the item in order.
+        //todo this is a bit cursed and could use some cleanup for sure
+        components()
+                .map(comp -> new Pair<>(comp, ItemComponentHandler.from(comp)))
+                .sorted(Comparator.comparing(p -> p.getSecond().priority()))
+                .forEach(p -> p.getSecond().buildItemStack(p.getFirst(), builder));
+
+        return builder
                 .amount(amount())
                 .displayName(net.kyori.adventure.text.Component.text(translationKey()).decoration(TextDecoration.ITALIC, false))
                 .meta(meta -> meta.customModelData(stateId()))
