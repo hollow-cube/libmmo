@@ -1,16 +1,19 @@
 package unnamed.mmo.quest;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import net.minestom.server.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.objective.QuestObjective;
 import unnamed.mmo.quest.objective.QuestRegistry;
 
 public interface QuestContext {
-    Player player();
-    QuestRegistry.Quest quest();
 
-    QuestContext addChildContext(QuestObjective objective, QuestContext context);
+    <T> @NotNull T get(Codec<T> codec);
 
-    void set(T thing, blah);
+    <T> void set(@NotNull Codec<T> codec, T value);
 
-    T get(???);
+    @NotNull QuestContext child(@NotNull String name, @NotNull QuestObjective objective);
+
 }

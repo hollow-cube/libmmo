@@ -22,19 +22,19 @@ public record BlockBreakObjective(int blockId, int count) implements QuestObject
     public CompletableFuture<Void> onStart(QuestContext context) {
         CompletableFuture<Void> complete = new CompletableFuture<>();
 
-        context.player().eventNode().addListener(EventListener.builder(PlayerBlockBreakEvent.class)
-                .expireWhen(event -> complete.isDone())
-                .filter(event -> event.getBlock().id() == blockId)
-                .handler(event -> {
-                    int current = context.get(COUNT);
-                    current++;
-                    if (current == count()) {
-                        complete.complete(null);
-                        return;
-                    }
-                    context.set(COUNT, current);
-                })
-                .build());
+//        context.player().eventNode().addListener(EventListener.builder(PlayerBlockBreakEvent.class)
+//                .expireWhen(event -> complete.isDone())
+//                .filter(event -> event.getBlock().id() == blockId)
+//                .handler(event -> {
+//                    int current = context.get(COUNT);
+//                    current++;
+//                    if (current == count()) {
+//                        complete.complete(null);
+//                        return;
+//                    }
+//                    context.set(COUNT, current);
+//                })
+//                .build());
 
         return complete;
     }

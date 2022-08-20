@@ -12,12 +12,12 @@ public record ProgressObjective(String flag) implements QuestObjective {
     public CompletableFuture<Void> onStart(QuestContext context) {
         CompletableFuture<Void> complete = new CompletableFuture<>();
 
-        context.player().eventNode().addListener(EventListener.builder(ProgressAttainedEvent.class)
-                .expireWhen(event -> complete.isDone())
-                .filter(event -> event.getPlayer() == context.player() &&
-                        Objects.equals(event.getProgressId(), flag))
-                .handler(event -> complete.complete(null))
-                .build());
+//        context.player().eventNode().addListener(EventListener.builder(ProgressAttainedEvent.class)
+//                .expireWhen(event -> complete.isDone())
+//                .filter(event -> event.getPlayer() == context.player() &&
+//                        Objects.equals(event.getProgressId(), flag))
+//                .handler(event -> complete.complete(null))
+//                .build());
 
         return complete;
     }
