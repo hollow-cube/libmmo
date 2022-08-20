@@ -17,6 +17,8 @@ public interface QuestContext {
 
     @NotNull Player player();
 
+    @NotNull Quest quest();
+
 
     @ApiStatus.Internal
     @NotNull ObjectiveData serialize();

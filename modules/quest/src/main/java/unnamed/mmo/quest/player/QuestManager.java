@@ -1,7 +1,7 @@
 package unnamed.mmo.quest.player;
 
-import com.mojang.datafixers.util.Pair;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import unnamed.mmo.quest.Quest;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.quest.QuestContextImpl;
 import unnamed.mmo.quest.QuestState;
-import unnamed.mmo.quest.objective.ChatObjective;
+import unnamed.mmo.quest.event.PlayerQuestCompleteEvent;
 import unnamed.mmo.quest.storage.ObjectiveData;
 import unnamed.mmo.quest.storage.QuestData;
 
@@ -37,7 +37,7 @@ public class QuestManager {
     public void startQuest(@NotNull String questId) {
         Quest quest = Quest.fromNamespaceId(questId);
         Check.notNull(quest, "No such quest: " + questId);
-        QuestContextImpl context = new QuestContextImpl(player, new ObjectiveData(NamespaceID.from("todo"), Map.of(), ""));
+        QuestContextImpl context = new QuestContextImpl(player, quest, new ObjectiveData(NamespaceID.from("todo"), Map.of(), ""));
         startWithTracking(quest, context);
     }
 
@@ -60,7 +60,7 @@ public class QuestManager {
             Check.notNull(quest, "no such quest: " + questId);
 
             // Create a context from the data and restart the quest
-            QuestContext context = new QuestContextImpl(player, objectiveData);
+            QuestContext context = new QuestContextImpl(player, quest, objectiveData);
             startWithTracking(quest, context);
         }
     }
@@ -71,9 +71,12 @@ public class QuestManager {
 
         var completion = quest.objective().onStart(rootContext);
         completion.thenAccept(unused -> {
-            player.sendMessage("finished quest " + questId);
             completed.add(questId);
             inProgress.remove(questId);
+
+            // Dispatch completion event
+            var event = new PlayerQuestCompleteEvent(player, quest);
+            EventDispatcher.call(event);
         });
     }
 

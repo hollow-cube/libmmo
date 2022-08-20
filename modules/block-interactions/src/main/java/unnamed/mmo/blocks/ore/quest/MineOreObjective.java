@@ -2,10 +2,8 @@ package unnamed.mmo.blocks.ore.quest;
 
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.event.EventListener;
-import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.ore.event.PlayerOreBreakEvent;

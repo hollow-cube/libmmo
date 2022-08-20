@@ -2,19 +2,29 @@ package unnamed.mmo.quest.objective;
 
 import com.mojang.serialization.Codec;
 import net.minestom.server.utils.NamespaceID;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.registry.Registry;
+import unnamed.mmo.registry.Resource;
 import unnamed.mmo.registry.ResourceFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface QuestObjective {
+import static unnamed.mmo.util.ExtraCodecs.lazy;
 
-    Codec<QuestObjective> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
+public interface QuestObjective extends Resource {
+
+    Codec<QuestObjective> CODEC = lazy(() -> Factory.CODEC).dispatch(Factory::from, Factory::codec);
 
     CompletableFuture<Void> onStart(QuestContext context);
+
+    default @NotNull NamespaceID namespace() {
+        Factory factory = Factory.from(this);
+        Check.notNull(factory, "No such objective for " + this);
+        return factory.namespace();
+    }
 
 
     class Factory extends ResourceFactory<QuestObjective> {

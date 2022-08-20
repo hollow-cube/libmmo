@@ -17,19 +17,21 @@ import java.util.stream.Collectors;
 public class QuestContextImpl implements QuestContext {
 
     private final Player player;
+    private final Quest quest;
     private final ObjectiveData data;
 
-    private final Map<String, QuestContextImpl> children = new HashMap<>();
+    protected final Map<String, QuestContextImpl> children = new HashMap<>();
     private Codec<Object> objCodec = null;
     private Object objData = null;
 
-    public QuestContextImpl(@NotNull Player player, @NotNull ObjectiveData data) {
+    public QuestContextImpl(@NotNull Player player, @NotNull Quest quest, @NotNull ObjectiveData data) {
         this.player = player;
+        this.quest = quest;
         this.data = data;
 
         // Actively load all children
         for (var entry : data.children().entrySet()) {
-            children.put(entry.getKey(), new QuestContextImpl(player, entry.getValue()));
+            children.put(entry.getKey(), new QuestContextImpl(player, quest, entry.getValue()));
         }
     }
 
@@ -38,6 +40,10 @@ public class QuestContextImpl implements QuestContext {
         return this.player;
     }
 
+    @Override
+    public @NotNull Quest quest() {
+        return this.quest;
+    }
 
     @Override
     public <T> @NotNull T get(Codec<T> codec) {
@@ -58,7 +64,7 @@ public class QuestContextImpl implements QuestContext {
     @Override
     public @NotNull QuestContext child(@NotNull String name, @NotNull QuestObjective objective) {
         NamespaceID type = QuestObjective.Factory.TYPE_REGISTRY.get(objective.getClass()).namespace();
-        return children.computeIfAbsent(name, s -> new QuestContextImpl(player, new ObjectiveData(type, Map.of(), "")));
+        return children.computeIfAbsent(name, s -> new QuestContextImpl(player, quest, new ObjectiveData(type, Map.of(), "")));
     }
 
 
@@ -70,7 +76,10 @@ public class QuestContextImpl implements QuestContext {
                         .map(entry -> new Pair<>(entry.getKey(), entry.getValue().serialize()))
                         .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),
                 //todo safety
-                objCodec.encodeStart(JsonOps.INSTANCE, objData).result().get().toString()
+                objCodec == null ?
+                        // If the data has not changed we do not have a new codec, so just leave whatever was there.
+                        data.data() :
+                        objCodec.encodeStart(JsonOps.INSTANCE, objData).result().get().toString()
         );
     }
 }

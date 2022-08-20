@@ -1,12 +1,19 @@
 package unnamed.mmo.quest;
 
 import com.google.auto.service.AutoService;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.ServerProcess;
+import net.minestom.server.advancements.FrameType;
+import net.minestom.server.advancements.notifications.Notification;
+import net.minestom.server.advancements.notifications.NotificationCenter;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unnamed.mmo.quest.event.PlayerQuestCompleteEvent;
+import unnamed.mmo.quest.event.PlayerQuestObjectiveCompleteEvent;
 import unnamed.mmo.quest.objective.QuestObjective;
 import unnamed.mmo.quest.player.QuestManager;
 import unnamed.mmo.quest.storage.QuestStorage;
@@ -30,6 +37,9 @@ public class QuestFacet implements Facet {
 
         server.eventHandler().addListener(PlayerLoginEvent.class, this::handleJoin);
         server.eventHandler().addListener(PlayerDisconnectEvent.class, this::handleLeave);
+
+        server.eventHandler().addListener(PlayerQuestObjectiveCompleteEvent.class, this::handleObjectiveCompletion);
+        server.eventHandler().addListener(PlayerQuestCompleteEvent.class, this::handleQuestCompletion);
     }
 
     private void handleJoin(@NotNull PlayerLoginEvent event) {
@@ -55,6 +65,24 @@ public class QuestFacet implements Facet {
                     managers.remove(player);
                     System.out.println("Saved quest data for " + player);
                 });
+    }
+
+    private void handleObjectiveCompletion(@NotNull PlayerQuestObjectiveCompleteEvent event) {
+        var notification = new Notification(
+                Component.text("Objective " + event.getObjective().name()),
+                FrameType.TASK,
+                Material.GOLD_INGOT
+        );
+        NotificationCenter.send(notification, event.getPlayer());
+    }
+
+    private void handleQuestCompletion(@NotNull PlayerQuestCompleteEvent event) {
+        var notification = new Notification(
+                Component.text("Completed " + event.getQuest().name()),
+                FrameType.CHALLENGE,
+                Material.GOLD_INGOT
+        );
+        NotificationCenter.send(notification, event.getPlayer());
     }
 
 }
