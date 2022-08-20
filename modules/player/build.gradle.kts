@@ -1,3 +1,1 @@
-plugins {
-    `java-library`
-}
+apply(plugin = "java-library")

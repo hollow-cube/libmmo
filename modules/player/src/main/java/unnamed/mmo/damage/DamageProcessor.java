@@ -33,9 +33,9 @@ public class DamageProcessor {
         if (target instanceof LivingEntity targetEntity) {
             if (iTickManager.isEntityImmune(targetEntity)) return;
 
-            if (source instanceof Player player) {
-                DamageType type = DamageType.fromPlayer(player);
-                DamageInfo info = new DamageInfo(type, getAttributeValue(player, Attribute.ATTACK_DAMAGE, 1));
+            if (source instanceof LivingEntity attacker) {
+                DamageType type = DamageType.fromEntity(attacker);
+                DamageInfo info = new DamageInfo(type, getAttributeValue(attacker, Attribute.ATTACK_DAMAGE, 1));
                 // Handle Items - Attack damage attribute was handled by getAttributeValue previously
                 // Only apply enchants on main hand
                 /*ItemStack itemStack = player.getItemInMainHand();
@@ -49,7 +49,7 @@ public class DamageProcessor {
                     info.getKnockbackStrength().addBase(0.5 * itemStack.meta().getEnchantmentMap().get(Enchantment.KNOCKBACK));
                 }*/
                 // More knockback if sprinting
-                if (player.isSprinting()) {
+                if (attacker.isSprinting()) {
                     info.getKnockbackStrength().multiply(1.15);
                 }
                 // Handle Potion effects
@@ -86,13 +86,12 @@ public class DamageProcessor {
                 }
                 info.getDamageValue().multiply(resistanceMod);*/
                 // Attack cooldown modifier
-                info.getDamageValue().multiply(attackCooldownManager.getCooldownDamageMultiplier(player));
-                info.apply(targetEntity, player.getPosition().yaw());
+                if(attacker instanceof Player player) {
+                    info.getDamageValue().multiply(attackCooldownManager.getCooldownDamageMultiplier(player));
+                    attackCooldownManager.resetCooldown(player);
+                }
+                info.apply(targetEntity, attacker.getPosition().yaw());
                 iTickManager.setImmunityTicks(targetEntity, info.getImmunityTicks());
-                attackCooldownManager.resetCooldown(player);
-
-            } else {
-                logger.warn("Non-player entity attacked a target! This is currently unsupported.");
             }
         } else {
             logger.warn("Non-living entity was attacked?!?");
