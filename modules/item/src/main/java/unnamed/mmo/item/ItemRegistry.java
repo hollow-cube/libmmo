@@ -1,7 +1,8 @@
 package unnamed.mmo.item;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.*;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.ArrayUtils;

@@ -1,9 +1,7 @@
 package unnamed.mmo.loot;
 
 import org.junit.jupiter.api.Test;
-import unnamed.mmo.loot.test.*;
-
-import java.util.List;
+import unnamed.mmo.loot.test.StringLootType;
 
 import static com.google.common.truth.Truth.assertThat;
 import static unnamed.mmo.loot.test.LootTableUtil.*;

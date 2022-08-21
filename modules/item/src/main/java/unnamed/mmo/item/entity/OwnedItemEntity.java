@@ -3,7 +3,6 @@ package unnamed.mmo.item.entity;
 import com.google.auto.service.AutoService;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.entity.ItemEntity;
-import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityItemMergeEvent;

@@ -6,14 +6,13 @@ import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
-import net.minestom.server.utils.debug.DebugUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.entity.OwnedItemEntity;
-import unnamed.mmo.loot.LootResult;
 import unnamed.mmo.loot.LootContext;
+import unnamed.mmo.loot.LootResult;
 
 import java.util.concurrent.CompletableFuture;
 

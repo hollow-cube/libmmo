@@ -1,7 +1,6 @@
 package unnamed.mmo.item;
 
 import com.mojang.serialization.Codec;
-import org.jetbrains.annotations.NotNull;
 
 public interface ItemComponent {
 

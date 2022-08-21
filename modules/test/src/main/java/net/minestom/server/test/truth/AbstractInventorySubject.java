@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.google.common.truth.Truth.*;
+import static com.google.common.truth.Truth.assertAbout;
 
 public class AbstractInventorySubject extends Subject {
     private final AbstractInventory actual;
