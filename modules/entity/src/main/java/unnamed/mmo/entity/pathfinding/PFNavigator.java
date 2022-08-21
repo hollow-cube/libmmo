@@ -136,7 +136,7 @@ public final class PFNavigator {
         if (entity instanceof LivingEntity && ((LivingEntity) entity).isDead()) return; // No pathfinding tick for dead entities
         if (path == null) return;
 
-        if (tick++ % 5 == 0) {
+        if (this.tick++ % 5 == 0) {
             sendDebugData();
         }
 

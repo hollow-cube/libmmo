@@ -1,0 +1,43 @@
+{
+  "namespace": "unnamed:attack_enemy",
+  "task": {
+    "type": "selector",
+    // Define the stimuli for this task. They can provide context such as target entities/positions
+    "stimuli": [
+      {
+        "type": "target_closest_entity",
+        "entityType": "player",
+        "range": 25
+      }
+    ],
+    // Children are evaluated in order.
+    "children": {
+      // If there is a target (from stimuli)
+      "target != null": {
+        "type": "parallel",
+        // Follow the target and attempt to attack it
+        children: [
+          {
+            "type": "follow_target"
+          },
+          {
+            "type": "attack_target"
+          }
+        ]
+      },
+      // No expression always matches
+      "": {
+        "type": "sequence",
+        "children": [
+          {
+            "type": "idle_time",
+            "time": 5
+          },
+          {
+            "type": "wander_in_region"
+          }
+        ]
+      }
+    }
+  }
+}
