@@ -59,6 +59,7 @@ public class Main {
             // Testing
             event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("unnamed:gold_ore").asBlock());
             player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_pickaxe").asItemStack());
+            player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_hoe").asItemStack());
 
             //todo this needs to be done elsewhere
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));

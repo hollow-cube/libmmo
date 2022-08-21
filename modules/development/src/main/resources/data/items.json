@@ -21,14 +21,34 @@
     }
   },
   {
-    "namespace": "unnamed:gold_ingot",
-    "id": 1,
-    "material": "minecraft:gold_ingot",
-
+    "namespace": "unnamed:diamond_hoe",
+    "id": 0,
+    "material": "minecraft:diamond_hoe",
+    "components": [
+      {
+        "type": "unnamed:hoe"
+      },
+      {
+        "type": "unnamed:rarity",
+        "value": "common"
+      }
+    ],
     "defaultStateId": 1,
     "states": {
       "[]": {
         "stateId": 1
+      }
+    }
+  },
+  {
+    "namespace": "unnamed:gold_ingot",
+    "id": 1,
+    "material": "minecraft:gold_ingot",
+
+    "defaultStateId": 2,
+    "states": {
+      "[]": {
+        "stateId": 2
       }
     }
   }

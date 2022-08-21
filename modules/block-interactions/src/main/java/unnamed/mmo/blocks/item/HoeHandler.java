@@ -20,10 +20,10 @@ import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemComponentHandler;
 
 @AutoService(ItemComponentHandler.class)
-public class HoeComponentHandler implements ItemComponentHandler<HoeComponent> {
+public class HoeHandler implements ItemComponentHandler<Hoe> {
     private final EventNode<Event> eventNode = EventNode.all("comphandler_unnamed:hoe");
 
-    public HoeComponentHandler() {
+    public HoeHandler() {
         eventNode.addListener(PlayerUseItemOnBlockEvent.class, this::handleUseItem);
     }
 
@@ -33,13 +33,13 @@ public class HoeComponentHandler implements ItemComponentHandler<HoeComponent> {
     }
 
     @Override
-    public @NotNull Class<HoeComponent> componentType() {
-        return HoeComponent.class;
+    public @NotNull Class<Hoe> componentType() {
+        return Hoe.class;
     }
 
     @Override
-    public @NotNull Codec<@NotNull HoeComponent> codec() {
-        return HoeComponent.CODEC;
+    public @NotNull Codec<@NotNull Hoe> codec() {
+        return Hoe.CODEC;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class HoeComponentHandler implements ItemComponentHandler<HoeComponent> {
         final Item item = Item.fromItemStack(itemStack);
 
         // Ensure the item is a hoe
-        final HoeComponent hoe = item.getComponent(HoeComponent.class);
+        final Hoe hoe = item.getComponent(Hoe.class);
         if (hoe == null) return;
 
         // Convert block to farmland
