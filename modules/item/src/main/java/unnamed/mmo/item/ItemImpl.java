@@ -4,10 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@ApiStatus.Internal
 public record ItemImpl(
         @NotNull ItemRegistry.Entry registry,
         byte @NotNull [] propertiesArray,

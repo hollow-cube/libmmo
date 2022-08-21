@@ -36,10 +36,26 @@ public interface ItemComponentHandler<C extends ItemComponent> extends Resource 
 
     // Implementation
 
+    /**
+     * The returned event node (if present) is registered to the server. This should be
+     * used to implement any behavior required by this component.
+     * <p>
+     * todo would be nice to have some utility functions instead of having to manually
+     *      filter and parse the item each time.
+     */
     default @Nullable EventNode<Event> eventNode() {
         return null;
     }
 
+    /**
+     * Called when an {@link ItemStack} is being constructed from the associated item.
+     * <p>
+     * For now, only lore elements should be appended. In the future, this may also be
+     * used to manage transient data such as durability, debug tool type, etc.
+     *
+     * @param component The instance of this component
+     * @param builder The item builder to modify
+     */
     default void buildItemStack(@NotNull C component, @NotNull ItemStack.Builder builder) {}
 
 

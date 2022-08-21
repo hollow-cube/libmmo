@@ -21,6 +21,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * A custom item. This system works similarly to {@link net.minestom.server.instance.block.Block}, where
+ * each item has a unique ID, and can have multiple states, each of which gave their own unique ID and some
+ * property overrides.
+ * <p>
+ * The {@link #stateId()} is used as the custom model data of the {@link ItemStack}, and should be used
+ * to identify an {@link Item} from an {@link ItemStack}. For this conversion, {@link #fromItemStack(ItemStack)}
+ * should always be used.
+ */
 public interface Item extends Resource.Id {
 
     Codec<Item> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -34,16 +43,32 @@ public interface Item extends Resource.Id {
     @Contract(pure = true)
     @NotNull NamespaceID namespace();
 
+
+    /**
+     * @return The ID of this item. Multiple item IDs may exist with different states.
+     */
     @Override
     @Contract(pure = true)
     int id();
 
+    /**
+     * @return The unique ID of this item state.
+     */
     @Contract(pure = true)
     int stateId();
 
+    /**
+     * todo need to add withProperties to create a state from properties
+     *
+     * @return The property map for this item.
+     */
     @Unmodifiable @NotNull Map<String, String> properties();
 
 
+    /**
+     * @return The translation key for this item
+     * @see LanguageProvider#get(Component)
+     */
     @Contract(pure = true)
     default @NotNull String translationKey() {
         return String.format("item.%s.%s.name", namespace().namespace(), namespace().path());
@@ -66,17 +91,31 @@ public interface Item extends Resource.Id {
      */
     @NotNull Stream<ItemComponent> components();
 
+    /**
+     * Fetches an {@link ItemComponent} by its type
+     *
+     * @return The component, or null if not found.
+     */
     default <C extends ItemComponent> @Nullable C getComponent(Class<C> type) {
         return getComponent(ItemComponentHandler.from(type).name());
     }
 
+    /**
+     * Fetches an {@link ItemComponent} by its namespace id.
+     * <p>
+     * todo might want to consider removing these methods and their type parameter issues
+     *
+     * @return The component, or null if not found.
+     */
     @SuppressWarnings("TypeParameterUnusedInFormals")
     <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace);
-    //todo might want to consider removing these methods and their type parameter issues
 
 
     // ItemStack conversion
 
+    /**
+     * @return an {@link ItemStack} which may be given to the player, contains all transient item data.
+     */
     default @NotNull ItemStack asItemStack() {
         final var builder = ItemStack.builder(material());
 
@@ -97,9 +136,14 @@ public interface Item extends Resource.Id {
                 .build();
     }
 
+    /**
+     * Parses an {@link ItemStack} into an {@link Item}. This should be used over a manual item lookup
+     * because it correctly loads transient item data.
+     */
     static @NotNull Item fromItemStack(@NotNull ItemStack itemStack) {
         // Makes the assumption that there will not be unhandled items in circulation
-        return Objects.requireNonNull(Item.fromId(itemStack.meta().getCustomModelData()));
+        return Objects.requireNonNull(Item.fromId(itemStack.meta().getCustomModelData()))
+                .withAmount(itemStack.amount());
     }
 
 

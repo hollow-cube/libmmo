@@ -13,9 +13,17 @@ import unnamed.mmo.server.Facet;
 
 import java.util.UUID;
 
+/**
+ * An {@link OwnedItemEntity} is a regular {@link ItemEntity}, except that it may only
+ * be picked up by the defined owner. This should be used for all items currently.
+ */
 public class OwnedItemEntity extends ItemEntity {
     private final UUID owner;
 
+    /**
+     * @param owner The uuid of the owning entity (player or otherwise)
+     * @param itemStack The item stack to spawn
+     */
     public OwnedItemEntity(@NotNull UUID owner, @NotNull ItemStack itemStack) {
         super(itemStack);
         this.owner = owner;
