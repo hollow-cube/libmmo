@@ -4,6 +4,7 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.entity.brain.navigator.Navigator;
 import unnamed.mmo.entity.brain.task.Task;
 
@@ -12,6 +13,8 @@ public class SingleTaskBrain implements Brain {
     private final Entity entity;
     private final Navigator navigator;
     private final Task task;
+
+    private Entity target = null;
 
     public SingleTaskBrain(@NotNull Entity entity, @NotNull Task task) {
         this.entity = entity;
@@ -48,6 +51,11 @@ public class SingleTaskBrain implements Brain {
     public void tick(long time) {
         if (lastInstance == null) return;
 
+        //todo also player death or anything else?
+        if (target.isRemoved()) {
+            target = null;
+        }
+
         navigator.tick(time);
         switch (task.getState()) {
             case INIT, COMPLETE -> task.start(this);
@@ -58,5 +66,10 @@ public class SingleTaskBrain implements Brain {
                 failed = true;
             }
         }
+    }
+
+    @Override
+    public @Nullable Entity getTarget() {
+        return target;
     }
 }
