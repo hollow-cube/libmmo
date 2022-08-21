@@ -3,6 +3,7 @@ package unnamed.mmo.item;
 import com.mojang.serialization.Codec;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +26,37 @@ public interface ItemComponentHandler<C extends ItemComponent> extends Resource 
 
     @NotNull Codec<@NotNull C> codec();
 
+    /**
+     * The priority of this component when building the {@link ItemStack}. Relevant when applying lore.
+     */
+    default int priority() {
+        return 0;
+    }
+
 
     // Implementation
 
+    /**
+     * The returned event node (if present) is registered to the server. This should be
+     * used to implement any behavior required by this component.
+     * <p>
+     * todo would be nice to have some utility functions instead of having to manually
+     *      filter and parse the item each time.
+     */
     default @Nullable EventNode<Event> eventNode() {
         return null;
     }
 
-    //todo introduce method for modifying lore, but need to figure out priorities here.
+    /**
+     * Called when an {@link ItemStack} is being constructed from the associated item.
+     * <p>
+     * For now, only lore elements should be appended. In the future, this may also be
+     * used to manage transient data such as durability, debug tool type, etc.
+     *
+     * @param component The instance of this component
+     * @param builder The item builder to modify
+     */
+    default void buildItemStack(@NotNull C component, @NotNull ItemStack.Builder builder) {}
 
 
     // Static helpers

@@ -3,10 +3,10 @@ package unnamed.mmo.loot.test;
 import com.google.auto.service.AutoService;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.loot.LootResult;
 import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.loot.LootEntry;
 import unnamed.mmo.loot.LootModifier;
+import unnamed.mmo.loot.LootResult;
 
 import java.util.ArrayList;
 import java.util.List;

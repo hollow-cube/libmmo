@@ -1,11 +1,13 @@
 package unnamed.mmo.item;
 
+import org.jetbrains.annotations.ApiStatus;
 import unnamed.mmo.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+@ApiStatus.Internal
 class ItemComponentRegistry {
 
     static final Registry<ItemComponentHandler<?>> REGISTRY = Registry.manual(

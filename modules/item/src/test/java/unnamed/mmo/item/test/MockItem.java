@@ -8,6 +8,7 @@ import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemComponent;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 public record MockItem(
         NamespaceID namespace,
@@ -27,6 +28,11 @@ public record MockItem(
                 material,
                 amount
         );
+    }
+
+    @Override
+    public @NotNull Stream<ItemComponent> components() {
+        return Stream.empty();
     }
 
     @Override

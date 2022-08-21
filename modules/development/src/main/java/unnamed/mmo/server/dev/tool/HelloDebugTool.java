@@ -1,8 +1,6 @@
 package unnamed.mmo.server.dev.tool;
 
 import com.google.auto.service.AutoService;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;

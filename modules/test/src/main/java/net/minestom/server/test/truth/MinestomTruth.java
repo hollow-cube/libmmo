@@ -1,6 +1,5 @@
 package net.minestom.server.test.truth;
 
-import com.google.common.truth.Truth;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.item.ItemStack;

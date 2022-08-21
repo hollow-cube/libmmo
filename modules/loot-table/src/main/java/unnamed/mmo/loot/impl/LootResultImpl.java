@@ -2,8 +2,8 @@ package unnamed.mmo.loot.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
-import unnamed.mmo.loot.LootResult;
 import unnamed.mmo.loot.LootContext;
+import unnamed.mmo.loot.LootResult;
 import unnamed.mmo.registry.Registry;
 
 import java.util.*;

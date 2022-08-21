@@ -1,8 +1,6 @@
 package unnamed.mmo.chat.storage;
 
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import unnamed.mmo.chat.ChatMessage;
 import unnamed.mmo.chat.ChatQuery;
 

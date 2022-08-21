@@ -2,6 +2,7 @@ package unnamed.mmo.item;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
@@ -28,8 +29,9 @@ public class TestItem {
         ItemStack expected = ItemStack.builder(Material.GUNPOWDER)
                 .amount(5)
                 .meta(builder -> {
+                    builder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES);
                     builder.customModelData(2);
-                    builder.displayName(Component.text("item.test.item.name").decoration(TextDecoration.ITALIC, false));
+                    builder.displayName(Component.text("item.test.item.name"));
                 })
                 .build();
 

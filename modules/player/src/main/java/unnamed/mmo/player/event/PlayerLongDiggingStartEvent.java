@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.IntSupplier;
-import java.util.function.Supplier;
 
 public class PlayerLongDiggingStartEvent implements PlayerInstanceEvent, BlockEvent {
     private final Player player;

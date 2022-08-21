@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.data.NumberSource;
 import unnamed.mmo.loot.LootContext;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public record LootContextImpl(

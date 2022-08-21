@@ -1,9 +1,5 @@
 package unnamed.mmo.server.dev;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
@@ -18,17 +14,15 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.world.DimensionType;
-import org.bson.UuidRepresentation;
 import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
-import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
+import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.player.PlayerImpl;
-import unnamed.mmo.server.dev.tool.DebugTool;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 

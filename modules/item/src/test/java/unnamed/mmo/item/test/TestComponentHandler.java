@@ -2,7 +2,6 @@ package unnamed.mmo.item.test;
 
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
-import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
@@ -11,8 +10,8 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.item.ItemComponentHandler;
 import unnamed.mmo.item.Item;
+import unnamed.mmo.item.ItemComponentHandler;
 
 @AutoService(ItemComponentHandler.class)
 public class TestComponentHandler implements ItemComponentHandler<TestComponent> {

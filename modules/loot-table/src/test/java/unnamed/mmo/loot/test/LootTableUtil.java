@@ -5,12 +5,7 @@ import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.data.number.NumberProvider;
-import unnamed.mmo.loot.LootPool;
-import unnamed.mmo.loot.LootTable;
-import unnamed.mmo.loot.LootContext;
-import unnamed.mmo.loot.LootEntry;
-import unnamed.mmo.loot.LootModifier;
-import unnamed.mmo.loot.LootPredicate;
+import unnamed.mmo.loot.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,8 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import unnamed.mmo.chat.ChatQuery;
-import unnamed.mmo.test.TestUtil;
 import unnamed.mmo.chat.storage.MockChatStorage;
+import unnamed.mmo.test.TestUtil;
 
 import java.util.stream.Stream;
 

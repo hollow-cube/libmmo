@@ -1,6 +1,9 @@
 package net.minestom.server.test.truth;
 
-import com.google.common.truth.*;
+import com.google.common.truth.Fact;
+import com.google.common.truth.FailureMetadata;
+import com.google.common.truth.Subject;
+import com.google.common.truth.Truth;
 import net.minestom.server.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 

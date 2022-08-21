@@ -1,7 +1,6 @@
 package unnamed.mmo.registry;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;

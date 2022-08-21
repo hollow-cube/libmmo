@@ -8,7 +8,6 @@ import net.minestom.server.event.EventFilter;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.network.PlayerProvider;
-import net.minestom.server.utils.debug.DebugUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
