@@ -37,6 +37,7 @@ import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.entity.UnnamedEntity;
+import unnamed.mmo.entity.brain.task.WanderInRegionTask;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
@@ -96,7 +97,7 @@ public class Main {
 
 
             //todo test entity
-            UnnamedEntity entity = new UnnamedEntity();
+            UnnamedEntity entity = new UnnamedEntity(new WanderInRegionTask(new WanderInRegionTask.Spec()));
             entity.setInstance(instance, new Pos(0, 40, 0))
                     .thenAccept(unused -> System.out.println("Spawned"));
         });
