@@ -1,5 +1,10 @@
 package unnamed.mmo.entity.pathfinding;
 
+import com.mattworzala.debug.DebugMessage;
+import com.mattworzala.debug.Layer;
+import com.mattworzala.debug.shape.Box;
+import com.mattworzala.debug.shape.Line;
+import com.mattworzala.debug.shape.OutlineBox;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.collision.CollisionUtils;
 import net.minestom.server.coordinate.Point;
@@ -19,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.ArrayList;
 
 // TODO all pathfinding requests could be processed in another thread
 
@@ -122,11 +128,18 @@ public final class PFNavigator {
         return success;
     }
 
+    private long tick = 0;
+
     @ApiStatus.Internal
     public synchronized void tick(long tick) {
         if (goalPosition == null) return; // No path
         if (entity instanceof LivingEntity && ((LivingEntity) entity).isDead()) return; // No pathfinding tick for dead entities
         if (path == null) return;
+
+        if (tick++ % 5 == 0) {
+            sendDebugData();
+        }
+
 
         Point currentTarget = path.getCurrent();
         if (currentTarget == null) currentTarget = goalPosition;
@@ -188,5 +201,59 @@ public final class PFNavigator {
     public boolean isComplete() {
         if (this.path == null) return true;
         return goalPosition == null || entity.getPosition().distance(goalPosition) < 1;
+    }
+
+
+
+    // SECTION: Debug rendering
+    // Eventually this should be only in the dev server. Just don't currently have a way to do a "mixin" here.
+    // Probably will have some way to set the entity provider somewhere.
+
+    private @NotNull String debugNamespace(){
+        return "debug_" + entity.getUuid();
+    }
+
+    private void sendDebugData() {
+        var builder = DebugMessage.builder()
+                .clear(debugNamespace());
+
+        addPathfinderDebugData(builder);
+        addTargetPoint(builder);
+
+        builder.build()
+                .sendTo(entity.getViewersAsAudience());
+    }
+
+    private void addPathfinderDebugData(DebugMessage.Builder builder) {
+        if (path == null) return;
+        var nodes = path.nodes;
+        var linePoints = new ArrayList<Vec>();
+
+        for (int i = path.index; i < nodes.size(); i++) {
+            var pos = Vec.fromPoint(nodes.get(i));
+            builder.set(
+                    debugNamespace() + ":pf_node_" + i,
+                    new Box(pos.sub(0.4, 0.0, 0.4), pos.add(0.4, 0.1, 0.4), 0x331CB2F5, Layer.TOP)
+            );
+            linePoints.add(pos.withY(y -> y + 0.05));
+        }
+        builder.set(
+                debugNamespace() + ":pf_path",
+                new Line(linePoints, 10f, 0xFF1CB2F5, Layer.TOP)
+        );
+    }
+
+    private void addTargetPoint(DebugMessage.Builder builder) {
+        if (goalPosition == null) return;
+        builder.set(
+                debugNamespace() + ":pf_target",
+                new OutlineBox.Builder()
+                        .block(goalPosition.blockX(), goalPosition.blockY(), goalPosition.blockZ(), 0)
+                        .color(0x55FF0000)
+                        .layer(Layer.TOP)
+                        .colorLine(0xFFFF0000)
+                        .layerLine(Layer.TOP)
+                        .build()
+        );
     }
 }
