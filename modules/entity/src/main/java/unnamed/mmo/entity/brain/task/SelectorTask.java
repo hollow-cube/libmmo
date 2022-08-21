@@ -10,7 +10,6 @@ import static unnamed.mmo.util.ExtraCodecs.lazy;
 
 public class SelectorTask extends AbstractTask {
 
-
     private final Spec spec;
     private final Task targetTask;
     private final Task otherwiseTask;
@@ -28,18 +27,32 @@ public class SelectorTask extends AbstractTask {
         final Entity target = brain.getTarget();
         // Check if there is a target, and we are not currently running the target task.
         if (target != null && activeTask != targetTask) {
-            // End the active task
-            if (activeTask != null) {
-                //todo bad
-                ((AbstractTask) activeTask).end(true);
-            }
+            selectAndStart(brain, targetTask);
+            return;
+        }
+        if (target == null && activeTask != otherwiseTask) {
+            selectAndStart(brain, otherwiseTask);
+            return;
+        }
 
-            // start the other task
-            activeTask = otherwiseTask;
+        // Restart a task if it has finished
+        if (activeTask.getState() != State.RUNNING) {
             activeTask.start(brain);
-        } else if (activeTask != otherwiseTask)
+        }
 
         activeTask.tick(brain);
+    }
+
+    private void selectAndStart(Brain brain, Task task) {
+        // End the active task
+        if (activeTask != null) {
+            //todo bad
+            ((AbstractTask) activeTask).end(true);
+        }
+
+        // start the other task
+        activeTask = task;
+        activeTask.start(brain);
     }
 
 

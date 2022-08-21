@@ -52,7 +52,7 @@ public class SingleTaskBrain implements Brain {
         if (lastInstance == null) return;
 
         //todo also player death or anything else?
-        if (target.isRemoved()) {
+        if (target != null && target.isRemoved()) {
             target = null;
         }
 
@@ -71,5 +71,9 @@ public class SingleTaskBrain implements Brain {
     @Override
     public @Nullable Entity getTarget() {
         return target;
+    }
+
+    public void setTarget(@NotNull Entity target) {
+        this.target = target;
     }
 }
