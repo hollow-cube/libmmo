@@ -27,10 +27,10 @@ public class TestNavigatorBasicIntegration {
         var instance = env.createFlatInstance();
         instance.loadChunk(0, 0).join();
 
-        entity.setInstance(instance, new Pos(5, 42, 5)).join();
+        entity.setInstance(instance, new Pos(5, 40, 5)).join();
         navigator.setInstance(instance);
 
-        navigator.setPathTo(new Pos(0, 42, 0));
+        navigator.setPathTo(new Pos(0, 40, 0));
         var result = env.tickWhile(() -> {
             System.out.println(entity.getPosition());
             navigator.tick(System.currentTimeMillis());
@@ -38,6 +38,7 @@ public class TestNavigatorBasicIntegration {
         }, Duration.ofMillis(100));
 
         assertThat(result).isTrue();
+        assertThat(entity.getPosition().distance(new Vec(0, 40, 0))).isAtMost(1);
     }
 
     @ParameterizedTest(name = "{0}")
@@ -47,23 +48,27 @@ public class TestNavigatorBasicIntegration {
         var navigator = newNavigator.apply(entity);
 
         var instance = env.createFlatInstance();
-        instance.loadChunk(0, 0).join();
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                instance.loadChunk(x, y).join();
+            }
+        }
 
         // Block the direct path
         instance.setBlock(3, 41, 0, Block.STONE);
         instance.setBlock(3, 42, 0, Block.STONE);
 
-        entity.setInstance(instance, new Pos(5, 42, 0)).join();
+        entity.setInstance(instance, new Pos(5, 40, 0)).join();
         navigator.setInstance(instance);
 
-        navigator.setPathTo(new Pos(0, 42, 0));
+        navigator.setPathTo(new Pos(0, 40, 0));
         var result = env.tickWhile(() -> {
             System.out.println(entity.getPosition());
             navigator.tick(System.currentTimeMillis());
             return navigator.isActive();
-        }, Duration.ofMillis(100));
+        }, Duration.ofMillis(200));
 
         assertThat(result).isTrue();
-        assertThat(entity.getPosition().sameBlock(new Vec(0, 40, 0))).isTrue();
+        assertThat(entity.getPosition().distance(new Vec(0, 40, 0))).isAtMost(1);
     }
 }
