@@ -3,7 +3,6 @@ package unnamed.mmo.quest.objective;
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import unnamed.mmo.quest.QuestContext;
