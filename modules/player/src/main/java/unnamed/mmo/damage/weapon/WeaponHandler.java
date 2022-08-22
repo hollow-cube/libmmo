@@ -6,7 +6,6 @@ import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.item.ItemComponentHandler;
-import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
 
 public class WeaponHandler implements ItemComponentHandler<Weapon> {
 
