@@ -1,4 +1,6 @@
-apply(plugin = "java-library")
+plugins {
+    `java-library`
+}
 
 dependencies {
     implementation(project(":modules:common"))
