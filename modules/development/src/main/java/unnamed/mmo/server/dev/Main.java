@@ -79,17 +79,17 @@ public class Main {
 
 
             //todo test entity
-            UnnamedEntity entity = new UnnamedEntity(new SelectorTask(new SelectorTask.Spec(
-                    new FollowTargetTask.Spec(),
-                    new WanderInRegionTask.Spec()
-            )));
-            entity.setInstance(instance, new Pos(0, 40, 0))
-                    .thenAccept(unused -> System.out.println("Spawned"));
-
-            MinecraftServer.getSchedulerManager().buildTask(() -> {
-                System.out.println("SETTING TARGET");
-                ((SingleTaskBrain) entity.brain()).setTarget(player);
-            }).delay(5, net.minestom.server.utils.time.TimeUnit.SECOND).schedule();
+//            UnnamedEntity entity = new UnnamedEntity(new SelectorTask(new SelectorTask.Spec(
+//                    new FollowTargetTask.Spec(),
+//                    new WanderInRegionTask.Spec()
+//            )));
+//            entity.setInstance(instance, new Pos(0, 40, 0))
+//                    .thenAccept(unused -> System.out.println("Spawned"));
+//
+//            MinecraftServer.getSchedulerManager().buildTask(() -> {
+//                System.out.println("SETTING TARGET");
+//                ((SingleTaskBrain) entity.brain()).setTarget(player);
+//            }).delay(5, net.minestom.server.utils.time.TimeUnit.SECOND).schedule();
         });
 
         BaseCommandRegister.registerCommands();
