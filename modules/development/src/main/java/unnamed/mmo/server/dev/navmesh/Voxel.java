@@ -2,11 +2,17 @@ package unnamed.mmo.server.dev.navmesh;
 
 import com.mattworzala.debug.shape.OutlineBox;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Vec;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public class Voxel {
     public static Voxel merge(Voxel a, Voxel b) {
-        return new Voxel(
+        Voxel v = new Voxel(
                 Math.min(a.x1(), b.x1()),
                 Math.min(a.y1(), b.y1()),
                 Math.min(a.z1(), b.z1()),
@@ -14,6 +20,17 @@ public class Voxel {
                 Math.max(a.y2(), b.y2()),
                 Math.max(a.z2(), b.z2())
         );
+        for (var edge : a.edges) {
+            if (edge != b) {
+                v.edges.add(edge);
+            }
+        }
+        for (var edge : b.edges) {
+            if (edge != a) {
+                v.edges.add(edge);
+            }
+        }
+        return v;
     }
 
     public static Voxel mergeSafe(Voxel a, Voxel b) {
@@ -22,6 +39,8 @@ public class Voxel {
             return merged;
         return null;
     }
+
+    Collection<Voxel> edges = new HashSet<>();
 
     private final int x1;
     private final int y1;
@@ -69,10 +88,31 @@ public class Voxel {
     }
 
     public boolean contains(int x, int y, int z) {
-        return x >= x1 && x < x2 && y >= y1 && y < y2 && z >= z1 && z < z2;
+        //todo y is ignored
+        return x >= x1 && x < x2 && z >= z1 && z < z2;
     }
 
     public int area() {
         return (x2 - x1) * (y2 - y1) * (z2 - z1);
+    }
+
+    public Vec center() {
+        return new Vec((x1 + x2) / 2f, (y1 + y2) / 2f, (z1 + z2) / 2f);
+    }
+
+    public Vec min() {
+        return new Vec(x1, y1, z1);
+    }
+
+    @Override
+    public String toString() {
+        return "Voxel{" +
+                "x1=" + x1 +
+                ", y1=" + y1 +
+                ", z1=" + z1 +
+                ", x2=" + x2 +
+                ", y2=" + y2 +
+                ", z2=" + z2 +
+                '}';
     }
 }
