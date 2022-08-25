@@ -6,21 +6,22 @@ import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CraftingInventory extends Inventory {
 
-    private final List<CraftingRecipe> recipeList = new ArrayList<>();
+    private final RecipeList recipeList;
 
     // The crafting menu indices are laid out as follows
     // 1 2 3
     // 4 5 6 -> 0
     // 7 8 9
-    public CraftingInventory() {
+    public CraftingInventory(RecipeList list) {
         super(InventoryType.CRAFTING, Component.text("Ultimate Supreme Crafting Menu"));
+        this.recipeList = list;
     }
 
     @Override
@@ -69,12 +70,17 @@ public class CraftingInventory extends Inventory {
 
     private void updateCraftingRecipe() {
         List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), 1, 9));
-        for (CraftingRecipe recipe : recipeList) {
+        for (CraftingRecipe recipe : recipeList.getRecipeList()) {
             if (recipe.doesRecipeMatch(currentRecipe)) {
                 setItemStack(0, recipe.getRecipeOutput());
                 return;
             }
         }
         setItemStack(0, ItemStack.AIR);
+    }
+
+    @TestOnly
+    public void refreshCurrentRecipe() {
+        updateCraftingRecipe();
     }
 }

@@ -14,4 +14,6 @@ public interface CraftingRecipe {
     boolean doesRecipeMatch(@NotNull List<ItemStack> items);
 
     @NotNull ItemStack getRecipeOutput();
+
+    boolean containsIngredient(@NotNull ItemStack itemStack);
 }

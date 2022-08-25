@@ -34,4 +34,9 @@ public record ShapelessCraftingRecipe(@NotNull Map<Material, Integer> recipe, @N
     public @NotNull ItemStack getRecipeOutput() {
         return output;
     }
+
+    @Override
+    public boolean containsIngredient(@NotNull ItemStack itemStack) {
+        return recipe.containsKey(itemStack.material());
+    }
 }

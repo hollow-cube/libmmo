@@ -24,6 +24,7 @@ import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.item.crafting.CraftingInventory;
+import unnamed.mmo.item.crafting.RecipeList;
 import unnamed.mmo.player.PlayerImpl;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
@@ -100,7 +101,7 @@ public class Main {
         Command craftCommand = new Command("craft");
         craftCommand.setDefaultExecutor((sender, context) -> {
             if(sender instanceof Player player) {
-                player.openInventory(new CraftingInventory());
+                player.openInventory(new CraftingInventory(new RecipeList()));
             }
         });
 

@@ -29,4 +29,14 @@ public record ShapedCraftingRecipe(@NotNull List<Material> recipe, @NotNull Item
     public @NotNull ItemStack getRecipeOutput() {
         return output;
     }
+
+    @Override
+    public boolean containsIngredient(@NotNull ItemStack itemStack) {
+        for(Material material : recipe) {
+            if(itemStack.material() == material) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
