@@ -33,9 +33,9 @@ public class CraftingInventory extends Inventory {
             } else if (!getItemStack(0).isAir()) {
                 setCursorItem(player, getItemStack(0));
                 // Decrement all items in the crafting menu by 1
-                for(int i = 1; i <= 9; i++) {
+                for (int i = 1; i <= 9; i++) {
                     int count = getItemStack(i).amount() - 1;
-                    if(count <= 0) {
+                    if (count <= 0) {
                         setItemStack(i, ItemStack.AIR);
                     } else {
                         setItemStack(i, getItemStack(i).withAmount(count));
@@ -47,10 +47,10 @@ public class CraftingInventory extends Inventory {
         }
         boolean result = super.leftClick(player, slot);
         // If the click is canceled, don't proceed
-        if(!result) {
+        if (!result) {
             return false;
         }
-        if(slot <= 9) {
+        if (slot <= 9) {
             // Item was placed into crafting menu, check recipes
             updateCraftingRecipe();
         }
@@ -69,8 +69,8 @@ public class CraftingInventory extends Inventory {
 
     private void updateCraftingRecipe() {
         List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), 1, 9));
-        for(CraftingRecipe recipe : recipeList) {
-            if(recipe.doesRecipeMatch(currentRecipe)) {
+        for (CraftingRecipe recipe : recipeList) {
+            if (recipe.doesRecipeMatch(currentRecipe)) {
                 setItemStack(0, recipe.getRecipeOutput());
                 return;
             }

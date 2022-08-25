@@ -10,12 +10,19 @@ import java.util.Map;
 
 public record ShapelessCraftingRecipe(@NotNull Map<Material, Integer> recipe, @NotNull ItemStack output) implements CraftingRecipe {
 
+    public ShapelessCraftingRecipe {
+        int materialCount = recipe.values().stream().mapToInt(Integer::intValue).sum();
+        if(materialCount > 9) {
+            throw new IllegalArgumentException("Cannot create a shapeless recipe with more than 9 items!");
+        }
+    }
+
     @Override
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         Map<Material, Integer> counts = new HashMap<>();
-        for(ItemStack item : items) {
-            if(item.isAir()) continue;
-            if(!recipe.containsKey(item.material())) {
+        for (ItemStack item : items) {
+            if (item.isAir()) continue;
+            if (!recipe.containsKey(item.material())) {
                 return false;
             }
             counts.putIfAbsent(item.material(), 0);

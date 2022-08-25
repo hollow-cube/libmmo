@@ -17,8 +17,8 @@ public record ShapedCraftingRecipe(@NotNull List<Material> recipe, @NotNull Item
     @Override
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         for (int i = 0; i < recipe.size(); i++) {
-            if(recipe.get(i) == Material.AIR) continue;
-            if(recipe.get(i) != items.get(i).material()) {
+            if (recipe.get(i) == Material.AIR) continue;
+            if (recipe.get(i) != items.get(i).material()) {
                 return false;
             }
         }
