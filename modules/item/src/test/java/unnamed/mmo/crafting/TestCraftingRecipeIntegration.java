@@ -8,7 +8,6 @@ import unnamed.mmo.item.crafting.CraftingInventory;
 import unnamed.mmo.item.crafting.RecipeList;
 import unnamed.mmo.item.crafting.ShapelessCraftingRecipe;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

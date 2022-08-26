@@ -2,6 +2,7 @@ package unnamed.mmo.item.crafting;
 
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,5 +27,14 @@ public class RecipeList {
             }
         }
         return list;
+    }
+
+    public @Nullable CraftingRecipe findRecipeForItem(@NotNull ItemStack itemStack) {
+        for(CraftingRecipe recipe : recipeList) {
+            if(recipe.getRecipeOutput().equals(itemStack)) {
+                return recipe;
+            }
+        }
+        return null;
     }
 }
