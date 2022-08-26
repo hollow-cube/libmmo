@@ -4,14 +4,14 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.trait.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.Quest;
-import unnamed.mmo.quest.objective.QuestObjective;
+import unnamed.mmo.quest.objective.Objective;
 
 public class QuestObjectiveCompleteEvent implements PlayerEvent {
     private final Player player;
     private final Quest quest;
-    private final QuestObjective objective;
+    private final Objective objective;
 
-    public QuestObjectiveCompleteEvent(Player player, Quest quest, QuestObjective objective) {
+    public QuestObjectiveCompleteEvent(Player player, Quest quest, Objective objective) {
         this.player = player;
         this.quest = quest;
         this.objective = objective;
@@ -26,7 +26,7 @@ public class QuestObjectiveCompleteEvent implements PlayerEvent {
         return quest;
     }
 
-    public QuestObjective getObjective() {
+    public Objective getObjective() {
         return objective;
     }
 }

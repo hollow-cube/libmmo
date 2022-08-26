@@ -3,7 +3,6 @@ package unnamed.mmo.quest.objective;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import unnamed.mmo.quest.storage.ObjectiveData;
 import unnamed.mmo.quest.test.MockObjective;
 import unnamed.mmo.quest.test.MockQuestContext;
 

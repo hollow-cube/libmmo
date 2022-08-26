@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import unnamed.mmo.lang.LanguageProvider;
 import unnamed.mmo.quest.event.QuestCompleteEvent;
 import unnamed.mmo.quest.event.QuestObjectiveChangeEvent;
-import unnamed.mmo.quest.objective.QuestObjective;
+import unnamed.mmo.quest.objective.Objective;
 import unnamed.mmo.quest.player.QuestManager;
 import unnamed.mmo.quest.storage.QuestStorage;
 import unnamed.mmo.server.Facet;
@@ -34,7 +34,7 @@ public class QuestFacet implements Facet {
 
     @Override
     public void hook(@NotNull ServerProcess server) {
-        LOGGER.info("Loaded {} quest objectives", QuestObjective.Factory.REGISTRY.size());
+        LOGGER.info("Loaded {} quest objectives", Objective.Factory.REGISTRY.size());
 
         server.eventHandler().addListener(PlayerLoginEvent.class, this::handleJoin);
         server.eventHandler().addListener(PlayerDisconnectEvent.class, this::handleLeave);

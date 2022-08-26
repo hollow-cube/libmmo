@@ -13,27 +13,27 @@ import java.util.concurrent.CompletableFuture;
 
 import static unnamed.mmo.util.ExtraCodecs.lazy;
 
-public interface QuestObjective {
+public interface Objective {
 
-    Codec<QuestObjective> CODEC = lazy(() -> Factory.CODEC).dispatch(Factory::from, Factory::codec);
+    Codec<Objective> CODEC = lazy(() -> Factory.CODEC).dispatch(Factory::from, Factory::codec);
 
     @NotNull CompletableFuture<Void> onStart(@NotNull QuestContext context);
 
     @Nullable Component getCurrentStatus(@NotNull QuestContext context);
 
 
-    class Factory extends ResourceFactory<QuestObjective> {
+    class Factory extends ResourceFactory<Objective> {
         public static Registry<Factory> REGISTRY = Registry.service("quest_objective", Factory.class);
 
         public static Registry.Index<Class<?>, Factory> TYPE_REGISTRY = REGISTRY.index(Factory::type);
 
         static final Codec<Factory> CODEC = Codec.STRING.xmap(namespace -> REGISTRY.required(namespace), Factory::name);
 
-        public Factory(NamespaceID namespace, Class<? extends QuestObjective> type, Codec<? extends QuestObjective> codec) {
+        public Factory(NamespaceID namespace, Class<? extends Objective> type, Codec<? extends Objective> codec) {
             super(namespace, type, codec);
         }
 
-        static @Nullable Factory from(@NotNull QuestObjective objective) {
+        static @Nullable Factory from(@NotNull Objective objective) {
             return TYPE_REGISTRY.get(objective.getClass());
         }
     }

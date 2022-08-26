@@ -9,7 +9,7 @@ import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.quest.QuestContextImpl;
 import unnamed.mmo.quest.QuestState;
 import unnamed.mmo.quest.event.QuestCompleteEvent;
-import unnamed.mmo.quest.storage.ObjectiveData;
+import unnamed.mmo.quest.objective.ObjectiveData;
 import unnamed.mmo.quest.storage.QuestData;
 
 import java.util.*;

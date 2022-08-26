@@ -16,9 +16,9 @@ import java.util.concurrent.CompletableFuture;
 
 import static unnamed.mmo.util.ExtraCodecs.lazy;
 
-public record ParallelObjective(List<QuestObjective> children) implements QuestObjective {
+public record ParallelObjective(List<Objective> children) implements Objective {
     public static final Codec<ParallelObjective> CODEC = RecordCodecBuilder.create(i -> i.group(
-            lazy(() -> QuestObjective.CODEC).listOf().fieldOf("children").forGetter(ParallelObjective::children)
+            lazy(() -> Objective.CODEC).listOf().fieldOf("children").forGetter(ParallelObjective::children)
     ).apply(i, ParallelObjective::new));
 
     public ParallelObjective {
@@ -44,7 +44,7 @@ public record ParallelObjective(List<QuestObjective> children) implements QuestO
             }
 
             // Not complete, restart this child.
-            QuestObjective child = children().get(i);
+            Objective child = children().get(i);
             QuestContext childContext = context.child(String.valueOf(i));
 
             final int index = i;
@@ -70,8 +70,8 @@ public record ParallelObjective(List<QuestObjective> children) implements QuestO
         return Component.text("not implemented");
     }
 
-    @AutoService(QuestObjective.Factory.class)
-    public static class Factory extends QuestObjective.Factory {
+    @AutoService(Objective.Factory.class)
+    public static class Factory extends Objective.Factory {
         public Factory() {
             super(NamespaceID.from("unnamed:parallel"), ParallelObjective.class, ParallelObjective.CODEC);
         }

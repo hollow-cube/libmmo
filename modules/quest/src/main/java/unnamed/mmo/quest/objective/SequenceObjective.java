@@ -18,10 +18,10 @@ import java.util.concurrent.CompletableFuture;
 
 import static unnamed.mmo.util.ExtraCodecs.lazy;
 
-public record SequenceObjective(List<QuestObjective> children) implements QuestObjective {
+public record SequenceObjective(List<Objective> children) implements Objective {
 
     public static final Codec<SequenceObjective> CODEC = RecordCodecBuilder.create(i -> i.group(
-            lazy(() -> QuestObjective.CODEC).listOf().fieldOf("children").forGetter(SequenceObjective::children)
+            lazy(() -> Objective.CODEC).listOf().fieldOf("children").forGetter(SequenceObjective::children)
     ).apply(i, SequenceObjective::new));
 
     private static final Codec<Integer> CURRENT = Codec.INT.orElse(0);
@@ -37,7 +37,7 @@ public record SequenceObjective(List<QuestObjective> children) implements QuestO
 
         int current = context.get(CURRENT);
         for (int i = current; i < children().size(); i++) {
-            QuestObjective child = children().get(i);
+            Objective child = children().get(i);
             QuestContext childContext = context.child(String.valueOf(i));
 
             final int index = i;
@@ -58,14 +58,14 @@ public record SequenceObjective(List<QuestObjective> children) implements QuestO
         // If the quest is completed we can just keep showing the last child
         if (current >= children.size()) current = children.size() - 1;
 
-        QuestObjective currentChild = children.get(current);
+        Objective currentChild = children.get(current);
         QuestContext currentChildContext = context.child(String.valueOf(current));
         return currentChild.getCurrentStatus(currentChildContext);
     }
 
 
-    @AutoService(QuestObjective.Factory.class)
-    public static class Factory extends QuestObjective.Factory {
+    @AutoService(Objective.Factory.class)
+    public static class Factory extends Objective.Factory {
         public Factory() {
             super(NamespaceID.from("unnamed:sequence"), SequenceObjective.class, SequenceObjective.CODEC);
         }

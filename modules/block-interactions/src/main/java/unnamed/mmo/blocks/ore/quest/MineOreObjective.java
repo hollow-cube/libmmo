@@ -9,7 +9,7 @@ import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.blocks.ore.event.PlayerOreBreakEvent;
 import unnamed.mmo.quest.QuestContext;
-import unnamed.mmo.quest.objective.QuestObjective;
+import unnamed.mmo.quest.objective.Objective;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.concurrent.CompletableFuture;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public record MineOreObjective(
         @NotNull NamespaceID ore,
         int count
-) implements QuestObjective {
+) implements Objective {
     public static final Codec<MineOreObjective> CODEC = RecordCodecBuilder.create(i -> i.group(
             ExtraCodecs.NAMESPACE_ID.fieldOf("ore").forGetter(MineOreObjective::ore),
             Codec.INT.fieldOf("count").forGetter(MineOreObjective::count)
@@ -61,8 +61,8 @@ public record MineOreObjective(
     }
 
 
-    @AutoService(QuestObjective.Factory.class)
-    public static class Factory extends QuestObjective.Factory {
+    @AutoService(Objective.Factory.class)
+    public static class Factory extends Objective.Factory {
         public Factory() {
             super(NamespaceID.from("unnamed:mine_ore"), MineOreObjective.class, MineOreObjective.CODEC);
         }

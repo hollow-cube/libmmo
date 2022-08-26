@@ -1,4 +1,4 @@
-package unnamed.mmo.quest.storage;
+package unnamed.mmo.quest.objective;
 
 import org.jetbrains.annotations.NotNull;
 

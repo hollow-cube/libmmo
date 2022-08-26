@@ -4,7 +4,7 @@ import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.Quest;
 import unnamed.mmo.quest.QuestContextImpl;
-import unnamed.mmo.quest.storage.ObjectiveData;
+import unnamed.mmo.quest.objective.ObjectiveData;
 
 public class MockQuestContext extends QuestContextImpl {
 

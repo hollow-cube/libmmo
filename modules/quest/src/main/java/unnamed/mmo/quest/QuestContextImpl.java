@@ -7,7 +7,7 @@ import com.mojang.serialization.JsonOps;
 import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.event.QuestObjectiveChangeEvent;
-import unnamed.mmo.quest.storage.ObjectiveData;
+import unnamed.mmo.quest.objective.ObjectiveData;
 import unnamed.mmo.util.EventUtil;
 
 import java.util.HashMap;

@@ -1,6 +1,7 @@
 package unnamed.mmo.quest.storage;
 
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.quest.objective.ObjectiveData;
 
 import java.util.List;
 import java.util.Map;

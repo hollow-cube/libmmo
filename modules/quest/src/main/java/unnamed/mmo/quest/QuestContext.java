@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.quest.storage.ObjectiveData;
+import unnamed.mmo.quest.objective.ObjectiveData;
 
 public interface QuestContext {
 

@@ -4,12 +4,12 @@ import com.mojang.serialization.Codec;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.QuestContext;
-import unnamed.mmo.quest.objective.QuestObjective;
+import unnamed.mmo.quest.objective.Objective;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MockObjective implements QuestObjective {
+public class MockObjective implements Objective {
 
     private final CompletableFuture<Void> future = new CompletableFuture<>();
     private final Component status = Component.text(ThreadLocalRandom.current().nextInt());
