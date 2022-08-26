@@ -7,8 +7,10 @@ import com.mojang.serialization.JsonOps;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.quest.event.QuestObjectiveChangeEvent;
 import unnamed.mmo.quest.objective.QuestObjective;
 import unnamed.mmo.quest.storage.ObjectiveData;
+import unnamed.mmo.util.EventUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +61,10 @@ public class QuestContextImpl implements QuestContext {
     public <T> void set(@NotNull Codec<T> codec, T value) {
         objCodec = (Codec<Object>) codec;
         objData = value;
+
+        // Emit an objective changed event
+        var event = new QuestObjectiveChangeEvent(player(), quest(), null); //todo do not have objective here
+        EventUtil.safeDispatch(event);
     }
 
     @Override

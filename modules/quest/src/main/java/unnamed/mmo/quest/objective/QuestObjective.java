@@ -1,6 +1,7 @@
 package unnamed.mmo.quest.objective;
 
 import com.mojang.serialization.Codec;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +19,13 @@ public interface QuestObjective extends Resource {
 
     Codec<QuestObjective> CODEC = lazy(() -> Factory.CODEC).dispatch(Factory::from, Factory::codec);
 
-    CompletableFuture<Void> onStart(QuestContext context);
+    @NotNull CompletableFuture<Void> onStart(@NotNull QuestContext context);
 
+    @Nullable Component getCurrentStatus(@NotNull QuestContext context);
+
+
+
+    //todo this is a little cursed (and unfriendly to tests)
     default @NotNull NamespaceID namespace() {
         Factory factory = Factory.from(this);
         Check.notNull(factory, "No such objective for " + this);

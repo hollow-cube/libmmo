@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.Quest;
 import unnamed.mmo.quest.objective.QuestObjective;
 
-public class PlayerQuestObjectiveCompleteEvent implements PlayerEvent {
+public class QuestObjectiveCompleteEvent implements PlayerEvent {
     private final Player player;
     private final Quest quest;
     private final QuestObjective objective;
 
-    public PlayerQuestObjectiveCompleteEvent(Player player, Quest quest, QuestObjective objective) {
+    public QuestObjectiveCompleteEvent(Player player, Quest quest, QuestObjective objective) {
         this.player = player;
         this.quest = quest;
         this.objective = objective;

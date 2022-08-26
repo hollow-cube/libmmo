@@ -74,5 +74,26 @@ public class TestSequenceObjective {
         assertThat(future.isDone()).isTrue();
     }
 
+    @Test
+    public void testSequenceStatus() {
+        var obj1 = new MockObjective();
+        var obj2 = new MockObjective();
+        var sequence = new SequenceObjective(List.of(obj1, obj2));
+
+        var context = new MockQuestContext(null, null, new ObjectiveData(NamespaceID.from("test"), Map.of(), ""));
+        sequence.onStart(context);
+
+        // Before anything we should get obj1 status
+        assertThat(sequence.getCurrentStatus(context)).isSameInstanceAs(obj1.status());
+
+        // After completing 1 we should see 2
+        obj1.complete();
+        assertThat(sequence.getCurrentStatus(context)).isSameInstanceAs(obj2.status());
+
+        // After completing 2 we should continue getting 2
+        obj2.complete();
+        assertThat(sequence.getCurrentStatus(context)).isSameInstanceAs(obj2.status());
+    }
+
 
 }

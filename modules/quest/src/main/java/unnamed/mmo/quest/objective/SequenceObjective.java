@@ -3,10 +3,13 @@ package unnamed.mmo.quest.objective;
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.quest.QuestContext;
-import unnamed.mmo.quest.event.PlayerQuestObjectiveCompleteEvent;
+import unnamed.mmo.quest.event.QuestObjectiveCompleteEvent;
 import unnamed.mmo.util.EventUtil;
 import unnamed.mmo.util.FutureUtil;
 
@@ -29,7 +32,7 @@ public record SequenceObjective(List<QuestObjective> children) implements QuestO
     }
 
     @Override
-    public CompletableFuture<Void> onStart(QuestContext context) {
+    public @NotNull CompletableFuture<Void> onStart(@NotNull QuestContext context) {
         CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
 
         int current = context.get(CURRENT);
@@ -41,12 +44,23 @@ public record SequenceObjective(List<QuestObjective> children) implements QuestO
             future = future.thenCompose(unused -> child.onStart(childContext)).thenRun(() -> {
                 context.set(CURRENT, index + 1);
                 // Dispatch completion event
-                var event = new PlayerQuestObjectiveCompleteEvent(context.player(), context.quest(), child);
+                var event = new QuestObjectiveCompleteEvent(context.player(), context.quest(), child);
                 EventUtil.safeDispatch(event);
             });
         }
 
         return future.exceptionally(FutureUtil::handleException);
+    }
+
+    @Override
+    public @Nullable Component getCurrentStatus(@NotNull QuestContext context) {
+        int current = context.get(CURRENT);
+        // If the quest is completed we can just keep showing the last child
+        if (current >= children.size()) current = children.size() - 1;
+
+        QuestObjective currentChild = children.get(current);
+        QuestContext currentChildContext = context.child(String.valueOf(current), currentChild);
+        return currentChild.getCurrentStatus(currentChildContext);
     }
 
 

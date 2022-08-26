@@ -9,7 +9,7 @@ import unnamed.mmo.quest.Quest;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.quest.QuestContextImpl;
 import unnamed.mmo.quest.QuestState;
-import unnamed.mmo.quest.event.PlayerQuestCompleteEvent;
+import unnamed.mmo.quest.event.QuestCompleteEvent;
 import unnamed.mmo.quest.storage.ObjectiveData;
 import unnamed.mmo.quest.storage.QuestData;
 
@@ -19,7 +19,7 @@ public class QuestManager {
     private final Player player;
 
     private final Set<String> completed = new HashSet<>();
-    private final Map<String, QuestContext> inProgress = new HashMap<>();
+    public final Map<String, QuestContext> inProgress = new HashMap<>(); //todo should be private
 
     public QuestManager(@NotNull Player player, @NotNull QuestData data) {
         this.player = player;
@@ -75,7 +75,7 @@ public class QuestManager {
             inProgress.remove(questId);
 
             // Dispatch completion event
-            var event = new PlayerQuestCompleteEvent(player, quest);
+            var event = new QuestCompleteEvent(player, quest);
             EventDispatcher.call(event);
         });
     }

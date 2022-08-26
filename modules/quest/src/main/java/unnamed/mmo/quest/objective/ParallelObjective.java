@@ -3,10 +3,12 @@ package unnamed.mmo.quest.objective;
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
+import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.QuestContext;
-import unnamed.mmo.quest.event.PlayerQuestObjectiveCompleteEvent;
+import unnamed.mmo.quest.event.QuestObjectiveCompleteEvent;
 import unnamed.mmo.util.EventUtil;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public record ParallelObjective(List<QuestObjective> children) implements QuestO
     private static final Codec<Integer> COMPLETED = Codec.INT.orElse(0);
 
     @Override
-    public CompletableFuture<Void> onStart(QuestContext context) {
+    public @NotNull CompletableFuture<Void> onStart(@NotNull QuestContext context) {
         CompletableFuture<?>[] futures = new CompletableFuture<?>[children.size()];
 
         // Completed is a bitset of the completed children. A one at the bit index
@@ -55,7 +57,7 @@ public record ParallelObjective(List<QuestObjective> children) implements QuestO
                 //todo could delete the context data for this child at this point.
 
                 // Dispatch completion event
-                var event = new PlayerQuestObjectiveCompleteEvent(context.player(), context.quest(), child);
+                var event = new QuestObjectiveCompleteEvent(context.player(), context.quest(), child);
                 EventUtil.safeDispatch(event);
             });
         }
@@ -63,7 +65,10 @@ public record ParallelObjective(List<QuestObjective> children) implements QuestO
         return CompletableFuture.allOf(futures);
     }
 
-
+    @Override
+    public @NotNull Component getCurrentStatus(@NotNull QuestContext context) {
+        return Component.text("not implemented");
+    }
 
     @AutoService(QuestObjective.Factory.class)
     public static class Factory extends QuestObjective.Factory {

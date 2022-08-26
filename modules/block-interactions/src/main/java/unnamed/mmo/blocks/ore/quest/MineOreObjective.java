@@ -3,6 +3,7 @@ package unnamed.mmo.blocks.ore.quest;
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ public record MineOreObjective(
     private static final Codec<Integer> CURRENT = Codec.INT.orElse(0);
 
     @Override
-    public CompletableFuture<Void> onStart(QuestContext context) {
+    public @NotNull CompletableFuture<Void> onStart(@NotNull QuestContext context) {
         CompletableFuture<Void> complete = new CompletableFuture<>();
 
         context.player().eventNode().addListener(EventListener.builder(PlayerOreBreakEvent.class)
@@ -49,6 +50,16 @@ public record MineOreObjective(
 
         return complete;
     }
+
+    @Override
+    public @NotNull Component getCurrentStatus(@NotNull QuestContext context) {
+        int current = context.get(CURRENT);
+        return Component.translatable("objective.mine_ore.status",
+                Component.text(ore().asString()),   // Ore name, todo should render the translatable name
+                Component.text(current),            // Current count
+                Component.text(count()));           // Total count
+    }
+
 
     @AutoService(QuestObjective.Factory.class)
     public static class Factory extends QuestObjective.Factory {

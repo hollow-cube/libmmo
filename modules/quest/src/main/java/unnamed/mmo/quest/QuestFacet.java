@@ -12,8 +12,10 @@ import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unnamed.mmo.quest.event.PlayerQuestCompleteEvent;
-import unnamed.mmo.quest.event.PlayerQuestObjectiveCompleteEvent;
+import unnamed.mmo.lang.LanguageProvider;
+import unnamed.mmo.quest.event.QuestCompleteEvent;
+import unnamed.mmo.quest.event.QuestObjectiveChangeEvent;
+import unnamed.mmo.quest.event.QuestObjectiveCompleteEvent;
 import unnamed.mmo.quest.objective.QuestObjective;
 import unnamed.mmo.quest.player.QuestManager;
 import unnamed.mmo.quest.storage.QuestStorage;
@@ -38,8 +40,8 @@ public class QuestFacet implements Facet {
         server.eventHandler().addListener(PlayerLoginEvent.class, this::handleJoin);
         server.eventHandler().addListener(PlayerDisconnectEvent.class, this::handleLeave);
 
-        server.eventHandler().addListener(PlayerQuestObjectiveCompleteEvent.class, this::handleObjectiveCompletion);
-        server.eventHandler().addListener(PlayerQuestCompleteEvent.class, this::handleQuestCompletion);
+        server.eventHandler().addListener(QuestObjectiveChangeEvent.class, this::handleObjectiveChange);
+        server.eventHandler().addListener(QuestCompleteEvent.class, this::handleQuestCompletion);
     }
 
     private void handleJoin(@NotNull PlayerLoginEvent event) {
@@ -67,16 +69,20 @@ public class QuestFacet implements Facet {
                 });
     }
 
-    private void handleObjectiveCompletion(@NotNull PlayerQuestObjectiveCompleteEvent event) {
-        var notification = new Notification(
-                Component.text("Objective " + event.getObjective().name()),
-                FrameType.TASK,
-                Material.GOLD_INGOT
-        );
-        NotificationCenter.send(notification, event.getPlayer());
+    private void handleObjectiveChange(@NotNull QuestObjectiveChangeEvent event) {
+//        var notification = new Notification(
+//                Component.text("Objective " + event.getObjective().name()),
+//                FrameType.TASK,
+//                Material.GOLD_INGOT
+//        );
+//        NotificationCenter.send(notification, event.getPlayer());
+        QuestManager manager = managers.get(event.getPlayer().getUuid());
+        QuestContext context = manager.inProgress.get(event.getQuest().name());
+        Component component = event.getQuest().objective().getCurrentStatus(context);
+        event.getPlayer().sendMessage(LanguageProvider.get(component));
     }
 
-    private void handleQuestCompletion(@NotNull PlayerQuestCompleteEvent event) {
+    private void handleQuestCompletion(@NotNull QuestCompleteEvent event) {
         var notification = new Notification(
                 Component.text("Completed " + event.getQuest().name()),
                 FrameType.CHALLENGE,
