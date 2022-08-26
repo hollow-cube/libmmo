@@ -1,5 +1,6 @@
 package unnamed.mmo.chat.command;
 
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.CommandDispatcher;
 import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.entity.Player;
@@ -39,6 +40,7 @@ public class TestLogCommand {
     @ParameterizedTest
     @MethodSource("commandToQueryMappings")
     public void basicExecution(String command, ChatQuery expectedQuery) {
+        MinecraftServer.init();
         CommandResult result = dispatcher.execute(player, command);
 
         assertThat(result.getType()).isEqualTo(CommandResult.Type.SUCCESS);

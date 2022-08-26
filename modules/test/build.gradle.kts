@@ -6,9 +6,9 @@ plugins {
 dependencies {
 
     // JUnit
-    api("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    api("org.junit.jupiter:junit-jupiter-params:5.8.1")
-    runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    api("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    api("org.junit.jupiter:junit-jupiter-params:5.9.0")
+    runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 
     // Truth
     api("com.google.truth:truth:1.1.3")

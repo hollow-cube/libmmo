@@ -28,7 +28,7 @@ public class TestLongDiggingIntegration {
         });
 
         var startDiggingPacket = new ClientPlayerDiggingPacket(ClientPlayerDiggingPacket.Status.STARTED_DIGGING,
-                new Vec(0, 42, 0), BlockFace.TOP);
+                new Vec(0, 42, 0), BlockFace.TOP, 1);
         player.addPacketToQueue(startDiggingPacket);
 
         player.interpretPacketQueue();
@@ -48,7 +48,7 @@ public class TestLongDiggingIntegration {
 
         // Start digging
         var startDiggingPacket = new ClientPlayerDiggingPacket(ClientPlayerDiggingPacket.Status.STARTED_DIGGING,
-                new Vec(0, 42, 0), BlockFace.TOP);
+                new Vec(0, 42, 0), BlockFace.TOP, 1);
         player.addPacketToQueue(startDiggingPacket);
         player.interpretPacketQueue();
 
