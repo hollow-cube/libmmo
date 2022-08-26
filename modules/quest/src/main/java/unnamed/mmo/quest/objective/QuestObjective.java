@@ -3,34 +3,23 @@ package unnamed.mmo.quest.objective;
 import com.mojang.serialization.Codec;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.utils.NamespaceID;
-import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.registry.Registry;
-import unnamed.mmo.registry.Resource;
 import unnamed.mmo.registry.ResourceFactory;
 
 import java.util.concurrent.CompletableFuture;
 
 import static unnamed.mmo.util.ExtraCodecs.lazy;
 
-public interface QuestObjective extends Resource {
+public interface QuestObjective {
 
     Codec<QuestObjective> CODEC = lazy(() -> Factory.CODEC).dispatch(Factory::from, Factory::codec);
 
     @NotNull CompletableFuture<Void> onStart(@NotNull QuestContext context);
 
     @Nullable Component getCurrentStatus(@NotNull QuestContext context);
-
-
-
-    //todo this is a little cursed (and unfriendly to tests)
-    default @NotNull NamespaceID namespace() {
-        Factory factory = Factory.from(this);
-        Check.notNull(factory, "No such objective for " + this);
-        return factory.namespace();
-    }
 
 
     class Factory extends ResourceFactory<QuestObjective> {

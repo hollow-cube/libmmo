@@ -2,7 +2,6 @@ package unnamed.mmo.quest.player;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.Quest;
@@ -37,7 +36,7 @@ public class QuestManager {
     public void startQuest(@NotNull String questId) {
         Quest quest = Quest.fromNamespaceId(questId);
         Check.notNull(quest, "No such quest: " + questId);
-        QuestContextImpl context = new QuestContextImpl(player, quest, new ObjectiveData(NamespaceID.from("todo"), Map.of(), ""));
+        QuestContextImpl context = new QuestContextImpl(player, quest, new ObjectiveData(Map.of(), ""));
         startWithTracking(quest, context);
     }
 

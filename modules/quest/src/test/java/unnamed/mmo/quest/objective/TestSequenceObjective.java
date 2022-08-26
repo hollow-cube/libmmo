@@ -1,10 +1,9 @@
 package unnamed.mmo.quest.objective;
 
-import net.minestom.server.utils.NamespaceID;
 import org.junit.jupiter.api.Test;
 import unnamed.mmo.quest.storage.ObjectiveData;
-import unnamed.mmo.quest.test.MockQuestContext;
 import unnamed.mmo.quest.test.MockObjective;
+import unnamed.mmo.quest.test.MockQuestContext;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ public class TestSequenceObjective {
         var obj1 = new MockObjective();
         var sequence = new SequenceObjective(List.of(obj1));
 
-        var context = new MockQuestContext(null, null, new ObjectiveData(NamespaceID.from("test"), Map.of(), ""));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), ""));
         var future = sequence.onStart(context);
 
         // Nothing has happened, no context should be saved
@@ -38,7 +37,7 @@ public class TestSequenceObjective {
         var obj2 = new MockObjective();
         var sequence = new SequenceObjective(List.of(obj1, obj2));
 
-        var context = new MockQuestContext(null, null, new ObjectiveData(NamespaceID.from("test"), Map.of(), ""));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), ""));
         var future = sequence.onStart(context);
 
         // Nothing has happened, no context should be saved
@@ -63,8 +62,7 @@ public class TestSequenceObjective {
         var sequence = new SequenceObjective(List.of(obj1, obj2));
 
         // Context has data=1, so the sequence should resume from there.
-        var context = new MockQuestContext(null, null,
-                new ObjectiveData(NamespaceID.from("test"), Map.of(), "1"));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), "1"));
         var future = sequence.onStart(context);
 
         // Completing the second objective should result in the sequence being completed
@@ -80,7 +78,7 @@ public class TestSequenceObjective {
         var obj2 = new MockObjective();
         var sequence = new SequenceObjective(List.of(obj1, obj2));
 
-        var context = new MockQuestContext(null, null, new ObjectiveData(NamespaceID.from("test"), Map.of(), ""));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), ""));
         sequence.onStart(context);
 
         // Before anything we should get obj1 status

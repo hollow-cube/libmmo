@@ -45,7 +45,7 @@ public record ParallelObjective(List<QuestObjective> children) implements QuestO
 
             // Not complete, restart this child.
             QuestObjective child = children().get(i);
-            QuestContext childContext = context.child(String.valueOf(i), child);
+            QuestContext childContext = context.child(String.valueOf(i));
 
             final int index = i;
             futures[i] = child.onStart(childContext).thenRun(() -> {

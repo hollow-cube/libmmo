@@ -38,7 +38,7 @@ public record SequenceObjective(List<QuestObjective> children) implements QuestO
         int current = context.get(CURRENT);
         for (int i = current; i < children().size(); i++) {
             QuestObjective child = children().get(i);
-            QuestContext childContext = context.child(String.valueOf(i), child);
+            QuestContext childContext = context.child(String.valueOf(i));
 
             final int index = i;
             future = future.thenCompose(unused -> child.onStart(childContext)).thenRun(() -> {
@@ -59,7 +59,7 @@ public record SequenceObjective(List<QuestObjective> children) implements QuestO
         if (current >= children.size()) current = children.size() - 1;
 
         QuestObjective currentChild = children.get(current);
-        QuestContext currentChildContext = context.child(String.valueOf(current), currentChild);
+        QuestContext currentChildContext = context.child(String.valueOf(current));
         return currentChild.getCurrentStatus(currentChildContext);
     }
 

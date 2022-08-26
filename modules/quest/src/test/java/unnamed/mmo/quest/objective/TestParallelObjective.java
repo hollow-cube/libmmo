@@ -1,6 +1,5 @@
 package unnamed.mmo.quest.objective;
 
-import net.minestom.server.utils.NamespaceID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -20,7 +19,7 @@ public class TestParallelObjective {
         var obj1 = new MockObjective();
         var objective = new ParallelObjective(List.of(obj1));
 
-        var context = new MockQuestContext(null, null, new ObjectiveData(NamespaceID.from("test"), Map.of(), ""));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), ""));
         var future = objective.onStart(context);
 
         // Nothing has happened, no context should be saved
@@ -43,7 +42,7 @@ public class TestParallelObjective {
         var obj2 = new MockObjective();
         var objective = new ParallelObjective(List.of(obj1, obj2));
 
-        var context = new MockQuestContext(null, null, new ObjectiveData(NamespaceID.from("test"), Map.of(), ""));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), ""));
         var future = objective.onStart(context);
 
         if (sequential) {
@@ -74,8 +73,7 @@ public class TestParallelObjective {
         var objective = new ParallelObjective(List.of(obj1, obj2));
 
         // Start with second quest completed already
-        var context = new MockQuestContext(null, null,
-                new ObjectiveData(NamespaceID.from("test"), Map.of(), "2"));
+        var context = new MockQuestContext(null, null, new ObjectiveData(Map.of(), "2"));
         var future = objective.onStart(context);
 
         // Completing the first one should result in the parallel objective being completed

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import unnamed.mmo.lang.LanguageProvider;
 import unnamed.mmo.quest.event.QuestCompleteEvent;
 import unnamed.mmo.quest.event.QuestObjectiveChangeEvent;
-import unnamed.mmo.quest.event.QuestObjectiveCompleteEvent;
 import unnamed.mmo.quest.objective.QuestObjective;
 import unnamed.mmo.quest.player.QuestManager;
 import unnamed.mmo.quest.storage.QuestStorage;

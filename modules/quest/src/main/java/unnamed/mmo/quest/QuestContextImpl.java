@@ -5,10 +5,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minestom.server.entity.Player;
-import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.quest.event.QuestObjectiveChangeEvent;
-import unnamed.mmo.quest.objective.QuestObjective;
 import unnamed.mmo.quest.storage.ObjectiveData;
 import unnamed.mmo.util.EventUtil;
 
@@ -68,16 +66,14 @@ public class QuestContextImpl implements QuestContext {
     }
 
     @Override
-    public @NotNull QuestContext child(@NotNull String name, @NotNull QuestObjective objective) {
-        NamespaceID type = QuestObjective.Factory.TYPE_REGISTRY.get(objective.getClass()).namespace();
-        return children.computeIfAbsent(name, s -> new QuestContextImpl(player, quest, new ObjectiveData(type, Map.of(), "")));
+    public @NotNull QuestContext child(@NotNull String name) {
+        return children.computeIfAbsent(name, s -> new QuestContextImpl(player, quest, new ObjectiveData(Map.of(), "")));
     }
 
 
     @Override
     public @NotNull ObjectiveData serialize() {
         return new ObjectiveData(
-                data.type(),
                 children.entrySet().stream()
                         .map(entry -> new Pair<>(entry.getKey(), entry.getValue().serialize()))
                         .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),

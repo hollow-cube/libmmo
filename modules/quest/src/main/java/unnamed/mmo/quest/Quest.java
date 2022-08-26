@@ -10,8 +10,6 @@ import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
 import unnamed.mmo.util.ExtraCodecs;
 
-import java.util.List;
-
 public record Quest(
         @NotNull NamespaceID namespace,
         //todo

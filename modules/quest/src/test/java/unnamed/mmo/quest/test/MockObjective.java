@@ -11,8 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MockObjective implements QuestObjective {
 
-    private CompletableFuture<Void> future = new CompletableFuture<>();
-    private Component status = Component.text(ThreadLocalRandom.current().nextInt());
+    private final CompletableFuture<Void> future = new CompletableFuture<>();
+    private final Component status = Component.text(ThreadLocalRandom.current().nextInt());
 
     private static final Codec<Integer> CURRENT = Codec.INT.orElse(0);
 
