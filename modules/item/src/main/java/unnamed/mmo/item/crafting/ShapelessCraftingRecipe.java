@@ -1,8 +1,11 @@
 package unnamed.mmo.item.crafting;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,4 +42,10 @@ public record ShapelessCraftingRecipe(@NotNull Map<Material, Integer> recipe, @N
     public boolean containsIngredient(@NotNull ItemStack itemStack) {
         return recipe.containsKey(itemStack.material());
     }
+
+
+    public static final Codec<ShapelessCraftingRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.unboundedMap(ExtraCodecs.MATERIAL, Codec.INT).fieldOf("components").forGetter(ShapelessCraftingRecipe::recipe),
+            ExtraCodecs.MATERIAL.fieldOf("output").xmap(ItemStack::of, ItemStack::material).forGetter(ShapelessCraftingRecipe::output)
+    ).apply(i, ShapelessCraftingRecipe::new));
 }

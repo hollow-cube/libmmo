@@ -1,8 +1,11 @@
 package unnamed.mmo.item.crafting;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
 
@@ -39,4 +42,9 @@ public record ShapedCraftingRecipe(@NotNull List<Material> recipe, @NotNull Item
         }
         return false;
     }
+
+    public static final Codec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
+            ExtraCodecs.MATERIAL.listOf().fieldOf("components").forGetter(ShapedCraftingRecipe::recipe),
+            ExtraCodecs.MATERIAL.fieldOf("output").xmap(ItemStack::of, ItemStack::material).forGetter(ShapedCraftingRecipe::output)
+    ).apply(i, ShapedCraftingRecipe::new));
 }
