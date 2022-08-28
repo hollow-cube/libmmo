@@ -27,7 +27,6 @@ public record SequenceObjective(List<Objective> children) implements Objective {
     private static final Codec<Integer> CURRENT = Codec.INT.orElse(0);
 
     public SequenceObjective {
-        //todo not sure this should be an error?
         Check.argCondition(children.isEmpty(), "children must not be empty");
     }
 

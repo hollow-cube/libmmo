@@ -68,11 +68,15 @@ public class OreBlockHandler implements BlockHandler {
     }
 
     @Override
-    public void onDestroy(@NotNull Destroy destroy) {
-        final Block block = destroy.getBlock();
-        if (block.compare(REPLACEMENT_BLOCK, Block.Comparator.STATE) || !(destroy instanceof PlayerDestroy))
+    public void onDestroy(@NotNull Destroy d) {
+        final Block block = d.getBlock();
+        if (block.compare(REPLACEMENT_BLOCK, Block.Comparator.STATE))
             return;
+        if (!(d instanceof PlayerDestroy destroy)) {
+            return;
+        }
 
+        // Get the Ore definition of the block being broken
         final Instance instance = destroy.getInstance();
         final Point pos = destroy.getBlockPosition();
         final Ore ore = Ore.fromBlock(block);
@@ -84,7 +88,7 @@ public class OreBlockHandler implements BlockHandler {
         }
 
         // Call break event
-        final Player player = ((PlayerDestroy) destroy).getPlayer();
+        final Player player = destroy.getPlayer();
         final var event = new PlayerOreBreakEvent(player, block, ore);
         EventDispatcher.call(event);
 

@@ -22,8 +22,8 @@ public record ParallelObjective(List<Objective> children) implements Objective {
     ).apply(i, ParallelObjective::new));
 
     public ParallelObjective {
-        //todo not sure this should be an error? Probably should just complete instantly
         Check.argCondition(children.isEmpty(), "children must not be empty");
+        // Max children of 32 because we use an integer bitset for tracking completion
         Check.argCondition(children.size() > 32, "cannot have more than 32 children");
     }
 

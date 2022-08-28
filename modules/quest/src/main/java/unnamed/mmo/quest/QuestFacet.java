@@ -69,15 +69,9 @@ public class QuestFacet implements Facet {
     }
 
     private void handleObjectiveChange(@NotNull QuestObjectiveChangeEvent event) {
-//        var notification = new Notification(
-//                Component.text("Objective " + event.getObjective().name()),
-//                FrameType.TASK,
-//                Material.GOLD_INGOT
-//        );
-//        NotificationCenter.send(notification, event.getPlayer());
         QuestManager manager = managers.get(event.getPlayer().getUuid());
-        QuestContext context = manager.inProgress.get(event.getQuest().name());
-        Component component = event.getQuest().objective().getCurrentStatus(context);
+        Component component = manager.getProgress(event.getQuest().name());
+        assert component != null; // Quest must be in progress for this event to trigger.
         event.getPlayer().sendMessage(LanguageProvider.get(component));
     }
 

@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.blocks.ore.event.PlayerOreBreakEvent;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.quest.objective.Objective;
@@ -34,11 +35,9 @@ public record MineOreObjective(
                 .handler(event -> {
                     // Ensure we are mining the right ore
                     if (!event.getOre().namespace().equals(ore())) {
-                        System.out.println("WRONG ORE");
                         return;
                     }
 
-                    System.out.println("MINE ORE");
                     int current = context.get(CURRENT) + 1;
                     context.set(CURRENT, current);
 
@@ -53,11 +52,12 @@ public record MineOreObjective(
 
     @Override
     public @NotNull Component getCurrentStatus(@NotNull QuestContext context) {
-        int current = context.get(CURRENT);
+        final int current = context.get(CURRENT);
+        final Ore ore = Ore.fromNamespaceId(ore());
         return Component.translatable("objective.mine_ore.status",
-                Component.text(ore().asString()),   // Ore name, todo should render the translatable name
-                Component.text(current),            // Current count
-                Component.text(count()));           // Total count
+                Component.translatable(ore.translationKey()),   // Ore name
+                Component.text(current),                        // Current count
+                Component.text(count()));                       // Total count
     }
 
 

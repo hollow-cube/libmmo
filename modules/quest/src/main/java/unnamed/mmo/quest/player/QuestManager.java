@@ -1,9 +1,11 @@
 package unnamed.mmo.quest.player;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.quest.Quest;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.quest.QuestContextImpl;
@@ -18,7 +20,7 @@ public class QuestManager {
     private final Player player;
 
     private final Set<String> completed = new HashSet<>();
-    public final Map<String, QuestContext> inProgress = new HashMap<>(); //todo should be private
+    private final Map<String, QuestContext> inProgress = new HashMap<>();
 
     public QuestManager(@NotNull Player player, @NotNull QuestData data) {
         this.player = player;
@@ -31,6 +33,15 @@ public class QuestManager {
         if (inProgress.containsKey(quest))
             return QuestState.IN_PROGRESS;
         return QuestState.NOT_STARTED;
+    }
+
+    // Null if not in progress
+    public @Nullable Component getProgress(@NotNull String quest) {
+        if (!inProgress.containsKey(quest))
+            return null;
+
+        var context = inProgress.get(quest);
+        return Quest.fromNamespaceId(quest).objective().getCurrentStatus(context);
     }
 
     public void startQuest(@NotNull String questId) {

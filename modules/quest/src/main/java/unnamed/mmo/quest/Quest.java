@@ -12,14 +12,11 @@ import unnamed.mmo.util.ExtraCodecs;
 
 public record Quest(
         @NotNull NamespaceID namespace,
-        //todo
-//        @NotNull List<Object> requirements,
         @NotNull Objective objective
 ) implements Resource {
 
     public static final Codec<Quest> CODEC = RecordCodecBuilder.create(i -> i.group(
             ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(Quest::namespace),
-//            Codec.unit(null).listOf().optionalFieldOf("requirements", List.of()).forGetter(Quest::requirements),
             Objective.CODEC.fieldOf("objective").forGetter(Quest::objective)
     ).apply(i, Quest::new));
 
