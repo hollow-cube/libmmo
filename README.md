@@ -1,9 +1,9 @@
 # Minestom libraries for MMOs
-A set of data-driven* libraries useful for creating MMO servers, based on Minestom.
+A set of data-driven<sup>1</sup> libraries useful for creating MMO servers, based on Minestom.
 
 blah blah more
 
-* as in, they load static data for content, rather than hardcoding it. The Minecraft definition of data-driven, 
+<sup>1</sup> As in, they load static data for content, rather than hardcoding it. The Minecraft definition of data-driven, 
   not [the general programming term](https://en.wikipedia.org/wiki/Data-driven_programming).
 
 
@@ -29,8 +29,8 @@ The project is split into a set of modules, each one representing a unique featu
 independently of each other, although there are some required dependencies. See the individual module README
 files for more information about usage and dependencies.
 
-To achieve this separation, this project makes very heavy use of the (Java Service Provider Interface (SPI))
-[https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html]. SPI is used to load implementation
+To achieve this separation, this project makes very heavy use of the [Java Service Provider Interface (SPI)]
+(https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html). SPI is used to load implementation
 classes from different modules when they are present, without loading them when they should not be. An example
 is a better explanation: The loot module is a generic way of generating content randomly (collectively "loot").
 When importing the loot module, there are no implementations of loot, so you cannot actually generate anything.
