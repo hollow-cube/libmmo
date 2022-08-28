@@ -56,7 +56,7 @@ a copy of the internal Minestom test framework, and some Minestom specific Truth
 
 
 # Contributing
-See the notes about style and patterns in the contributing file (todo).
+Issues and PRs are welcome! Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 Local development is currently done using the `development` module (and of course tests). To run the development
 server, execute `./gradlew :modules:development:run`.
