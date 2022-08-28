@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.BlockInteractionUtils;
 import unnamed.mmo.blocks.data.CropBlockData;
+import unnamed.mmo.util.FutureUtil;
 
 public class CropHandler implements BlockHandler {
 
@@ -34,13 +35,15 @@ public class CropHandler implements BlockHandler {
             if (entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
                 itemEntityMeta.setItem(ItemStack.of(blockData.cropGrownMaterial()));
             }
-            entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.2, 0.5));
+            entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.2, 0.5))
+                    .exceptionally(FutureUtil::handleException);
         }
         Entity entity = new Entity(EntityType.ITEM);
         if (entity.getEntityMeta() instanceof ItemEntityMeta itemEntityMeta) {
             itemEntityMeta.setItem(ItemStack.of(blockData.seedMaterial()));
         }
-        entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.2, 0.5));
+        entity.setInstance(destroy.getInstance(), destroy.getBlockPosition().add(0.5, 0.2, 0.5))
+                .exceptionally(FutureUtil::handleException);
     }
 
     @Override

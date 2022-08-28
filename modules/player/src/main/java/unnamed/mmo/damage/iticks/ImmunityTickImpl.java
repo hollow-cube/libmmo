@@ -23,7 +23,7 @@ public class ImmunityTickImpl implements ImmunityTicks {
 
     @Override
     public void update() {
-        tickMap.entrySet().removeIf(entry -> entry.getValue().startTime + (long) MinecraftServer.TICK_MS * entry.getValue().ticksImmune < System.currentTimeMillis());
+        tickMap.entrySet().removeIf(entry -> entry.getValue().startTime() + (long) MinecraftServer.TICK_MS * entry.getValue().ticksImmune() < System.currentTimeMillis());
     }
 
     private record TickEntry(long startTime, int ticksImmune) {}

@@ -52,7 +52,7 @@ public interface Item extends Resource.Id {
     int id();
 
     /**
-     * @return The unique ID of this item state.
+     * Returns the unique ID of this item state.
      */
     @Contract(pure = true)
     int stateId();
@@ -66,7 +66,7 @@ public interface Item extends Resource.Id {
 
 
     /**
-     * @return The translation key for this item
+     * Returns the translation key for this item
      * @see LanguageProvider#get(Component)
      */
     @Contract(pure = true)
@@ -114,7 +114,7 @@ public interface Item extends Resource.Id {
     // ItemStack conversion
 
     /**
-     * @return an {@link ItemStack} which may be given to the player, contains all transient item data.
+     * Returns an {@link ItemStack} which may be given to the player, contains all transient item data.
      */
     default @NotNull ItemStack asItemStack() {
         final var builder = ItemStack.builder(material());
