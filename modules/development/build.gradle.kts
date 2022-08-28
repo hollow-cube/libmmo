@@ -16,3 +16,7 @@ dependencies {
 application {
     mainClass.set("unnamed.mmo.server.dev.Main")
 }
+
+tasks.named("run", JavaExec::class) {
+    workingDir("build")
+}

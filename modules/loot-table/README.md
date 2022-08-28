@@ -1,0 +1,2 @@
+# Loot Table
+todo

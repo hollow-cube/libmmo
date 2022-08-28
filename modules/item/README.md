@@ -2,9 +2,6 @@
 Items are loaded from a JSON data file, the format is described below
 
 ### Format
-The format is shown below, I would suggest a simple tool to convert a slightly nicer format 
-and generate IDs/property map automatically.
-
 ```json5
 [
   {
@@ -102,14 +99,3 @@ Below is a minimal item, except for the commented parts which have not currently
   }
 }
 ```
-
-Some things that still need to be worked out:
-- Name/lore in more detail
-  - Would like to do translations but that very well may be out of scope, and is complicated when
-    components need to add content to the lore.
-- Resource pack things (textures/models)
-  - I have a draft of this that I can work on soon
-- Testing
-  - Not currently super testable without testing e2e flow, need to create mock items.
-  - Basically just want to test item loading (ensure it loads item registry data) as well as multiple states.
-
