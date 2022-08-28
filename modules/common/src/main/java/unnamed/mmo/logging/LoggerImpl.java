@@ -9,10 +9,12 @@ record LoggerImpl(
         org.slf4j.Logger delegate
 ) implements Logger {
 
+    @Override
     public void debug(@NotNull String message) {
         debug(message, Map.of());
     }
 
+    @Override
     public void debug(@NotNull String message, @NotNull Map<String, Object> context) {
         if (!delegate.isDebugEnabled()) return;
 
@@ -28,10 +30,12 @@ record LoggerImpl(
     }
 
 
+    @Override
     public void info(@NotNull String message) {
         info(message, Map.of());
     }
 
+    @Override
     public void info(@NotNull String message, @NotNull Map<String, Object> context) {
         if (!delegate.isInfoEnabled()) return;
 
@@ -46,10 +50,12 @@ record LoggerImpl(
         }
     }
 
+    @Override
     public void warn(@NotNull String message) {
         warn(message, Map.of());
     }
 
+    @Override
     public void warn(@NotNull String message, @NotNull Map<String, Object> context) {
         if (!delegate.isWarnEnabled()) return;
 
@@ -64,10 +70,12 @@ record LoggerImpl(
         }
     }
 
+    @Override
     public void error(@NotNull String message) {
         error(message, Map.of());
     }
 
+    @Override
     public void error(@NotNull String message, @NotNull Map<String, Object> context) {
         if (!delegate.isErrorEnabled()) return;
 

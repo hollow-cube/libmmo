@@ -35,7 +35,7 @@ public final class CustomJsonWriter extends AbstractFileBasedWriter {
     private final Map<String, Token> jsonProperties;
 
     public CustomJsonWriter() throws IOException {
-        this(Collections.<String, String>emptyMap());
+        this(Collections.emptyMap());
     }
 
     public CustomJsonWriter(final Map<String, String> properties) throws IOException {
