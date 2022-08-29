@@ -3,6 +3,7 @@ package unnamed.mmo.fishing.item;
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
@@ -13,6 +14,10 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.inventory.Inventory;
+import net.minestom.server.inventory.InventoryType;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
@@ -66,11 +71,12 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
         var inWater = BlockUtil.isWater(bobberEntity.getInstance().getBlock(position));
 
         if (inWater && !wasInWater) {
-            bobberEntity.getInstance().playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_SPLASH, Sound.Source.PLAYER, 0.5f, 1f), position.x(), position.y(), position.z());
+            bobberEntity.getInstance().playSound(Sound.sound(SoundEvent.ENTITY_GENERIC_SPLASH, Sound.Source.PLAYER, 0.5f, 1f), position.x(), position.y(), position.z());
+            bobberEntity.getVelocity().add(0, -4, 0);
         }
 
         if (inWater) {
-            bobberEntity.setVelocity(bobberEntity.getVelocity().add(0, 0.68, 0));
+            bobberEntity.setVelocity(bobberEntity.getVelocity().add(0, 0.67, 0));
         }
 
         MinecraftServer.getSchedulerManager().scheduleNextTick(() -> bobberTick(bobberEntity, inWater));
@@ -80,6 +86,7 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
 
         FISHING_HOOKS.put(player, new ArrayList<>());
 
+        // todo spread the bobbers out a bit
         for (int i = 0; i < rod.bobberCount(); i++) {
             var bobber = new Entity(EntityType.FISHING_BOBBER);
 
@@ -107,7 +114,7 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
         }
 
         var position = player.getPosition();
-        instance.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 1f), position.x(), position.y(), position.z());
+        instance.playSound(Sound.sound(SoundEvent.ENTITY_FISHING_BOBBER_RETRIEVE, Sound.Source.PLAYER, 1f, 0.5f), position.x(), position.y(), position.z());
 
         // Remove fishing hooks from the map
         FISHING_HOOKS.remove(player);
@@ -120,6 +127,7 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {
+
         var itemStack = event.getPlayer().getItemInHand(event.getHand());
 
         var item = Item.fromItemStack(itemStack);
@@ -128,10 +136,22 @@ public class FishingRodHandler implements ItemComponentHandler<FishingRod> {
 
         if (rod == null) return; // No fishing rod in hand
 
-        if (FISHING_HOOKS.get(event.getPlayer()) != null) { // Fishing rod is already thrown
-            removeBobbers(event.getPlayer(), event.getInstance());
+        if (event.getPlayer().isSneaking()) {
+            var inventory = new Inventory(InventoryType.WINDOW_3X3, "Bait");
+            var border = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE).withDisplayName(Component.empty());
+
+            for (int i = 0; i < 9; i++) {
+                if (i == 4) continue;
+                inventory.setItemStack(i, border);
+            }
+
+            event.getPlayer().openInventory(inventory);
         } else {
-            summonBobber(event.getInstance(), event.getPlayer(), rod);
+            if (FISHING_HOOKS.get(event.getPlayer()) != null) { // Fishing rod is already thrown
+                removeBobbers(event.getPlayer(), event.getInstance());
+            } else {
+                summonBobber(event.getInstance(), event.getPlayer(), rod);
+            }
         }
     }
 }
