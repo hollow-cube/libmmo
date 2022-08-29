@@ -11,6 +11,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.inventory.PlayerInventoryUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import unnamed.mmo.item.Item;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -207,7 +208,7 @@ public class CraftingInventory extends Inventory {
                     while(iterator.hasNext()) {
                         CraftingRecipe.ComponentEntry entry = iterator.next();
                         final int decrementAmount = entry.count() * recipeCrafts;
-                        if(entry.material() == getItemStack(i).material() && decrementAmount>= getItemStack(i).amount()) {
+                        if(entry.item().stateId() == Item.fromItemStack(getItemStack(i)).stateId() && decrementAmount>= getItemStack(i).amount()) {
                             // Found match, Decrement
                             if(getItemStack(i).amount() <= decrementAmount) {
                                 setItemStack(i, ItemStack.AIR);

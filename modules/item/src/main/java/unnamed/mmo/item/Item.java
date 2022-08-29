@@ -169,4 +169,54 @@ public interface Item extends Resource.Id {
         return ItemRegistry.ITEM_STATE_MAP.get(stateId);
     }
 
+    Item EMPTY_ITEM = new EmptyItem();
+
+    class EmptyItem implements Item {
+
+        @Override
+        public @NotNull NamespaceID namespace() {
+            return NamespaceID.from("unnamed", "emptyitem");
+        }
+
+        @Override
+        public int id() {
+            return -5;
+        }
+
+        @Override
+        public int stateId() {
+            return -5;
+        }
+
+        @Override
+        public @Unmodifiable @NotNull Map<String, String> properties() {
+            return Map.of();
+        }
+
+        @Override
+        public @NotNull Material material() {
+            return Material.AIR;
+        }
+
+        @Override
+        public int amount() {
+            return 1;
+        }
+
+        @Override
+        public Item withAmount(int amount) {
+            return this;
+        }
+
+        @Override
+        public @NotNull Stream<ItemComponent> components() {
+            return Stream.empty();
+        }
+
+        @Override
+        public <C extends ItemComponent> @Nullable C getComponent(@NotNull String namespace) {
+            return null;
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.item.Item;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @Not
             // This method could detect you have the 4 required in the items list, and remove the 8 required in the recipe list
             // And then when it checks against the 8 stick itemstack in the recipe, you don't have it in the crafting menu
             // But that's a really weird case to go for, we would need to implement some sort of best-fit algorithm, or just not do that
-            recipeClone.removeIf(entry -> item.material() == entry.material() && item.amount() >= entry.count());
+            recipeClone.removeIf(entry -> Item.fromItemStack(item).stateId() == entry.item().stateId() && item.amount() >= entry.count());
         }
         return recipeClone.isEmpty();
     }
@@ -42,7 +43,7 @@ public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @Not
     @Override
     public boolean containsIngredient(@NotNull ItemStack itemStack) {
         for(ComponentEntry entry : recipe) {
-            if(entry.material() == itemStack.material()) {
+            if(Item.fromItemStack(itemStack).stateId() == entry.item().stateId()) {
                 return true;
             }
         }

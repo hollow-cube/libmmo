@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.item.Item;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
@@ -21,10 +22,10 @@ public interface CraftingRecipe {
 
     boolean containsIngredient(@NotNull ItemStack itemStack);
 
-    record ComponentEntry(Material material, int count) {}
+    record ComponentEntry(Item item, int count) {}
 
     Codec<ComponentEntry> ENTRY_CODEC = RecordCodecBuilder.create(i -> i.group(
-            ExtraCodecs.MATERIAL.fieldOf("material").forGetter(ComponentEntry::material),
+            Item.CODEC.fieldOf("item").forGetter(ComponentEntry::item),
             Codec.INT.optionalFieldOf("count", 1).forGetter(ComponentEntry::count)
     ).apply(i, ComponentEntry::new));
 }

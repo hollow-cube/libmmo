@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.item.Item;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
     @Override
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         for (int i = 0; i < recipe.size(); i++) {
-            if (recipe.get(i).material() == Material.AIR) continue;
-            if (recipe.get(i).material() != items.get(i).material() || items.get(i).amount() >= recipe.get(i).count()) {
+            if (recipe.get(i).item() == Item.EMPTY_ITEM) continue;
+            if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i)).stateId() || items.get(i).amount() >= recipe.get(i).count()) {
                 return false;
             }
         }
@@ -36,7 +37,7 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
     @Override
     public boolean containsIngredient(@NotNull ItemStack itemStack) {
         for(ComponentEntry entry : recipe) {
-            if(itemStack.material() == entry.material()) {
+            if(entry.item().stateId() != Item.fromItemStack(itemStack).stateId()) {
                 return true;
             }
         }
