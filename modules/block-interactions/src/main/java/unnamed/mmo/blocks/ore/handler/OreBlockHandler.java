@@ -31,7 +31,7 @@ public class OreBlockHandler implements BlockHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(OreBlockHandler.class);
 
     //todo this should probably be configurable.
-    private static final Block REPLACEMENT_BLOCK = Block.BEDROCK;
+    public static final Block REPLACEMENT_BLOCK = Block.BEDROCK;
 
     private OreBlockHandler() {
         Check.stateCondition(instance != null, "There can only be one OreBlockHandler");
