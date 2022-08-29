@@ -18,6 +18,11 @@ import java.util.List;
 public class CraftingInventory extends Inventory {
 
     private final RecipeList recipeList;
+    private CraftingRecipe activeRecipe = null;
+
+    private static final int CRAFTING_SLOT = 0;
+    private static final int CRAFTING_INVENTORY_START_INDEX = 1;
+    private static final int CRAFTING_INVENTORY_END_INDEX = 9;
 
     // The crafting menu indices are laid out as follows
     // 1 2 3
@@ -31,15 +36,24 @@ public class CraftingInventory extends Inventory {
     @Override
     public boolean leftClick(@NotNull Player player, int slot) {
         if (slot == 0) {
+            final ItemStack craftingItemStack = getCraftingSlotItem();
+            final ItemStack playerCursorStack = getCursorItem(player);
             // Deny placements into crafting slot
-            if (!getCursorItem(player).isAir()) {
+            if (!playerCursorStack.isAir() && craftingItemStack.isAir()) {
                 return false;
             // If there is a crafting output, grab it
-            } else if (!getItemStack(0).isAir()) {
-                setCursorItem(player, getItemStack(0));
+            } else if(!craftingItemStack.isAir() && (
+                    craftingItemStack.equals(playerCursorStack) || playerCursorStack.isAir())) {
+                if(playerCursorStack.isAir()) {
+                    setCursorItem(player, craftingItemStack);
+                } else {
+                    setCursorItem(player, playerCursorStack.withAmount(amount -> amount + craftingItemStack.amount()));
+                }
                 // Decrement all items in the crafting menu by 1
-                for (int i = 1; i <= 9; i++) {
-                    int count = getItemStack(i).amount() - 1;
+                for (int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
+                    ItemStack componentStack = getItemStack(i);
+                    if(componentStack.isAir()) continue;
+                    int count = componentStack.amount() - 1;
                     if (count <= 0) {
                         setItemStack(i, ItemStack.AIR);
                     } else {
@@ -55,7 +69,7 @@ public class CraftingInventory extends Inventory {
         if (!result) {
             return false;
         }
-        if (slot <= 9) {
+        if (slot <= CRAFTING_INVENTORY_END_INDEX) {
             // Item was placed into crafting menu, check recipes
             updateCraftingRecipe();
         }
@@ -65,16 +79,18 @@ public class CraftingInventory extends Inventory {
     @Override
     public boolean rightClick(@NotNull Player player, int slot) {
         // Somewhat similar to left-click - but if the itemstacks match, you can pick up more
-        if (slot == 0) {
+        if (slot == CRAFTING_SLOT) {
+            final ItemStack craftingItemStack = getCraftingSlotItem();
+            final ItemStack playerCursorStack = getCursorItem(player);
             // Deny placements into crafting slot
-            if (!getCursorItem(player).isAir() && getItemStack(0).isAir()) {
+            if (!playerCursorStack.isAir() && craftingItemStack.isAir()) {
                 return false;
                 // If there is a crafting output, and you have the same itemstack on your cursor or air, grab it
-            } else if (!getItemStack(0).isAir()) {
+            } else if (!craftingItemStack.isAir()) {
                 if(getCursorItem(player).isAir()) {
-                    setCursorItem(player, getItemStack(0));
-                } else if(getCursorItem(player).equals(getItemStack(0))) {
-                    setCursorItem(player, getCursorItem(player).withAmount(integer -> integer + getItemStack(0).amount()));
+                    setCursorItem(player, craftingItemStack);
+                } else if(playerCursorStack.equals(craftingItemStack)) {
+                    setCursorItem(player, playerCursorStack.withAmount(integer -> integer + craftingItemStack.amount()));
                 }
                 // Decrement all items in the crafting menu by 1
                 for (int i = 1; i <= 9; i++) {
@@ -104,9 +120,11 @@ public class CraftingInventory extends Inventory {
     @Override
     public boolean shiftClick(@NotNull Player player, int slot) {
         // Shift click - will work as long as you can shift click it into an empty player slot
-        if (slot == 0 && !getItemStack(0).isAir()) {
+        final ItemStack craftingItemStack = getCraftingSlotItem();
+        final ItemStack playerCursorStack = getCursorItem(player);
+        if (slot == 0 && !craftingItemStack.isAir()) {
             int maxCrafts = 999;
-            for (int i = 1; i <= 9; i++) {
+            for (int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
                 // TODO: This does not consider if more than one item is consumed in a craft
                 maxCrafts = Math.min(maxCrafts, getItemStack(i).amount());
             }
@@ -133,7 +151,7 @@ public class CraftingInventory extends Inventory {
                     if(canAdd) {
                         player.getInventory().addItemStack(getItemStack(0).withAmount(totalItems), TransactionOption.ALL);
                         final int craftNum = totalItems / outputAmount;
-                        for (int j = 1; j <= 9; j++) {
+                        for (int j = CRAFTING_INVENTORY_START_INDEX; j <= CRAFTING_INVENTORY_END_INDEX; j++) {
                             // TODO: This does not consider if more than one item is consumed in a craft
                             if(getItemStack(i).amount() <= craftNum) {
                                 setItemStack(i, ItemStack.AIR);
@@ -178,16 +196,22 @@ public class CraftingInventory extends Inventory {
         List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), 1, 9));
         for (CraftingRecipe recipe : recipeList.getRecipeList()) {
             if (recipe.doesRecipeMatch(currentRecipe)) {
-                setItemStack(0, recipe.getRecipeOutput());
+                setItemStack(CRAFTING_SLOT, recipe.getRecipeOutput());
+                activeRecipe = recipe;
                 return;
             }
         }
+        activeRecipe = null;
         setItemStack(0, ItemStack.AIR);
     }
 
     private void updateAll(Player player) {
         player.getInventory().update();
         update(player);
+    }
+
+    private ItemStack getCraftingSlotItem() {
+        return getItemStack(CRAFTING_SLOT);
     }
 
     @TestOnly

@@ -5,6 +5,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.junit.jupiter.api.Test;
 import unnamed.mmo.item.crafting.CraftingInventory;
+import unnamed.mmo.item.crafting.CraftingRecipe;
 import unnamed.mmo.item.crafting.RecipeList;
 import unnamed.mmo.item.crafting.ShapelessCraftingRecipe;
 
@@ -31,7 +32,7 @@ public class TestCraftingRecipeIntegration {
         MinecraftServer.init();
         RecipeList list = new RecipeList();
         CraftingInventory inventory = new CraftingInventory(list);
-        list.addRecipes(List.of(new ShapelessCraftingRecipe(Map.of(Material.OAK_LOG, 1), ItemStack.of(Material.OAK_PLANKS))));
+        list.addRecipes(List.of(new ShapelessCraftingRecipe(List.of(new CraftingRecipe.ComponentEntry(Material.OAK_LOG, 1)), ItemStack.of(Material.OAK_PLANKS))));
         inventory.setItemStack(2, ItemStack.of(Material.OAK_LOG));
         inventory.refreshCurrentRecipe();
         assertEquals(inventory.getItemStack(1), ItemStack.AIR);
@@ -44,7 +45,7 @@ public class TestCraftingRecipeIntegration {
         MinecraftServer.init();
         RecipeList list = new RecipeList();
         CraftingInventory inventory = new CraftingInventory(list);
-        list.addRecipes(List.of(new ShapelessCraftingRecipe(Map.of(Material.OAK_LOG, 1), ItemStack.of(Material.OAK_PLANKS))));
+        list.addRecipes(List.of(new ShapelessCraftingRecipe(List.of(new CraftingRecipe.ComponentEntry(Material.OAK_LOG, 1)), ItemStack.of(Material.OAK_PLANKS))));
         inventory.setItemStack(2, ItemStack.of(Material.OAK_LOG));
         inventory.refreshCurrentRecipe();
         assertEquals(inventory.getItemStack(0), ItemStack.of(Material.OAK_PLANKS));
