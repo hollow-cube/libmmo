@@ -12,6 +12,7 @@ import net.minestom.server.utils.inventory.PlayerInventoryUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,17 +50,7 @@ public class CraftingInventory extends Inventory {
                 } else {
                     setCursorItem(player, playerCursorStack.withAmount(amount -> amount + craftingItemStack.amount()));
                 }
-                // Decrement all items in the crafting menu by 1
-                for (int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
-                    ItemStack componentStack = getItemStack(i);
-                    if(componentStack.isAir()) continue;
-                    int count = componentStack.amount() - 1;
-                    if (count <= 0) {
-                        setItemStack(i, ItemStack.AIR);
-                    } else {
-                        setItemStack(i, getItemStack(i).withAmount(count));
-                    }
-                }
+                removeCraftingItems(1);
                 updateCraftingRecipe();
                 return true;
             }
@@ -92,15 +83,7 @@ public class CraftingInventory extends Inventory {
                 } else if(playerCursorStack.equals(craftingItemStack)) {
                     setCursorItem(player, playerCursorStack.withAmount(integer -> integer + craftingItemStack.amount()));
                 }
-                // Decrement all items in the crafting menu by 1
-                for (int i = 1; i <= 9; i++) {
-                    int count = getItemStack(i).amount() - 1;
-                    if (count <= 0) {
-                        setItemStack(i, ItemStack.AIR);
-                    } else {
-                        setItemStack(i, getItemStack(i).withAmount(count));
-                    }
-                }
+                removeCraftingItems(1);
                 updateCraftingRecipe();
                 return true;
             }
@@ -130,35 +113,21 @@ public class CraftingInventory extends Inventory {
             }
             final int maximumCrafts = maxCrafts;
             // We have calculated the most number of items we can craft, see if we can insert into the inventory
-            int outputAmount = getItemStack(0).amount();
+            int outputAmount = craftingItemStack.amount();
             int totalItems = maxCrafts * outputAmount;
-            boolean result = player.getInventory().addItemStack(getItemStack(0).withAmount(totalItems), TransactionOption.DRY_RUN);
+            boolean result = player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.DRY_RUN);
             if(result) {
                 // We can add all items! go ahead and do so
-                player.getInventory().addItemStack(getItemStack(0).withAmount(totalItems), TransactionOption.ALL);
-                for (int i = 1; i <= 9; i++) {
-                    // TODO: This does not consider if more than one item is consumed in a craft
-                    if(getItemStack(i).amount() <= maximumCrafts) {
-                        setItemStack(i, ItemStack.AIR);
-                    } else {
-                        setItemStack(i, getItemStack(i).withAmount(integer -> integer - maximumCrafts));
-                    }
-                }
+                player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.ALL);
+                removeCraftingItems(maxCrafts);
             } else {
                 // Figure out how many we can add
                 for(int i = totalItems; i > 0; i -= outputAmount) {
-                    boolean canAdd = player.getInventory().addItemStack(getItemStack(0).withAmount(i), TransactionOption.DRY_RUN);
+                    boolean canAdd = player.getInventory().addItemStack(craftingItemStack.withAmount(i), TransactionOption.DRY_RUN);
                     if(canAdd) {
-                        player.getInventory().addItemStack(getItemStack(0).withAmount(totalItems), TransactionOption.ALL);
+                        player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.ALL);
                         final int craftNum = totalItems / outputAmount;
-                        for (int j = CRAFTING_INVENTORY_START_INDEX; j <= CRAFTING_INVENTORY_END_INDEX; j++) {
-                            // TODO: This does not consider if more than one item is consumed in a craft
-                            if(getItemStack(i).amount() <= craftNum) {
-                                setItemStack(i, ItemStack.AIR);
-                            } else {
-                                setItemStack(i, getItemStack(i).withAmount(integer -> integer - craftNum));
-                            }
-                        }
+                        removeCraftingItems(craftNum);
                         break;
                     }
                 }
@@ -212,6 +181,45 @@ public class CraftingInventory extends Inventory {
 
     private ItemStack getCraftingSlotItem() {
         return getItemStack(CRAFTING_SLOT);
+    }
+
+    /**
+     * Removes the current recipe's crafting components from the inventory's item stacks
+     * @param recipeCrafts The amount of times to remove the recipe components (that is, the number of crafts that have been performed)
+     */
+    private void removeCraftingItems(int recipeCrafts) {
+        if(activeRecipe instanceof ShapedCraftingRecipe recipe) {
+            for(int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
+                CraftingRecipe.ComponentEntry entry = recipe.recipe().get(i - 1); // Shift index down 1 because 0 is the output slot
+                final int decrementAmount = entry.count() * recipeCrafts;
+                if(getItemStack(i).amount() <= decrementAmount) {
+                    setItemStack(i, ItemStack.AIR);
+                } else {
+                    setItemStack(i, getItemStack(i).withAmount(count -> count - decrementAmount));
+                }
+            }
+        } else if (activeRecipe instanceof ShapelessCraftingRecipe recipe) {
+            ArrayList<CraftingRecipe.ComponentEntry> recipeClone = new ArrayList<>(recipe.recipe());
+            for (int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
+                if (!getItemStack(i).isAir()) {
+                    // Since we don't know exactly what pairs with what, we will have to do a bit of searching
+                    var iterator = recipeClone.iterator();
+                    while(iterator.hasNext()) {
+                        CraftingRecipe.ComponentEntry entry = iterator.next();
+                        final int decrementAmount = entry.count() * recipeCrafts;
+                        if(entry.material() == getItemStack(i).material() && decrementAmount>= getItemStack(i).amount()) {
+                            // Found match, Decrement
+                            if(getItemStack(i).amount() <= decrementAmount) {
+                                setItemStack(i, ItemStack.AIR);
+                            } else {
+                                setItemStack(i, getItemStack(i).withAmount(count -> count - decrementAmount));
+                            }
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @TestOnly

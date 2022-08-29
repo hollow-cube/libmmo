@@ -21,7 +21,7 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         for (int i = 0; i < recipe.size(); i++) {
             if (recipe.get(i).material() == Material.AIR) continue;
-            if (recipe.get(i).material() != items.get(i).material() || recipe.get(i).count() != items.get(i).amount()) {
+            if (recipe.get(i).material() != items.get(i).material() || items.get(i).amount() >= recipe.get(i).count()) {
                 return false;
             }
         }

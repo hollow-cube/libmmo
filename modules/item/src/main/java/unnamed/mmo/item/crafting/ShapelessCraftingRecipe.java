@@ -24,7 +24,13 @@ public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @Not
             if (item.isAir()) continue;
             // O(n)2 time, :(
             // But I don't think there's a better way
-            recipeClone.removeIf(entry -> item.material() == entry.material() && item.amount() == entry.count());
+
+            // TODO: This could produce some funny behavior, fix somehow
+            // Say for instance you needed 4 of a stick in 1 slot, and 8 of that same stick in another
+            // This method could detect you have the 4 required in the items list, and remove the 8 required in the recipe list
+            // And then when it checks against the 8 stick itemstack in the recipe, you don't have it in the crafting menu
+            // But that's a really weird case to go for, we would need to implement some sort of best-fit algorithm, or just not do that
+            recipeClone.removeIf(entry -> item.material() == entry.material() && item.amount() >= entry.count());
         }
         return recipeClone.isEmpty();
     }
