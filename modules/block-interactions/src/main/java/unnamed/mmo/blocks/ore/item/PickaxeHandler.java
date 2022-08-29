@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,8 @@ import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemComponentHandler;
 import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
+
+import static unnamed.mmo.blocks.ore.handler.OreBlockHandler.REPLACEMENT_BLOCK;
 
 @AutoService(ItemComponentHandler.class)
 public class PickaxeHandler implements ItemComponentHandler<Pickaxe> {
@@ -43,7 +46,7 @@ public class PickaxeHandler implements ItemComponentHandler<Pickaxe> {
 
     private void handleLongDiggingStart(PlayerLongDiggingStartEvent event) {
         var ore = Ore.fromBlock(event.getBlock());
-        if (ore == null) return; // Did not dig a known ore block
+        if (ore == null || event.getBlock().compare(REPLACEMENT_BLOCK, Block.Comparator.STATE)) return;
 
         // Ensure they have a pickaxe in hand and get the pickaxe
         var item = Item.fromItemStack(event.getPlayer().getItemInMainHand());
