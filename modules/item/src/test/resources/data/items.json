@@ -26,5 +26,16 @@
         "stateId": 1
       }
     }
+  },
+  {
+    "namespace": "test:log",
+    "id": 2,
+    "material": "minecraft:oak_log",
+    "defaultStateId": 2,
+    "states": {
+      "[]": {
+        "stateId": 2
+      }
+    }
   }
 ]
