@@ -1,0 +1,49 @@
+{
+  "namespace": "unnamed:fisherman_npc",
+  "task": {
+    "type": "selector",
+    "children": {
+      "world.time < 700": {
+        // sleep
+        "type": "sleep_in_bed",
+        "bed": [5, 5, 5],
+
+        // Allow all to interrupt the other actions (since they should change when time changes)
+        "canInterrupt": true,
+      },
+      "q.time_of_day < 0.25": {
+        // Idle walk around in house
+        "type": "sequence",
+        "children": [
+          {
+            "type": "idle_time",
+            "time": {"min": 5, "max": 100}
+          },
+          {
+            "type": "wander_in_region",
+            "region": [[1, 1, 1], [10, 10, 10]]
+          }
+        ],
+
+        "canInterrupt": true
+      },
+      "world.time < 2400": {
+        // Walk to fishing spot then play animation forever
+        "type": "sequence",
+        "children": [
+          {
+            "type": "walk_to_fixed",
+            "point": [2, 2, 2]
+          },
+          {
+            "type": "play_animation",
+            "animation": "fisherman_fishing",
+            "repeat": "forever",
+          }
+        ],
+
+        "canInterrupt": true
+      },
+    }
+  }
+}

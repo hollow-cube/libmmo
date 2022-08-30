@@ -2,20 +2,39 @@
   "namespace": "unnamed:attack_enemy",
   "task": {
     "type": "selector",
-    // Define the stimuli for this task. They can provide context such as target entities/positions
+    // Define the stimuli for this task. They can provide context such as value entities/positions
     "stimuli": [
       {
         "type": "target_closest_entity",
         "entityType": "player",
-        "range": 25
+        "range": 25,
+        // If true, it will keep looking and update accordingly, rather than continuing to value
+        // the same entity until it is no longer in range.
+        "dynamic": false,
+      },
+      {
+        // Will value the last attacker always
+        "type": "target_last_attacker",
+        //todo how will it decide how long until it forgets? Entity setting for memory?
+        //todo min time until it can change value (in case two people are back and forth hitting it)
       }
+
+      // Various necessary behaviors
+      // - smelling: value without line of sight then pause (do an animation) and continue targeting
+      // - hearing: warden-like
+      // - slime jump on head: jumps on your head and you have to hit it off
+
+      // - interrupts: Be able to interrupt an action if a condition changes.
+      //   this works in one of 2 ways:
+      //    - specifying that certain actions may interrupt others
+      //    - specifying that certain can be interrupted
     ],
     // Children are evaluated in order.
     "children": {
-      // If there is a target (from stimuli)
+      // If there is a value (from stimuli)
       "target != null": {
         "type": "parallel",
-        // Follow the target and attempt to attack it
+        // Follow the value and attempt to attack it
         children: [
           {
             "type": "follow_target"

@@ -67,8 +67,8 @@ public class PFPathGenerator {
                 }
 
             }
-//            var nearbyPoints = current.getNearby(instance, closed, target, expandedBoundingBox)
-//                    .stream().filter(p -> p.point.distance(target) <= maxDistance).collect(Collectors.toSet());
+//            var nearbyPoints = current.getNearby(instance, closed, value, expandedBoundingBox)
+//                    .stream().filter(p -> p.point.distance(value) <= maxDistance).collect(Collectors.toSet());
 
         }
 
@@ -86,7 +86,7 @@ public class PFPathGenerator {
 //
 //        PNode current = open.poll();
 //
-//        if (current.point.distance(target) > closeDistance) return null;
+//        if (current.point.distance(value) > closeDistance) return null;
 //
 //        while (current.parent != null) {
 //            path.getNodes().add(current);
@@ -98,7 +98,7 @@ public class PFPathGenerator {
 //        path.addNodes(instance, expandedBoundingBox);
 
 //        if (path.getNodes().size() > 0) {
-//            PNode pEnd = new PNode(target, 0, 0, path.getNodes().get(path.getNodes().size() - 1));
+//            PNode pEnd = new PNode(value, 0, 0, path.getNodes().get(path.getNodes().size() - 1));
 //            path.getNodes().add(pEnd);
 //        }
 //

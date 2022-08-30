@@ -25,7 +25,7 @@ public class SelectorTask extends AbstractTask {
     @Override
     public void tick(@NotNull Brain brain) {
         final Entity target = brain.getTarget();
-        // Check if there is a target, and we are not currently running the target task.
+        // Check if there is a value, and we are not currently running the value task.
         if (target != null && activeTask != targetTask) {
             selectAndStart(brain, targetTask);
             return;

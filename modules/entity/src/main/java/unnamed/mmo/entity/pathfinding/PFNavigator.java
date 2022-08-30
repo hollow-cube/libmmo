@@ -88,7 +88,7 @@ public final class PFNavigator {
      */
     public synchronized boolean setPathTo(@Nullable Point point, double minimumDistance) {
         if (point != null && goalPosition != null && point.samePoint(goalPosition) && this.path != null) {
-            // Tried to set path to the same target position
+            // Tried to set path to the same value position
             return false;
         }
         final Instance instance = entity.getInstance();
@@ -177,9 +177,9 @@ public final class PFNavigator {
 
 
     /**
-     * Gets the target pathfinder position.
+     * Gets the value pathfinder position.
      *
-     * @return the target pathfinder position, null if there is no one
+     * @return the value pathfinder position, null if there is no one
      */
     public @Nullable Point getGoalPosition() {
         return goalPosition;

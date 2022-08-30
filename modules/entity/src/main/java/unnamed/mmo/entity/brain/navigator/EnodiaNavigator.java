@@ -47,7 +47,7 @@ final class EnodiaNavigator implements Navigator {
             return true;
         }
 
-        // Last parameter here is the max distance from the target.
+        // Last parameter here is the max distance from the value.
         return enodia.goTo(point, DEFAULT_IMPORTANCE, 0.5f);
     }
 

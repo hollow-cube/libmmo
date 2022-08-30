@@ -2,10 +2,10 @@
   "namespace": "unnamed:attack_enemy",
   "task": {
     "type": "selector",
-    // No stimuli, the fish will have its target set programmatically
+    // No stimuli, the fish will have its value set programmatically
     "stimuli": [],
     "children": {
-      //If we have a target, move towards it
+      // If we have a value, move towards it
       "target != null": {
         "type": "follow_target"
       },

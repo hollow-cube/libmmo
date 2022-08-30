@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 @EnvTest
 public class TestFollowTargetTaskIntegration {
 
-    // No target
+    // No value
     @Test
     public void testNoTarget(Env env) {
 
     }
 
-    // Static target
+    // Static value
 
-    // Moving target
+    // Moving value
 
 }
