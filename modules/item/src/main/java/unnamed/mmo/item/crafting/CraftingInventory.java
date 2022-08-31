@@ -163,7 +163,7 @@ public class CraftingInventory extends Inventory {
     }
 
     private void updateCraftingRecipe() {
-        List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), 1, 9));
+        List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), 1, 10));
         for (CraftingRecipe recipe : recipeList.getRecipeList()) {
             if (recipe.doesRecipeMatch(currentRecipe)) {
                 setItemStack(CRAFTING_SLOT, recipe.getRecipeOutput());
@@ -208,7 +208,7 @@ public class CraftingInventory extends Inventory {
                     while(iterator.hasNext()) {
                         CraftingRecipe.ComponentEntry entry = iterator.next();
                         final int decrementAmount = entry.count() * recipeCrafts;
-                        if(entry.item().stateId() == Item.fromItemStack(getItemStack(i)).stateId() && decrementAmount>= getItemStack(i).amount()) {
+                        if(entry.item().stateId() == Item.fromItemStack(getItemStack(i)).stateId() && getItemStack(i).amount() >= decrementAmount) {
                             // Found match, Decrement
                             if(getItemStack(i).amount() <= decrementAmount) {
                                 setItemStack(i, ItemStack.AIR);

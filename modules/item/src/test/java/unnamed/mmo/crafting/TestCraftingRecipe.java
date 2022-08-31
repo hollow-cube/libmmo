@@ -5,7 +5,6 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.NamespaceID;
 import org.junit.jupiter.api.Test;
-import unnamed.mmo.item.Item;
 import unnamed.mmo.item.crafting.CraftingInventory;
 import unnamed.mmo.item.crafting.CraftingRecipe;
 import unnamed.mmo.item.crafting.RecipeList;
@@ -13,12 +12,11 @@ import unnamed.mmo.item.crafting.ShapelessCraftingRecipe;
 import unnamed.mmo.item.test.MockItem;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class TestCraftingRecipeIntegration {
+public class TestCraftingRecipe {
 
     private final MockItem log = new MockItem(NamespaceID.from("test", "log"), 2, 2, null, Material.OAK_LOG, 1);
 
