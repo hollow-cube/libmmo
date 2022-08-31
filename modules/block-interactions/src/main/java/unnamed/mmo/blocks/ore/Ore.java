@@ -2,15 +2,18 @@ package unnamed.mmo.blocks.ore;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.NamespaceID;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.handler.OreBlockHandler;
+import unnamed.mmo.lang.LanguageProvider;
 import unnamed.mmo.loot.LootTable;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
@@ -28,9 +31,20 @@ public record Ore(
 
     static final Tag<Ore> TAG = Tag.String("ore_id").map(Ore::fromNamespaceId, Ore::name);
 
+
+    /**
+     * @return The translation key for this item
+     * @see LanguageProvider#get(Component)
+     */
+    @Contract(pure = true)
+    public @NotNull String translationKey() {
+        return String.format("ore.%s.%s.name", namespace().namespace(), namespace().path());
+    }
+
     public @NotNull Block asBlock() {
         return oreBlock.withTag(TAG, this).withHandler(OreBlockHandler.instance());
     }
+
 
     public static @Nullable Ore fromBlock(@NotNull Block block) {
         return block.getTag(TAG);

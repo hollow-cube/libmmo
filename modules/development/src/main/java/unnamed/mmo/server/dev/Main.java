@@ -23,6 +23,7 @@ import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.player.PlayerImpl;
+import unnamed.mmo.quest.QuestFacet;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
@@ -58,6 +59,7 @@ public class Main {
 
             // Testing
             event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("unnamed:gold_ore").asBlock());
+            event.getSpawnInstance().setBlock(4, 43, 5, Ore.fromNamespaceId("unnamed:diamond_ore").asBlock());
             player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_pickaxe").asItemStack());
 
             //todo this needs to be done elsewhere
@@ -86,6 +88,9 @@ public class Main {
         //todo stupid facet implementation
         DebugToolManager debugToolManager = new DebugToolManager();
         debugToolManager.hook(MinecraftServer.process());
+
+        QuestFacet questFacet = new QuestFacet();
+        questFacet.hook(MinecraftServer.process());
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
                 ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
