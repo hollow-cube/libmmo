@@ -45,7 +45,7 @@ public class CraftingInventory extends Inventory {
                 return false;
             // If there is a crafting output, grab it
             } else if(!craftingItemStack.isAir() && (
-                    craftingItemStack.equals(playerCursorStack) || playerCursorStack.isAir())) {
+                    craftingItemStack.isSimilar(playerCursorStack) || playerCursorStack.isAir())) {
                 if(playerCursorStack.isAir()) {
                     setCursorItem(player, craftingItemStack);
                 } else {
@@ -81,7 +81,7 @@ public class CraftingInventory extends Inventory {
             } else if (!craftingItemStack.isAir()) {
                 if(getCursorItem(player).isAir()) {
                     setCursorItem(player, craftingItemStack);
-                } else if(playerCursorStack.equals(craftingItemStack)) {
+                } else if(playerCursorStack.isSimilar(craftingItemStack)) {
                     setCursorItem(player, playerCursorStack.withAmount(integer -> integer + craftingItemStack.amount()));
                 }
                 removeCraftingItems(1);
