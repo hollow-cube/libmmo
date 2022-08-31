@@ -37,7 +37,7 @@ public class CraftingInventory extends Inventory {
 
     @Override
     public boolean leftClick(@NotNull Player player, int slot) {
-        if (slot == 0) {
+        if (slot == CRAFTING_SLOT) {
             final ItemStack craftingItemStack = getCraftingSlotItem();
             final ItemStack playerCursorStack = getCursorItem(player);
             // Deny placements into crafting slot
@@ -94,7 +94,7 @@ public class CraftingInventory extends Inventory {
         if (!result) {
             return false;
         }
-        if (slot <= 9) {
+        if (slot <= CRAFTING_INVENTORY_END_INDEX) {
             // Item was placed into crafting menu, check recipes
             updateCraftingRecipe();
         }
@@ -105,14 +105,8 @@ public class CraftingInventory extends Inventory {
     public boolean shiftClick(@NotNull Player player, int slot) {
         // Shift click - will work as long as you can shift click it into an empty player slot
         final ItemStack craftingItemStack = getCraftingSlotItem();
-        final ItemStack playerCursorStack = getCursorItem(player);
-        if (slot == 0 && !craftingItemStack.isAir()) {
-            int maxCrafts = 999;
-            for (int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
-                // TODO: This does not consider if more than one item is consumed in a craft
-                maxCrafts = Math.min(maxCrafts, getItemStack(i).amount());
-            }
-            final int maximumCrafts = maxCrafts;
+        if (slot == CRAFTING_SLOT && !craftingItemStack.isAir()) {
+            final int maxCrafts = maximumCrafts();
             // We have calculated the most number of items we can craft, see if we can insert into the inventory
             int outputAmount = craftingItemStack.amount();
             int totalItems = maxCrafts * outputAmount;
@@ -139,14 +133,14 @@ public class CraftingInventory extends Inventory {
         // And then we copy the code from Inventory#shiftClick, except we start our clickProcessor search at 1 instead to avoid
         // shift clicking things into the crafting slot
         final PlayerInventory playerInventory = player.getInventory();
-        final boolean isInWindow = slot <= 9;
-        final int clickSlot = isInWindow ? slot : PlayerInventoryUtils.convertSlot(slot, 10);
+        final boolean isInWindow = slot <= CRAFTING_INVENTORY_END_INDEX;
+        final int clickSlot = isInWindow ? slot : PlayerInventoryUtils.convertSlot(slot, CRAFTING_INVENTORY_END_INDEX + 1);
         final ItemStack clicked = isInWindow ? getItemStack(slot) : playerInventory.getItemStack(clickSlot);
         final ItemStack cursor = getCursorItem(player); // Isn't used in the algorithm
         final InventoryClickResult clickResult = this.clickProcessor.shiftClick(
                 isInWindow ? this : playerInventory,
                 isInWindow ? playerInventory : this,
-                1, isInWindow ? playerInventory.getInnerSize() : getInnerSize(), 1,
+                CRAFTING_INVENTORY_START_INDEX, isInWindow ? playerInventory.getInnerSize() : getInnerSize(), 1,
                 player, clickSlot, clicked, cursor);
         if (clickResult.isCancel()) {
             updateAll(player);
@@ -163,7 +157,7 @@ public class CraftingInventory extends Inventory {
     }
 
     private void updateCraftingRecipe() {
-        List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), 1, 10));
+        List<ItemStack> currentRecipe = List.of(Arrays.copyOfRange(getItemStacks(), CRAFTING_INVENTORY_START_INDEX, CRAFTING_INVENTORY_END_INDEX + 1));
         for (CraftingRecipe recipe : recipeList.getRecipeList()) {
             if (recipe.doesRecipeMatch(currentRecipe)) {
                 setItemStack(CRAFTING_SLOT, recipe.getRecipeOutput());
@@ -172,7 +166,7 @@ public class CraftingInventory extends Inventory {
             }
         }
         activeRecipe = null;
-        setItemStack(0, ItemStack.AIR);
+        setItemStack(CRAFTING_SLOT, ItemStack.AIR);
     }
 
     private void updateAll(Player player) {
@@ -221,6 +215,36 @@ public class CraftingInventory extends Inventory {
                 }
             }
         }
+    }
+
+    /**
+     * Based on the items in the current inventory and the active recipe, calculates the maximum number of crafts that can be performed
+     * @return
+     */
+    private int maximumCrafts() {
+        if(activeRecipe == null) {
+            return 0;
+        }
+        if(activeRecipe instanceof ShapedCraftingRecipe recipe) {
+            int maxCrafts = 999;
+            for (int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
+                int currentAmount = getItemStack(i).amount();
+                int craftAmount = recipe.recipe().get(i - 1).item().amount();
+                maxCrafts = Math.min(maxCrafts, currentAmount / craftAmount);
+            }
+            return maxCrafts;
+        } else if(activeRecipe instanceof ShapelessCraftingRecipe recipe) {
+            int maxCrafts = 999;
+            for(int i = CRAFTING_INVENTORY_START_INDEX; i <= CRAFTING_INVENTORY_END_INDEX; i++) {
+                for(var componentEntry : recipe.recipe()) {
+                    if(componentEntry.item().stateId() == Item.fromItemStack(getItemStack(i)).stateId()) {
+                        maxCrafts = Math.min(maxCrafts, getItemStack(i).amount() / componentEntry.item().amount());
+                    }
+                }
+            }
+            return maxCrafts;
+        }
+        return 0;
     }
 
     @TestOnly

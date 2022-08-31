@@ -3,9 +3,9 @@ package unnamed.mmo.item.crafting;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.item.Item;
+import unnamed.mmo.item.ItemImpl;
 import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
     @Override
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         for (int i = 0; i < recipe.size(); i++) {
-            if (recipe.get(i).item() == Item.EMPTY_ITEM) continue;
+            if (recipe.get(i).item() == ItemImpl.EMPTY_ITEM) continue;
             if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i)).stateId() || items.get(i).amount() >= recipe.get(i).count()) {
                 return false;
             }

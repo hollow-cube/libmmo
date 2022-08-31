@@ -3,10 +3,8 @@ package unnamed.mmo.item.crafting;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.item.Item;
-import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
 
