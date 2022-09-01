@@ -27,7 +27,7 @@
 
         "canInterrupt": true
       },
-      "world.time < 2400": {
+      "q.time_of_day < 0.5": {
         // Walk to fishing spot then play animation forever
         "type": "sequence",
         "children": [

@@ -9,6 +9,7 @@ import unnamed.mmo.mql.value.MqlHolder;
 import unnamed.mmo.mql.value.MqlNumberValue;
 import unnamed.mmo.mql.value.MqlValue;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MqlTest {
@@ -29,10 +30,9 @@ public class MqlTest {
                 };
             }
         };
-        var result = expr.evaluateToBool(scope);
-
-        assertTrue(result);
-
+        var result = expr.evaluate(scope);
+        assertTrue(result instanceof MqlNumberValue);
+        assertEquals(1, ((MqlNumberValue) result).value());
     }
 
 }
