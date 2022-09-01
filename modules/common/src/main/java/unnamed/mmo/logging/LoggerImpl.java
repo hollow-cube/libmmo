@@ -5,9 +5,7 @@ import org.slf4j.MDC;
 
 import java.util.Map;
 
-record LoggerImpl(
-        org.slf4j.Logger delegate
-) implements Logger {
+record LoggerImpl(org.slf4j.Logger delegate) implements Logger {
 
     @Override
     public void debug(@NotNull String message) {
