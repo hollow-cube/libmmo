@@ -29,6 +29,7 @@ public sealed interface Task permits AbstractTask {
         static final Registry.Index<Class<?>, Factory> TYPE_REGISTRY = REGISTRY.index(Factory::type);
 
         @SuppressWarnings("Convert2MethodRef")
+        //todo turn into Registry#required when updated
         public static final Codec<Factory> CODEC = Codec.STRING.xmap(ns -> REGISTRY.get(ns), Factory::name);
 
         public Factory(String namespace, Class<? extends Task.Spec> type, Codec<? extends Task.Spec> codec) {

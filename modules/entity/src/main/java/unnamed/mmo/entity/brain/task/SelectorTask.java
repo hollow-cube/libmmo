@@ -1,67 +1,108 @@
 package unnamed.mmo.entity.brain.task;
 
-import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minestom.server.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import unnamed.mmo.entity.EntityMqlQueryContext;
+import unnamed.mmo.entity.UnnamedEntity;
 import unnamed.mmo.entity.brain.Brain;
+import unnamed.mmo.entity.brain.stimuli.NearbyEntityStimuliSource;
+import unnamed.mmo.entity.brain.stimuli.StimuliSource;
 import unnamed.mmo.mql.MqlScript;
-import unnamed.mmo.util.DFUUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import static unnamed.mmo.util.ExtraCodecs.lazy;
 
 public class SelectorTask extends AbstractTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelectorTask.class);
 
     private final Spec spec;
-//    private final Task targetTask;
-//    private final Task otherwiseTask;
+    private final List<Task> children = new ArrayList<>();
 
-    private Task activeTask;
+    private EntityMqlQueryContext queryContext;
+    private int activeTask = -1;
+
+    //todo temp
+    private final StimuliSource stimuli = new NearbyEntityStimuliSource();
 
     public SelectorTask(Spec spec) {
         this.spec = spec;
-//        this.targetTask = spec.target().create();
-//        this.otherwiseTask = spec.otherwise().create();
+        for (var child : spec.children) {
+            children.add(child.create());
+        }
+    }
+
+
+    @Override
+    public void start(@NotNull Brain brain) {
+        super.start(brain);
+        this.queryContext = new EntityMqlQueryContext((UnnamedEntity) brain.entity());
+
+        evaluate(brain);
     }
 
     @Override
     public void tick(@NotNull Brain brain) {
-//        final Entity target = brain.getTarget();
-//        // Check if there is a value, and we are not currently running the value task.
-//        if (target != null && activeTask != targetTask) {
-//            selectAndStart(brain, targetTask);
-//            return;
-//        }
-//        if (target == null && activeTask != otherwiseTask) {
-//            selectAndStart(brain, otherwiseTask);
-//            return;
-//        }
-//
-//        // Restart a task if it has finished
-//        if (activeTask.getState() != State.RUNNING) {
-//            activeTask.start(brain);
-//        }
-//
-//        activeTask.tick(brain);
-    }
+        stimuli.update(brain); //todo not sure these should update every tick?
 
-    private void selectAndStart(Brain brain, Task task) {
-        // End the active task
-        if (activeTask != null) {
-            //todo bad
-            ((AbstractTask) activeTask).end(true);
+        // Try to tick the current task, if present
+        if (activeTask != -1) {
+            Task active = children.get(activeTask);
+            active.tick(brain);
+
+            // Check if task is complete
+            switch (active.getState()) {
+                case FAILED -> end(false);
+                case COMPLETE -> {
+                    // Current task finished with success, select a new task.
+                    activeTask = -1; // Reset the active task so evaluate restarts it if relevant
+                    evaluate(brain);
+                    return;
+                }
+                // Otherwise do nothing and continue as normal
+            }
+
+            // If the current task cannot be interrupted, do nothing else
+            Descriptor desc = spec.children.get(activeTask);
+            if (!desc.canInterrupt()) return;
         }
 
-        // start the other task
-        activeTask = task;
-        activeTask.start(brain);
+        // Attempt to choose a new task.
+        //todo do not test for change every tick in the future
+        evaluate(brain);
     }
+
+    /** Evaluate each task in order, choosing the first matching one. */
+    private void evaluate(@NotNull Brain brain) {
+        for (int i = 0; i < children.size(); i++) {
+            Descriptor child = spec.children.get(i);
+            // Try to evaluate this child
+            if (!child.script.evaluateToBool(queryContext))
+                continue;
+
+            // If the selected task is also the current task, do nothing
+            if (activeTask == i) return;
+
+            // Cancel the old task
+            //todo should do this better
+            brain.navigator().setPathTo(null);
+
+            // Change task and start the new one
+            LOGGER.info("starting new task: {}", i);
+            activeTask = i;
+            Task newTask = children.get(i);
+            newTask.start(brain);
+            return;
+        }
+    }
+
+
+
 
     public record Descriptor(
             MqlScript script,
@@ -78,17 +119,21 @@ public class SelectorTask extends AbstractTask {
             //todo stimuli
             List<Descriptor> children
     ) implements Task.Spec {
-        public static final Codec<Pair<Task.Spec, Boolean>> abcx = Codec.pair(
+        private static final Codec<Pair<Task.Spec, Boolean>> TASK_MIXIN = Codec.pair(
                 lazy(() -> Task.Spec.CODEC),
                 RecordCodecBuilder.create(i -> i.group(
-                        Codec.BOOL.fieldOf("canInterrupt").forGetter(b -> b)
+                        Codec.BOOL.optionalFieldOf("canInterrupt", false).forGetter(b -> b)
                 ).apply(i, b -> b))
         );
-//        public static final Codec<Spec> CODEC = RecordCodecBuilder.create(i -> i.group(
-//                Codec.unboundedMap(MqlScript.CODEC, Codec.pair(lazy(() -> Task.Spec.CODEC), Codec.BOOL.fieldOf("").forGetter(it -> false)))
-//                        .xmap(DFUUtil::mapToPairList, DFUUtil::pairListToMap)
-//                        .fieldOf("children").forGetter(Spec::children)
-//        ).apply(i, Spec::new));
+
+        private static final Codec<List<Descriptor>> DESCRIPTOR_LIST = Codec.unboundedMap(MqlScript.CODEC, TASK_MIXIN)
+                .xmap(m -> m.entrySet().stream().map(entry -> new Descriptor(entry.getKey(), entry.getValue().getFirst(), entry.getValue().getSecond())).toList(),
+                        d -> {throw new RuntimeException("not implemented");});
+
+        public static final Codec<Spec> CODEC = RecordCodecBuilder.create(i -> i.group(
+                DESCRIPTOR_LIST.fieldOf("children").forGetter(Spec::children)
+        ).apply(i, Spec::new));
+
 
         @Override
         public @NotNull Task create() {
@@ -96,36 +141,6 @@ public class SelectorTask extends AbstractTask {
         }
     }
 
-    public static void main(String[] args) {
-//        var result = JsonOps.INSTANCE.withDecoder(Spec.CODEC)
-//                .apply(JsonParser.parseString("""
-//                        {
-//                            "children": {
-//                                "1.0": "abc",
-//                                "q.is_alive": "def",
-//                                "3.0": "ghi"
-//                            }
-//                        }"""))
-//                .result()
-//                .get()
-//                .getFirst();
-        var result2 = JsonOps.INSTANCE.withDecoder(Spec.abcx)
-                .apply(JsonParser.parseString("""
-                        {
-                            "type": "unnamed:idle",
-                            "time": 1,
-                            "canInterrupt": false
-                        }"""))
-                .result()
-                .get()
-                .getFirst();
-
-        System.out.println(result2);
-
-//        for (var entry : result.children) {
-//            System.out.println(entry.getSecond());
-//        }
-    }
 
 
 }

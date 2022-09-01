@@ -5,6 +5,9 @@ import net.hollowcube.item.crafting.ToolCraftingInventory;
 import net.hollowcube.player.PlayerImpl;
 import net.hollowcube.server.dev.tool.DebugToolManager;
 import net.hollowcube.server.instance.TickTrackingInstance;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.command.builder.Command;
@@ -36,21 +39,22 @@ import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.chat.ChatManager;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
+import unnamed.mmo.damage.DamageProcessor;
+import unnamed.mmo.data.number.NumberProvider;
 import unnamed.mmo.entity.UnnamedEntity;
-import unnamed.mmo.entity.brain.SingleTaskBrain;
-import unnamed.mmo.entity.brain.task.FollowTargetTask;
-import unnamed.mmo.entity.brain.task.SelectorTask;
-import unnamed.mmo.entity.brain.task.WanderInRegionTask;
+import unnamed.mmo.entity.brain.task.*;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
+import unnamed.mmo.mql.MqlScript;
 import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.player.PlayerImpl;
 import unnamed.mmo.quest.QuestFacet;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -100,17 +104,34 @@ public class Main {
 
 
             //todo test entity
-            UnnamedEntity entity = new UnnamedEntity(new SelectorTask(new SelectorTask.Spec(
-                    new FollowTargetTask.Spec(),
-                    new WanderInRegionTask.Spec()
-            )));
+            JsonElement json = JsonParser.parseString("""
+                    {
+                        "type": "unnamed:selector",
+                        "children": {
+                            "q.has_target": {
+                                "type": "unnamed:follow_target"
+                            },
+                            "": {
+                                "type": "unnamed:sequence",
+                                "children": [
+                                    {
+                                        "type": "unnamed:wander_in_region"
+                                    },
+                                    {
+                                        "type": "unnamed:idle",
+                                        "time": 5
+                                    }
+                                ],
+                                
+                                "canInterrupt": true
+                            }
+                        }
+                    }""");
+            Task task = JsonOps.INSTANCE.withDecoder(SelectorTask.Spec.CODEC)
+                    .apply(json).getOrThrow(false, System.err::println).getFirst().create();
+            UnnamedEntity entity = new UnnamedEntity(task);
             entity.setInstance(instance, new Pos(0, 40, 0))
                     .thenAccept(unused -> System.out.println("Spawned"));
-
-            MinecraftServer.getSchedulerManager().buildTask(() -> {
-                System.out.println("SETTING TARGET");
-                ((SingleTaskBrain) entity.brain()).setTarget(player);
-            }).delay(5, net.minestom.server.utils.time.TimeUnit.SECOND).schedule();
         });
 
         BaseCommandRegister.registerCommands(); //todo this should be in a facet?

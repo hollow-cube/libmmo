@@ -48,7 +48,7 @@ public class WanderInRegionTask extends AbstractTask {
         }
     }
 
-    @AutoService(WanderInRegionTask.class)
+    @AutoService(Task.Factory.class)
     public static class Factory extends Task.Factory {
         public Factory() {
             super("unnamed:wander_in_region", Spec.class, Spec.CODEC);

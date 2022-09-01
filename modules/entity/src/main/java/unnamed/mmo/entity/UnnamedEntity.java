@@ -3,6 +3,7 @@ package unnamed.mmo.entity;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.entity.brain.Brain;
@@ -12,7 +13,7 @@ import unnamed.mmo.entity.brain.task.WanderInRegionTask;
 
 import java.util.concurrent.CompletableFuture;
 
-public class UnnamedEntity extends Entity {
+public class UnnamedEntity extends LivingEntity {
     private final Brain brain;
 
     public UnnamedEntity(Task task) {

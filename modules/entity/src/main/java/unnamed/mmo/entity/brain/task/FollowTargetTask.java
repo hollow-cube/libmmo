@@ -1,5 +1,7 @@
 package unnamed.mmo.entity.brain.task;
 
+import com.google.auto.service.AutoService;
+import com.mojang.serialization.Codec;
 import net.minestom.server.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.entity.brain.Brain;
@@ -28,10 +30,18 @@ public class FollowTargetTask extends AbstractTask {
 
 
     public record Spec() implements Task.Spec {
+        public static final Codec<Spec> CODEC = Codec.unit(new Spec());
 
         @Override
         public @NotNull Task create() {
             return new FollowTargetTask();
+        }
+    }
+
+    @AutoService(Task.Factory.class)
+    public static class Factory extends Task.Factory {
+        public Factory() {
+            super("unnamed:follow_target", Spec.class, Spec.CODEC);
         }
     }
 }
