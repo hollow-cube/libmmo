@@ -43,3 +43,5 @@ bin/
 
 !.env.sample
 !.github
+
+log.txt
