@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.data.NumberSource;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.ResourceFactory;
-import unnamed.mmo.util.DFUUtil;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.DFUUtil;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 /**
  * A source of numbers, see <a href="https://minecraft.fandom.com/wiki/Loot_table#Number_Providers">Number Providers</a>.

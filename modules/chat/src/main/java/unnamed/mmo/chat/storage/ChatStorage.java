@@ -12,7 +12,7 @@ import unnamed.mmo.chat.ChatMessage;
 import unnamed.mmo.chat.ChatQuery;
 import unnamed.mmo.config.ConfigProvider;
 import unnamed.mmo.mongo.MongoConfig;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

@@ -4,19 +4,21 @@ import net.minestom.server.ServerProcess;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A concept for managing server features between modules.
+ * A concept for loading modules of the server, similar-ish to extensions.
  * <p>
- * The idea being that the core server will load all facets using SPI, then call
- * their hook method with the starting {@link ServerProcess}.
+ * Facets are defined, then loaded using the service provider interface by
+ * the controlling server (development, production, etc).
  * <p>
- * Would need to be expanded to support references to other facets (probably wrapping
- * {@link ServerProcess} with some way to get another facet by its class). This can
- * work as long as they are all registered before {@link #hook(ServerProcess)} is called,
- * and all facets abide by a rule to never use another facet during {@link #hook(ServerProcess)}.
- * Could add a postHook or something method if absolutely necessary.
+ * All facets <i>must</i> have a public no-args constructor. There may be
+ * other constructors present (eg for use in tests).
+ * <p>
+ * Common registration functions are provided on {@link ServerWrapper}.
+ * These should be used over accessing the {@link ServerProcess} directly,
+ * because they can be transparently extended to support unloading facets
+ * if this ever becomes a desired behavior (and they have some utilities).
  */
 public interface Facet {
 
-    void hook(@NotNull ServerProcess server);
+    void hook(@NotNull ServerWrapper server);
 
 }

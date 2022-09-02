@@ -155,7 +155,7 @@ public class TestEnvVarOps {
 
 
 
-    private class MockEnvVarOps extends EnvVarOps {
+    private static class MockEnvVarOps extends EnvVarOps {
         private final Map<String, String> env;
 
         private MockEnvVarOps(Map<String, String> env) {this.env = env;}

@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.item.ItemComponent;
 
-import static unnamed.mmo.util.ExtraCodecs.string;
+import static unnamed.mmo.dfu.ExtraCodecs.string;
 
 public record TestComponent(
         @NotNull String name

@@ -1,10 +1,12 @@
 package unnamed.mmo.server.dev;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.ServerProcess;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
@@ -12,29 +14,32 @@ import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.instance.block.BlockHandler;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.world.DimensionType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.blocks.ore.Ore;
-import unnamed.mmo.chat.ChatManager;
-import unnamed.mmo.chat.storage.ChatStorage;
-import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
-import unnamed.mmo.item.ItemManager;
-import unnamed.mmo.item.crafting.CraftingInventory;
 import unnamed.mmo.item.crafting.RecipeList;
 import unnamed.mmo.item.crafting.ToolCraftingInventory;
-import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.player.PlayerImpl;
-import unnamed.mmo.quest.QuestFacet;
+import unnamed.mmo.server.Facet;
+import unnamed.mmo.server.ServerWrapper;
+import unnamed.mmo.server.dev.command.BaseCommandRegister;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class Main {
 
@@ -76,42 +81,57 @@ public class Main {
             player.getInventory().addItemStack(DebugToolManager.createTool("unnamed:hello"));
         });
 
-        BaseCommandRegister.registerCommands();
+        BaseCommandRegister.registerCommands(); //todo this should be in a facet?
 
-        // For now, manually register chat (with conn to mongo :/ need a config system)
-//        MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
-//                .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))
-//                .uuidRepresentation(UuidRepresentation.STANDARD)
-//                .build());
-//        ChatStorage chatStorage = ChatStorage.mongo(mongoClient);
-        ChatStorage chatStorage = ChatStorage.noop();
-        ChatManager chatManager = new ChatManager(chatStorage);
-        chatManager.hook(MinecraftServer.process());
 
-        //todo properly implement a config system & use facets better
-        ItemManager itemManager = new ItemManager();
-        itemManager.hook(MinecraftServer.process());
-        OwnedItemEntity.Handler itemEntityHandler = new OwnedItemEntity.Handler();
-        itemEntityHandler.hook(MinecraftServer.process());
+        // Discover loaded facets
+        Map<Class<?>, Facet> facets = new HashMap<>();
+        for (Facet facet : ServiceLoader.load(Facet.class)) {
+            facets.put(facet.getClass(), facet);
+        }
 
-        //todo stupid facet implementation
-        DebugToolManager debugToolManager = new DebugToolManager();
-        debugToolManager.hook(MinecraftServer.process());
+        // Hook each facet
+        for (Facet facet : facets.values()) {
+            facet.hook(new ServerWrapper() {
+                @Override
+                public @NotNull ServerProcess process() {
+                    return MinecraftServer.process();
+                }
 
-        QuestFacet questFacet = new QuestFacet();
-        questFacet.hook(MinecraftServer.process());
+                @Override
+                public <F extends Facet> @Nullable F getFacet(@NotNull Class<F> type) {
+                    return (F) facets.get(type);
+                }
+
+                @Override
+                public void addEventNode(@NotNull EventNode<?> node) {
+                    process().eventHandler().addChild(node);
+                }
+
+                @Override
+                public void registerCommand(@NotNull Command command) {
+                    process().command().register(command);
+                }
+
+                @Override
+                public void registerBlockHandler(@NotNull Supplier<BlockHandler> handlerSupplier) {
+                    process().block().registerHandler(handlerSupplier.get().getNamespaceId(), handlerSupplier);
+                }
+            });
+        }
+
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
                 ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
 
+
         BlockInteracter.registerEvents();
-        DamageProcessor.init();
 
         server.start("0.0.0.0", 25565);
 
         Command craftCommand = new Command("craft");
         craftCommand.setDefaultExecutor((sender, context) -> {
-            if(sender instanceof Player player) {
+            if (sender instanceof Player player) {
                 player.openInventory(new ToolCraftingInventory(new RecipeList()));
             }
         });

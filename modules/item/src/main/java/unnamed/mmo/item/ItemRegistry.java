@@ -11,8 +11,8 @@ import net.minestom.server.utils.block.BlockUtils;
 import net.minestom.server.utils.collection.ObjectArray;
 import org.jetbrains.annotations.ApiStatus;
 import unnamed.mmo.registry.Registry;
-import unnamed.mmo.util.DFUUtil;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.DFUUtil;
+import unnamed.mmo.dfu.ExtraCodecs;
 import unnamed.mmo.util.JsonUtil;
 
 import java.util.List;

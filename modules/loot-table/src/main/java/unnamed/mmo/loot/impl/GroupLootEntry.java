@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.loot.LootEntry;
 import unnamed.mmo.loot.LootPredicate;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.loot.impl.LootResultImpl;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package unnamed.mmo.util;
+package unnamed.mmo.dfu;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;

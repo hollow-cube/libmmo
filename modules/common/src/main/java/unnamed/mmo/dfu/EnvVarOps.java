@@ -114,7 +114,7 @@ public abstract class EnvVarOps implements DynamicOps<String> {
         for (String path : envKeys()) {
             if (!path.toUpperCase(Locale.ROOT).startsWith(input))
                 continue;
-            String[] rest = path.substring(input.length()).split("_");
+            String[] rest = path.substring(input.length()).split("_", -1);
             // First entry must be "" because we split on _00_REST
             if (rest.length < 2 || !rest[0].isEmpty())
                 continue;
@@ -217,6 +217,7 @@ public abstract class EnvVarOps implements DynamicOps<String> {
     protected abstract String get(String path);
 
     @Contract("_ -> fail")
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     private <T> T notImplemented(@NotNull String name) {
         throw new NotImplementedError("EnvVarOps#" + name);
     }
