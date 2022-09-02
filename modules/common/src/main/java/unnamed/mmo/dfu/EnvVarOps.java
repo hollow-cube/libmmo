@@ -7,6 +7,7 @@ import com.mojang.serialization.MapLike;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvEntry;
 import kotlin.NotImplementedError;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.Contract;
 
 import java.util.*;
@@ -155,18 +156,46 @@ public class EnvVarOps implements DynamicOps<EnvVarOps.Path> {
     @Override
     public DataResult<Stream<Path>> getStream(Path input) {
         //todo
-        throw new NotImplementedError("getMapEntries");
+        throw new NotImplementedError("getStream");
     }
 
     @Override
     public DataResult<Consumer<Consumer<Path>>> getList(Path input) {
-        //todo
-        throw new NotImplementedError("getMapEntries");
+        // Children is every path which starts with input and is followed by a single number segment
+        Map<Integer, Path> children = new HashMap<>(); // (map to ignore duplicate keys)
+        for (String path : envKeys()) {
+            if (!path.toUpperCase(Locale.ROOT).startsWith(input.path))
+                continue;
+            String[] rest = path.substring(input.path.length()).split("_");
+            // First entry must be "" because we split on _00_REST
+            if (rest.length < 2 || !rest[0].isEmpty())
+                continue;
+            // Try to parse number segment
+            int index = Integer.parseInt(rest[1]);
+            children.put(index, new Path(input.path + "_" + index));
+        }
+
+        // Sort on index
+        Path[] sortedChildren = new Path[children.size()];
+        for (var child : children.entrySet()) {
+            // If the child is not within the sorted range then there was an order problem in the original (eg skipping a number)
+            if (child.getKey() < 0 || child.getKey() >= children.size())
+                return DataResult.error("invalid index: " + child);
+            sortedChildren[child.getKey()] = child.getValue();
+        }
+
+        return DataResult.success(c -> {
+            for (var child : sortedChildren) {
+                Check.notNull(child, "missing list element");
+                c.accept(child);
+            }
+        });
     }
 
     @Override
     public Path createList(Stream<Path> input) {
-        return illegalSerialization();
+        return new Path("$$ERR"); //todo
+//        return illegalSerialization();
     }
 
     @Override
