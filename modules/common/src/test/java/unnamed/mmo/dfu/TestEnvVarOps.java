@@ -24,7 +24,7 @@ public class TestEnvVarOps {
             "VALUE", "foo"
         ));
         var result = ops.withDecoder(codec)
-                .apply(new EnvVarOps.Path(""))
+                .apply("")
                 .result()
                 .orElse(null);
 
@@ -43,7 +43,7 @@ public class TestEnvVarOps {
             "VALUE", "1"
         ));
         var result = ops.withDecoder(codec)
-                .apply(new EnvVarOps.Path(""))
+                .apply("")
                 .result()
                 .orElse(null);
 
@@ -66,7 +66,7 @@ public class TestEnvVarOps {
             "INNER_VALUE", "foo"
         ));
         var result = ops.withDecoder(codec)
-                .apply(new EnvVarOps.Path(""))
+                .apply("")
                 .result()
                 .orElse(null);
 
@@ -93,7 +93,7 @@ public class TestEnvVarOps {
             "INNER_INNER_VALUE", "foo"
         ));
         var result = ops.withDecoder(codec)
-                .apply(new EnvVarOps.Path(""))
+                .apply("")
                 .result()
                 .orElse(null);
 
@@ -114,7 +114,7 @@ public class TestEnvVarOps {
                 "VALUE_2", "C"
         ));
         var result = ops.withDecoder(codec)
-                .apply(new EnvVarOps.Path(""))
+                .apply("")
                 .result()
                 .orElse(null);
 
@@ -141,7 +141,7 @@ public class TestEnvVarOps {
                 "VALUE_1_B", "1 b"
         ));
         var result = ops.withDecoder(codec)
-                .apply(new EnvVarOps.Path(""))
+                .apply("")
                 .result()
                 .orElse(null);
 
@@ -161,8 +161,8 @@ public class TestEnvVarOps {
         private MockEnvVarOps(Map<String, String> env) {this.env = env;}
 
         @Override
-        protected String get(Path path) {
-            var value = env.get(path.path().toUpperCase(Locale.ROOT));
+        protected String get(String path) {
+            var value = env.get(path.toUpperCase(Locale.ROOT));
             return value == null ? "" : value;
         }
 
