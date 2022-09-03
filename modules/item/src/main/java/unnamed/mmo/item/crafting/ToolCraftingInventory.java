@@ -19,7 +19,7 @@ public class ToolCraftingInventory extends Inventory {
     private CraftingRecipe activeRecipe = null;
 
     private final int TOOL_INDEX = 19;
-    private final List<Integer> CRAFTING_INDICIES = List.of(11, 12, 13, 20, 21, 22, 29, 30, 31);
+    private final List<Integer> CRAFTING_INDICES = List.of(11, 12, 13, 20, 21, 22, 29, 30, 31);
     private final int OUTPUT_INDEX = 24;
 
     public ToolCraftingInventory(RecipeList list) {
@@ -35,7 +35,7 @@ public class ToolCraftingInventory extends Inventory {
         Arrays.fill(stacks, blockedItemStack);
         stacks[TOOL_INDEX] = super.getItemStack(TOOL_INDEX);
         stacks[OUTPUT_INDEX] = super.getItemStack(OUTPUT_INDEX);
-        for(Integer i : CRAFTING_INDICIES) {
+        for(Integer i : CRAFTING_INDICES) {
             stacks[i] = super.getItemStack(i);
         }
         return stacks;
@@ -46,7 +46,7 @@ public class ToolCraftingInventory extends Inventory {
         if(!isValidIndex(slot)) return false;
 
         // Only allow tools to be placed into the index
-        if(slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && isToolItem(getCursorItem(player))) return true;
+        if(slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && !isToolItem(getCursorItem(player))) return false;
         // Deny placements into the Crafting index
         if(slot == OUTPUT_INDEX && getItemStack(OUTPUT_INDEX).isAir()) return false;
 
@@ -65,7 +65,24 @@ public class ToolCraftingInventory extends Inventory {
     public boolean rightClick(@NotNull Player player, int slot) {
         if(!isValidIndex(slot)) return false;
 
+        // Only allow tools to be placed into the index
+        if(slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && !isToolItem(getCursorItem(player))) return false;
+        // Deny placements into the Crafting index
+        if(slot == OUTPUT_INDEX && getItemStack(OUTPUT_INDEX).isAir()) return false;
 
+        // Crafting
+        if(slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
+            if(!getCursorItem(player).isAir() || getItemStack (OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
+                if(getCursorItem(player).isAir()) {
+                    setCursorItem(player, getItemStack(OUTPUT_INDEX));
+                } else {
+                    setCursorItem(player, getCursorItem(player).withAmount(amount -> amount + getItemStack(OUTPUT_INDEX).amount()));
+                }
+            }
+            removeCraftingItems(1);
+            updateCraftingRecipe();
+            return true;
+        }
 
         boolean result = super.rightClick(player, slot);
         if(result)
@@ -81,7 +98,7 @@ public class ToolCraftingInventory extends Inventory {
 
     private boolean isValidIndex(int i) {
         if(i < getSize())
-            return i == TOOL_INDEX || i == OUTPUT_INDEX || CRAFTING_INDICIES.contains(i);
+            return i == TOOL_INDEX || i == OUTPUT_INDEX || CRAFTING_INDICES.contains(i);
         return true;
     }
 
@@ -91,7 +108,7 @@ public class ToolCraftingInventory extends Inventory {
 
     private void updateCraftingRecipe() {
         List<ItemStack> currentRecipe = new ArrayList<>(9);
-        for(Integer i : CRAFTING_INDICIES) {
+        for(Integer i : CRAFTING_INDICES) {
             currentRecipe.add(getItemStack(i));
         }
         List<ItemStack> currentRecipeWithTool = new ArrayList<>(10);
@@ -114,6 +131,36 @@ public class ToolCraftingInventory extends Inventory {
         }
         activeRecipe = null;
         setItemStack(OUTPUT_INDEX, ItemStack.AIR);
+    }
+
+    /**
+     * Removes the current recipe's crafting components from the inventory's item stacks
+     * @param recipeCrafts The amount of times to remove the recipe components (that is, the number of crafts that have been performed)
+     */
+    private void removeCraftingItems(int recipeCrafts) {
+        if(activeRecipe instanceof ShapedCraftingRecipe recipe) {
+            for(int i = 0; i < CRAFTING_INDICES.size(); i++) {
+                int index = CRAFTING_INDICES.get(i);
+                CraftingRecipe.ComponentEntry entry = recipe.recipe().get(i);
+                final int decrementAmount = entry.count() * recipeCrafts;
+                if(getItemStack(index).amount() <= decrementAmount) {
+                    setItemStack(index, ItemStack.AIR);
+                } else {
+                    setItemStack(index, getItemStack(index).withAmount(count -> count - decrementAmount));
+                }
+            }
+        } else if (activeRecipe instanceof ToolShapedCraftingRecipe recipe) {
+            for(int i = 0; i < CRAFTING_INDICES.size(); i++) {
+                int index = CRAFTING_INDICES.get(i);
+                CraftingRecipe.ComponentEntry entry = recipe.recipe().get(i);
+                final int decrementAmount = entry.count() * recipeCrafts;
+                if(getItemStack(index).amount() <= decrementAmount) {
+                    setItemStack(index, ItemStack.AIR);
+                } else {
+                    setItemStack(index, getItemStack(index).withAmount(count -> count - decrementAmount));
+                }
+            }
+        }
     }
 
 }
