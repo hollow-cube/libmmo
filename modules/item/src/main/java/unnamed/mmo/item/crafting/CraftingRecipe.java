@@ -20,6 +20,8 @@ public interface CraftingRecipe {
 
     boolean containsIngredient(@NotNull ItemStack itemStack);
 
+    boolean requiresTool();
+
     record ComponentEntry(Item item, int count) {}
 
     Codec<ComponentEntry> ENTRY_CODEC = RecordCodecBuilder.create(i -> i.group(

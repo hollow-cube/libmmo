@@ -10,17 +10,11 @@ import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
 
-public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNull ItemStack output) implements CraftingRecipe {
-
-    public ShapedCraftingRecipe {
-        if(recipe.size() != 9) {
-            throw new IllegalArgumentException("Shaped crafting recipe does not have exactly 9 items (use air for empty slots)!");
-        }
-    }
-
+public record ToolShapedCraftingRecipe(Item toolItem, @NotNull List<ComponentEntry> recipe, @NotNull ItemStack output) implements CraftingRecipe {
     @Override
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
-        for (int i = 0; i < recipe.size(); i++) {
+        if (toolItem.stateId() != Item.fromItemStack(items.get(0)).stateId()) return false;
+        for (int i = 1; i < recipe.size(); i++) {
             if (recipe.get(i).item() == ItemImpl.EMPTY_ITEM) continue;
             if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i)).stateId() || items.get(i).amount() >= recipe.get(i).count()) {
                 return false;
@@ -36,9 +30,10 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
 
     @Override
     public boolean containsIngredient(@NotNull ItemStack itemStack) {
-        int stateId = Item.fromItemStack(itemStack).stateId();
-        for(ComponentEntry entry : recipe) {
-            if(entry.item().stateId() != stateId) {
+        int stackStateId = Item.fromItemStack(itemStack).stateId();
+        if (toolItem.stateId() == stackStateId) return true;
+        for (ComponentEntry entry : recipe) {
+            if (entry.item().stateId() != stackStateId) {
                 return true;
             }
         }
@@ -47,12 +42,12 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
 
     @Override
     public boolean requiresTool() {
-        return false;
+        return true;
     }
 
-
-    public static final Codec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ENTRY_CODEC.listOf().fieldOf("components").forGetter(ShapedCraftingRecipe::recipe),
-            ExtraCodecs.MATERIAL.fieldOf("output").xmap(ItemStack::of, ItemStack::material).forGetter(ShapedCraftingRecipe::output)
-    ).apply(i, ShapedCraftingRecipe::new));
+    public static final Codec<ToolShapedCraftingRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Item.CODEC.fieldOf("tool").forGetter(ToolShapedCraftingRecipe::toolItem),
+            ENTRY_CODEC.listOf().fieldOf("components").forGetter(ToolShapedCraftingRecipe::recipe),
+            ExtraCodecs.MATERIAL.fieldOf("output").xmap(ItemStack::of, ItemStack::material).forGetter(ToolShapedCraftingRecipe::output)
+    ).apply(i, ToolShapedCraftingRecipe::new));
 }

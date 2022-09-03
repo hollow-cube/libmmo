@@ -50,6 +50,11 @@ public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @Not
         return false;
     }
 
+    @Override
+    public boolean requiresTool() {
+        return false;
+    }
+
 
     public static final Codec<ShapelessCraftingRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
             ENTRY_CODEC.listOf().fieldOf("components").forGetter(ShapelessCraftingRecipe::recipe),
