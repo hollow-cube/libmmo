@@ -22,6 +22,7 @@ import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
+import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.player.PlayerImpl;
 import unnamed.mmo.quest.QuestFacet;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
@@ -86,6 +87,8 @@ public class Main {
         //todo properly implement a config system & use facets better
         ItemManager itemManager = new ItemManager();
         itemManager.hook(MinecraftServer.process());
+        OwnedItemEntity.Handler itemEntityHandler = new OwnedItemEntity.Handler();
+        itemEntityHandler.hook(MinecraftServer.process());
 
         //todo stupid facet implementation
         DebugToolManager debugToolManager = new DebugToolManager();
