@@ -13,7 +13,7 @@ public class MockTask extends AbstractTask {
     }
 
     @Override
-    public void tick(@NotNull Brain brain) {
+    public void tick(@NotNull Brain brain, long time) {
         if (pass != null)
             end(pass);
     }

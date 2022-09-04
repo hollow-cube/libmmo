@@ -31,7 +31,7 @@ public class TestSequenceTask {
         var task = new SequenceTask(spec);
 
         task.start(brain);
-        task.tick(brain);
+        task.tick(brain, System.currentTimeMillis());
 
         // Should have passed and mock1 should also have been run (passed)
         assertThat(mock1).isComplete();
@@ -47,10 +47,10 @@ public class TestSequenceTask {
         var task = new SequenceTask(spec);
         task.start(brain);
 
-        task.tick(brain);
+        task.tick(brain, System.currentTimeMillis());
         assertThat(mock1).isComplete();
 
-        task.tick(brain);
+        task.tick(brain, System.currentTimeMillis());
         assertThat(mock2).isComplete();
 
         assertThat(task).isComplete();

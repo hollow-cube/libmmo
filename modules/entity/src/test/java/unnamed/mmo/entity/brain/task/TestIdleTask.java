@@ -19,7 +19,7 @@ public class TestIdleTask {
         task.start(brain);
         for (int i = 0; i < 5; i++) {
             assertThat(task.getState()).isEqualTo(Task.State.RUNNING);
-            task.tick(brain);
+            task.tick(brain, 0);
         }
         assertThat(task.getState()).isEqualTo(Task.State.COMPLETE);
     }
