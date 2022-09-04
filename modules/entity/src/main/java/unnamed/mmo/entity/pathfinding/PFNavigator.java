@@ -121,7 +121,9 @@ public final class PFNavigator {
                 point,
                 100,
                 this.entity.getBoundingBox().depth() * 2,
-                this.entity.getBoundingBox());
+                this.entity.getBoundingBox(),
+                PFPathOptimizer.NOOP
+        );
 
         final boolean success = path != null;
         this.goalPosition = success ? point : null;

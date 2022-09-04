@@ -12,7 +12,7 @@ public sealed interface Task permits AbstractTask {
 
     void start(@NotNull Brain brain);
 
-    void tick(@NotNull Brain brain);
+    void tick(@NotNull Brain brain, long time);
 
     enum State {
         INIT, RUNNING, COMPLETE, FAILED

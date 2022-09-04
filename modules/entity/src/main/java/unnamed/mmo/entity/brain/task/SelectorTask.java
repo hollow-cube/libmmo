@@ -47,13 +47,13 @@ public class SelectorTask extends AbstractTask {
     }
 
     @Override
-    public void tick(@NotNull Brain brain) {
+    public void tick(@NotNull Brain brain, long time) {
         stimuli.update(brain); //todo not sure these should update every tick?
 
         // Try to tick the current task, if present
         if (activeTask != -1) {
             Task active = children.get(activeTask);
-            active.tick(brain);
+            active.tick(brain, time);
 
             // Check if task is complete
             switch (active.getState()) {

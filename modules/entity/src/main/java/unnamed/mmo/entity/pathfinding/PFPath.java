@@ -1,12 +1,19 @@
 package unnamed.mmo.entity.pathfinding;
 
+import net.minestom.server.collision.BoundingBox;
+import net.minestom.server.collision.CollisionUtils;
+import net.minestom.server.collision.PhysicsResult;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
+import net.minestom.server.coordinate.Vec;
+import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PFPath {
-    final List<Point> nodes;
+    List<Point> nodes;
     public int index = 0;
 
     public PFPath(List<Point> nodes) {

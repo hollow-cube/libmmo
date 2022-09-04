@@ -59,7 +59,7 @@ public class SingleTaskBrain implements Brain {
         navigator.tick(time);
         switch (task.getState()) {
             case INIT, COMPLETE -> task.start(this);
-            case RUNNING -> task.tick(this);
+            case RUNNING -> task.tick(this, time);
             case FAILED -> {
                 if (!failed)
                     System.out.println("Failed");

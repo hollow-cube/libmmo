@@ -22,7 +22,7 @@ public class PFPathGenerator {
     }
 
     static Comparator<PFNode> pNodeComparator = (a, b) -> Float.compare(a.cost(), b.cost());
-    public static PFPath generate(Instance instance, Point orgStart, Point orgTarget, double maxDistance, double closeDistance, BoundingBox boundingBox) {
+    public static PFPath generate(Instance instance, Point orgStart, Point orgTarget, double maxDistance, double closeDistance, BoundingBox boundingBox, PFPathOptimizer optimizer) {
         Point start = PFNode.gravitySnap(instance, orgStart);
         Point target = PFNode.gravitySnap(instance, orgTarget);
         if (start == null || target == null) return null;
@@ -81,38 +81,7 @@ public class PFPathGenerator {
             result.add(0, current.point());
         }
 
-//        Collections.reverse(result);
-//        if (open.isEmpty()) return null;
-//
-//        PNode current = open.poll();
-//
-//        if (current.point.distance(value) > closeDistance) return null;
-//
-//        while (current.parent != null) {
-//            path.getNodes().add(current);
-//            current = current.parent;
-//        }
-//
-//        Collections.reverse(path.getNodes());
-//        path.reduceNodes(instance, expandedBoundingBox);
-//        path.addNodes(instance, expandedBoundingBox);
-
-//        if (path.getNodes().size() > 0) {
-//            PNode pEnd = new PNode(value, 0, 0, path.getNodes().get(path.getNodes().size() - 1));
-//            path.getNodes().add(pEnd);
-//        }
-//
-//        return path;
-        return new PFPath(result);
+        return optimizer.optimize(new PFPath(result), instance, expandedBoundingBox);
     }
 
-    public static void main(String[] args) {
-        Queue<PFNode> queue = new PriorityQueue<>(pNodeComparator);
-        PFNode a = new PFNode(Vec.ZERO, 2);
-        queue.offer(a);
-        queue.offer(a);
-        queue.remove(a);
-
-        PFPathGenerator.generate(null, new Vec(0, 0, 0), new Vec(5, 0, 0), 10, 0.8, null);
-    }
 }

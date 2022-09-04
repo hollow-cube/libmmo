@@ -25,7 +25,7 @@ public class IdleTask extends AbstractTask {
     }
 
     @Override
-    public void tick(@NotNull Brain brain) {
+    public void tick(@NotNull Brain brain, long time) {
         sleepTime -= 1;
         if (sleepTime < 1) {
             end(true);

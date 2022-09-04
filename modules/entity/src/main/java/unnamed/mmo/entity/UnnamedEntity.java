@@ -4,12 +4,13 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.event.EventDispatcher;
+import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.entity.brain.Brain;
 import unnamed.mmo.entity.brain.SingleTaskBrain;
 import unnamed.mmo.entity.brain.task.Task;
-import unnamed.mmo.entity.brain.task.WanderInRegionTask;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -40,5 +41,11 @@ public class UnnamedEntity extends LivingEntity {
 
     public @NotNull Brain brain() {
         return brain;
+    }
+
+    public void attack(@NotNull Entity target) {
+        swingMainHand();
+        EntityAttackEvent attackEvent = new EntityAttackEvent(this, target);
+        EventDispatcher.call(attackEvent);
     }
 }

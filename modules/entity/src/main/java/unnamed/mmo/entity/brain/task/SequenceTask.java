@@ -38,9 +38,9 @@ public class SequenceTask extends AbstractTask {
     }
 
     @Override
-    public void tick(@NotNull Brain brain) {
+    public void tick(@NotNull Brain brain, long time) {
         final Task current = current();
-        current.tick(brain);
+        current.tick(brain, time);
 
         // Do nothing if current task is still running
         if (current.getState() == State.RUNNING) return;
