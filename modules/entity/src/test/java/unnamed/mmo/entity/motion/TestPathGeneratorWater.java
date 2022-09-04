@@ -31,7 +31,7 @@ public class TestPathGeneratorWater {
         var start = new Vec(0, 0, 0);
 
         var result = PathGenerator.WATER.generate(world, start, bb);
-        assertThat(result).containsExactly(new Vec(1, 0, 0));
+        assertThat(result).containsExactly(new Vec(1.5, 0, 0.5));
     }
 
     @Test
@@ -46,12 +46,12 @@ public class TestPathGeneratorWater {
 
         var result = PathGenerator.WATER.generate(world, start, bb);
         assertThat(result).containsExactly(
-                new Vec(-1, 0, 0),
-                new Vec(1, 0, 0),
-                new Vec(0, -1, 0),
-                new Vec(0, 1, 0),
-                new Vec(0, 0, -1),
-                new Vec(0, 0, 1)
+                new Vec(-0.5, 0, 0.5),
+                new Vec(1.5, 0, 0.5),
+                new Vec(0.5, -1, 0.5),
+                new Vec(0.5, 1, 0.5),
+                new Vec(0.5, 0, -0.5),
+                new Vec(0.5, 0, 1.5)
         );
     }
 
