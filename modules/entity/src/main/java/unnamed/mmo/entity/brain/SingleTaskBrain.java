@@ -18,7 +18,7 @@ public class SingleTaskBrain implements Brain {
 
     public SingleTaskBrain(@NotNull Entity entity, @NotNull Task task) {
         this.entity = entity;
-        this.navigator = Navigator.motionSlime(entity);
+        this.navigator = Navigator.motion(entity);
         this.task = task;
     }
 

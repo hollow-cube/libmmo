@@ -7,24 +7,36 @@ import net.hollowcube.server.dev.tool.DebugToolManager;
 import net.hollowcube.server.instance.TickTrackingInstance;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mattworzala.debug.DebugMessage;
+import com.mattworzala.debug.Layer;
+import com.mattworzala.debug.shape.Line;
 import com.mojang.serialization.JsonOps;
+import net.kyori.adventure.audience.Audience;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.command.builder.Command;
+import net.minestom.server.adventure.MinestomAdventure;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.coordinate.Vec;
+import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
+import net.minestom.server.network.packet.server.*;
+import net.minestom.server.network.packet.server.play.EntityHeadLookPacket;
+import net.minestom.server.network.packet.server.play.EntityPositionAndRotationPacket;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
+import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.world.DimensionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,6 +72,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -104,30 +117,43 @@ public class Main {
 
 
             //todo test entity
+//            JsonElement json = JsonParser.parseString("""
+//                    {
+//                        "type": "unnamed:selector",
+//                        "children": {
+//                            "q.has_target": {
+//                                "type": "unnamed:follow_target"
+//                            },
+//                            "": {
+//                                "type": "unnamed:sequence",
+//                                "children": [
+//                                    {
+//                                        "type": "unnamed:wander_in_region"
+//                                    },
+//                                    {
+//                                        "type": "unnamed:idle",
+//                                        "time": 5
+//                                    }
+//                                ],
+//
+//                                "canInterrupt": true
+//                            }
+//                        }
+//                    }""");
             JsonElement json = JsonParser.parseString("""
                     {
-                        "type": "unnamed:selector",
-                        "children": {
-                            "q.has_target": {
-                                "type": "unnamed:follow_target"
+                        "type": "unnamed:sequence",
+                        "children": [
+                            {
+                                "type": "unnamed:wander_in_region"
                             },
-                            "": {
-                                "type": "unnamed:sequence",
-                                "children": [
-                                    {
-                                        "type": "unnamed:wander_in_region"
-                                    },
-                                    {
-                                        "type": "unnamed:idle",
-                                        "time": 5
-                                    }
-                                ],
-                                
-                                "canInterrupt": true
+                            {
+                                "type": "unnamed:idle",
+                                "time": 20
                             }
-                        }
+                        ]
                     }""");
-            Task task = JsonOps.INSTANCE.withDecoder(SelectorTask.Spec.CODEC)
+            Task task = JsonOps.INSTANCE.withDecoder(Task.Spec.CODEC)
                     .apply(json).getOrThrow(false, System.err::println).getFirst().create();
             UnnamedEntity entity = new UnnamedEntity(task);
             entity.setInstance(instance, new Pos(0, 40, 0))

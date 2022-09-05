@@ -106,6 +106,10 @@ public final class MotionNavigatorSlime implements Navigator {
             movementSpeed = livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue();
         }
 
+        // Alternative way to do this movement:
+        // - rotate towards the target pos each tick (interpolated probably, though the client interpolation might be enough)
+        // - jump in facing direction occasionally
+
         // Move towards the current target, trying to jump if stuck
         if (jumpCooldown.isReady(time)) {
             moveTowards(current, movementSpeed);

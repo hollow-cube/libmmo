@@ -2,11 +2,9 @@ package unnamed.mmo.entity.motion;
 
 import net.minestom.server.collision.BoundingBox;
 import net.minestom.server.coordinate.Point;
-import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import unnamed.mmo.entity.motion.util.PhysicsUtil;
 
 import java.util.*;
 
@@ -93,8 +91,10 @@ public interface Pathfinder {
             result.add(0, current);
         }
 
+        Path path = new Path(result);
         //todo optimize the path
+        path = PathOptimizer.STRING_PULL.optimize(path, world, bb);
 
-        return new Path(result);
+        return path;
     };
 }
