@@ -4,6 +4,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.metadata.other.SlimeMeta;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.instance.Instance;
@@ -18,7 +19,8 @@ public class UnnamedEntity extends LivingEntity {
     private final Brain brain;
 
     public UnnamedEntity(Task task) {
-        super(EntityType.ZOMBIE);
+        super(EntityType.SLIME);
+        ((SlimeMeta) getEntityMeta()).setSize(2);
         brain = new SingleTaskBrain(this, task);
     }
 

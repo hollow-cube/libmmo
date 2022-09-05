@@ -31,7 +31,14 @@ public interface PathGenerator {
             for (int y = -1; y <= 1; y++) {
                 var neighbor = pos.add(direction.normalX(), direction.normalY() + y, direction.normalZ());
                 // Block below must be solid, or we cannot move to it
-                if (!world.getBlock(neighbor.add(0, -1, 0), Condition.TYPE).isSolid()) continue;
+                try {
+                    if (!world.getBlock(neighbor.add(0, -1, 0), Condition.TYPE).isSolid()) continue;
+                } catch (RuntimeException e) {
+                    //todo need a better solution here. Instance throws an exception if the chunk is unloaded
+                    //     but that is kinda awful behavior here. Probably i will need to check if the chunk
+                    //     is loaded, but then i cant use a block getter
+                    continue;
+                }
                 // Ensure the BB fits at that block
                 if (PhysicsUtil.testCollision(world, neighbor, bb)) continue;
 

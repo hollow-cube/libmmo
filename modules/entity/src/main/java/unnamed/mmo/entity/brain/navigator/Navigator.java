@@ -4,9 +4,12 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.entity.brain.Brain;
+import unnamed.mmo.entity.motion.MotionNavigator;
+import unnamed.mmo.entity.motion.MotionNavigatorSlime;
 
-public sealed interface Navigator permits CustomNavigator, EnodiaNavigator, HydrazineNavigator {
+public interface Navigator {
 
     static @NotNull Navigator enodia(@NotNull Entity entity) {
         return new EnodiaNavigator(entity);
@@ -20,9 +23,17 @@ public sealed interface Navigator permits CustomNavigator, EnodiaNavigator, Hydr
         return new CustomNavigator(entity);
     }
 
+    static @NotNull Navigator motion(@NotNull Entity entity) {
+        return new MotionNavigator(entity);
+    }
+
+    static @NotNull Navigator motionSlime(@NotNull Entity entity) {
+        return new MotionNavigatorSlime(entity);
+    }
+
     default void setInstance(@NotNull Instance instance) {}
 
-    boolean setPathTo(@NotNull Point point);
+    boolean setPathTo(@Nullable Point point);
 
     boolean isActive();
 

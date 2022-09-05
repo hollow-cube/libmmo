@@ -30,7 +30,7 @@ public class TestNavigatorBasicIntegration {
         entity.setInstance(instance, new Pos(5, 40, 5)).join();
         navigator.setInstance(instance);
 
-        navigator.setPathTo(new Pos(0, 40, 0));
+        var pathFound = navigator.setPathTo(new Pos(0, 40, 0));
         var result = env.tickWhile(() -> {
             System.out.println(entity.getPosition());
             navigator.tick(System.currentTimeMillis());

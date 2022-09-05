@@ -2,6 +2,7 @@ package unnamed.mmo.entity.brain.navigator;
 
 import net.minestom.server.entity.Entity;
 import org.junit.jupiter.params.provider.Arguments;
+import unnamed.mmo.entity.motion.MotionNavigator;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -12,7 +13,8 @@ public class TestUtil {
         return Stream.of(
 //                Arguments.of("enodia", (Function<Entity, Navigator>) EnodiaNavigator::new),
 //                Arguments.of("hydrazine", (Function<Entity, Navigator>) HydrazineNavigator::new),
-                Arguments.of("custom", (Function<Entity, Navigator>) CustomNavigator::new)
+//                Arguments.of("custom", (Function<Entity, Navigator>) CustomNavigator::new),
+                Arguments.of("motion", (Function<Entity, Navigator>) MotionNavigator::new)
         );
     }
 }
