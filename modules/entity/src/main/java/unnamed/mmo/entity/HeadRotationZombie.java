@@ -16,6 +16,7 @@ public class HeadRotationZombie extends LivingEntity {
 
     public HeadRotationZombie() {
         super(EntityType.ZOMBIE);
+        onGround = false;
     }
 
     @Override

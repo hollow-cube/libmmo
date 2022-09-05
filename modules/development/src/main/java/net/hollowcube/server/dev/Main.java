@@ -19,24 +19,23 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.adventure.MinestomAdventure;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.coordinate.Vec;
-import net.minestom.server.entity.Entity;
-import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerPacketOutEvent;
-import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.network.packet.server.CachedPacket;
+import net.minestom.server.network.packet.server.FramedPacket;
+import net.minestom.server.network.packet.server.LazyPacket;
+import net.minestom.server.network.packet.server.SendablePacket;
 import net.minestom.server.instance.block.BlockHandler;
 import net.minestom.server.network.packet.server.*;
 import net.minestom.server.network.packet.server.play.EntityHeadLookPacket;
 import net.minestom.server.network.packet.server.play.EntityPositionAndRotationPacket;
+import net.minestom.server.network.packet.server.play.EntityRotationPacket;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.utils.NamespaceID;
@@ -57,6 +56,7 @@ import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.data.number.NumberProvider;
 import unnamed.mmo.entity.HeadRotationZombie;
+import unnamed.mmo.logging.LoggerFactory;
 import unnamed.mmo.entity.UnnamedEntity;
 import unnamed.mmo.entity.brain.task.*;
 import unnamed.mmo.item.Item;
@@ -87,18 +87,14 @@ public class Main {
 
         MinecraftServer server = MinecraftServer.init();
 
-        MojangAuth.init();
-        MinecraftServer.getConnectionManager().setPlayerProvider(PlayerImpl::new);
-
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
-
-        Instance instance = new TickTrackingInstance(UUID.randomUUID(), DimensionType.OVERWORLD);
-        instanceManager.registerInstance(instance);
+        Instance instance = instanceManager.createInstanceContainer();
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.STONE));
 
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
+            player.setPermissionLevel(2);
             event.setSpawningInstance(instance);
             player.setRespawnPoint(new Pos(0, 42, 0));
         });
