@@ -6,6 +6,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.instance.block.BlockFace;
 import net.minestom.server.network.packet.client.ClientPacket;
 import net.minestom.server.network.packet.client.play.ClientPlayerDiggingPacket;
 import net.minestom.server.network.packet.server.play.BlockBreakAnimationPacket;
@@ -24,6 +25,7 @@ public class PlayerImpl extends Player {
     private int diggingLastStage = 0;
     private int diggingBlockHealth = 0;
     private int diggingBlockMaxHealth = 0;
+    private BlockFace diggingFace = null;
 
 
     public PlayerImpl(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
@@ -65,6 +67,7 @@ public class PlayerImpl extends Player {
                     diggingBlockHealth = event.getMaxHealth();
                     diggingBlockMaxHealth = event.getMaxHealth();
                     diggingLastStage = 0;
+                    diggingFace = packet.blockFace();
                 }
             }
             case CANCELLED_DIGGING -> clearLongDigging();
@@ -87,7 +90,7 @@ public class PlayerImpl extends Player {
         diggingBlockHealth = Math.max(0, diggingBlockHealth - damage);
         if (diggingBlockHealth == 0) {
             // Break the block & reset
-            getInstance().breakBlock(this, diggingBlock);
+            getInstance().breakBlock(this, diggingBlock, diggingFace);
             clearLongDigging();
         } else {
             updateDiggingBlock();
@@ -98,6 +101,7 @@ public class PlayerImpl extends Player {
         diggingBlockHealth = 0;
         diggingBlockMaxHealth = 0;
         diggingLastStage = 0;
+        diggingFace = null;
 
         // Send update to clear digging animation
         updateDiggingBlock();
