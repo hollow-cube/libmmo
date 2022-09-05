@@ -1,0 +1,32 @@
+[
+  {
+    "namespace": "hostile_generic",
+    "type": "unnamed:selector",
+    "stimuli": [
+      {
+        "type": "unnamed:target_entity_in_range",
+        "entity_type": "player",
+        "range": 16,
+        "line_of_sight": true
+      }
+    ],
+    "children": {
+      "q.has_target": {
+        "type": "unnamed:follow_target"
+      },
+      "": {
+        "type": "unnamed:sequence",
+        "children": [
+          {
+            "type": "unnamed:idle_time",
+            "time": { "min": 20, "max": 60 }
+          },
+          {
+            "type": "unnamed:wander_in_region"
+          }
+        ],
+        "can_interrupt": true
+      }
+    }
+  }
+]

@@ -19,8 +19,10 @@ public class UnnamedEntity extends LivingEntity {
     private final Brain brain;
 
     public UnnamedEntity(Task task) {
-        super(EntityType.SLIME);
-        ((SlimeMeta) getEntityMeta()).setSize(2);
+        super(EntityType.ZOMBIE);
+        if (getEntityMeta() instanceof SlimeMeta slimeMeta) {
+            slimeMeta.setSize(1);
+        }
         brain = new SingleTaskBrain(this, task);
     }
 

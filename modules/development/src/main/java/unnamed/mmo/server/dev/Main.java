@@ -26,6 +26,7 @@ import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.entity.UnnamedEntity;
+import unnamed.mmo.entity.brain.task.SelectorTask;
 import unnamed.mmo.entity.brain.task.Task;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
@@ -82,43 +83,43 @@ public class Main {
 
 
             //todo test entity
-//            JsonElement json = JsonParser.parseString("""
-//                    {
-//                        "type": "unnamed:selector",
-//                        "children": {
-//                            "q.has_target": {
-//                                "type": "unnamed:follow_target"
-//                            },
-//                            "": {
-//                                "type": "unnamed:sequence",
-//                                "children": [
-//                                    {
-//                                        "type": "unnamed:wander_in_region"
-//                                    },
-//                                    {
-//                                        "type": "unnamed:idle",
-//                                        "time": 5
-//                                    }
-//                                ],
-//
-//                                "canInterrupt": true
-//                            }
-//                        }
-//                    }""");
             JsonElement json = JsonParser.parseString("""
                     {
-                        "type": "unnamed:sequence",
-                        "children": [
-                            {
-                                "type": "unnamed:wander_in_region"
+                        "type": "unnamed:selector",
+                        "children": {
+                            "q.has_target": {
+                                "type": "unnamed:follow_target"
                             },
-                            {
-                                "type": "unnamed:idle",
-                                "time": 20
+                            "": {
+                                "type": "unnamed:sequence",
+                                "children": [
+                                    {
+                                        "type": "unnamed:wander_in_region"
+                                    },
+                                    {
+                                        "type": "unnamed:idle",
+                                        "time": 5
+                                    }
+                                ],
+
+                                "canInterrupt": true
                             }
-                        ]
+                        }
                     }""");
-            Task task = JsonOps.INSTANCE.withDecoder(Task.Spec.CODEC)
+//            JsonElement json = JsonParser.parseString("""
+//                    {
+//                        "type": "unnamed:sequence",
+//                        "children": [
+//                            {
+//                                "type": "unnamed:wander_in_region"
+//                            },
+//                            {
+//                                "type": "unnamed:idle",
+//                                "time": 20
+//                            }
+//                        ]
+//                    }""");
+            Task task = JsonOps.INSTANCE.withDecoder(SelectorTask.Spec.CODEC)
                     .apply(json).getOrThrow(false, System.err::println).getFirst().create();
             UnnamedEntity entity = new UnnamedEntity(task);
             entity.setInstance(instance, new Pos(0, 40, 0))
