@@ -11,7 +11,6 @@ public class TestUtil {
 
     public static Stream<Arguments> navigators() {
         return Stream.of(
-//                Arguments.of("enodia", (Function<Entity, Navigator>) EnodiaNavigator::new),
 //                Arguments.of("hydrazine", (Function<Entity, Navigator>) HydrazineNavigator::new),
 //                Arguments.of("custom", (Function<Entity, Navigator>) CustomNavigator::new),
                 Arguments.of("motion", (Function<Entity, Navigator>) MotionNavigator::new)

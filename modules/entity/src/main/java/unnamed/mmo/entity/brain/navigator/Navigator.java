@@ -11,10 +11,6 @@ import unnamed.mmo.entity.motion.MotionNavigatorSlime;
 
 public interface Navigator {
 
-    static @NotNull Navigator enodia(@NotNull Entity entity) {
-        return new EnodiaNavigator(entity);
-    }
-
     static @NotNull Navigator hydrazine(@NotNull Entity entity) {
         return new HydrazineNavigator(entity);
     }
