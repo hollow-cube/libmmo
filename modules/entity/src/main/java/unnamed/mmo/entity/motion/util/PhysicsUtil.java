@@ -5,15 +5,21 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.minestom.server.instance.block.Block.Getter.Condition;
 
 /**
  * Amalgamation of Minestom physics utility calls and a simpler static bounding box check in a world.
  */
 public final class PhysicsUtil {
     private PhysicsUtil() {}
+
+    private static final int MAX_SNAP_DISTANCE = 32;
+
 
     /**
      * Simplified check if a bounding box collides with a solid block.
@@ -76,4 +82,25 @@ public final class PhysicsUtil {
 //         }
     }
 
+    /**
+     * Snap the given point to the ground. If the point is the ground block, this moves it to
+     * the air block on top of the ground, if it is in the air, it snaps to the ground underneath.
+     * <p>
+     * If there is no block within {@link #MAX_SNAP_DISTANCE}, null is returned.
+     */
+    public static @Nullable Point gravitySnap(@NotNull Block.Getter world, @NotNull Point point) {
+        if (world.getBlock(point, Condition.TYPE).isSolid())
+            return point.add(0, 1, 0);
+
+        var ground = point.sub(0, 1, 0);
+        while (!world.getBlock(ground, Condition.TYPE).isSolid()) {
+            ground = ground.sub(0, 1, 0);
+            if (Math.abs(ground.blockY() - point.blockY()) > MAX_SNAP_DISTANCE)
+                return null;
+        }
+
+        // Snap to the exact Y position
+        //todo need to take into account bounding box
+        return ground.withY(y -> Math.floor(y + 1));
+    }
 }

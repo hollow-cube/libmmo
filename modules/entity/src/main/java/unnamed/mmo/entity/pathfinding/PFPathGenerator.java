@@ -12,15 +12,6 @@ public class PFPathGenerator {
         return node.distance(target);
     }
 
-    private static Collection<Point> getNeighborPositions(Point point) {
-        return List.of(
-                point.add(1, 0, 0),
-                point.add(-1, 0, 0),
-                point.add(0, 0, 1),
-                point.add(0, 0, -1)
-        );
-    }
-
     static Comparator<PFNode> pNodeComparator = (a, b) -> Float.compare(a.cost(), b.cost());
     public static PFPath generate(Instance instance, Point orgStart, Point orgTarget, double maxDistance, double closeDistance, BoundingBox boundingBox, PFPathOptimizer optimizer) {
         Point start = PFNode.gravitySnap(instance, orgStart);
