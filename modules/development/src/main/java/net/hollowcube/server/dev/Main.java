@@ -10,15 +10,18 @@ import com.google.gson.JsonParser;
 import com.mattworzala.debug.DebugMessage;
 import com.mattworzala.debug.Layer;
 import com.mattworzala.debug.shape.Line;
+import com.mattworzala.debug.shape.Text;
 import com.mojang.serialization.JsonOps;
 import net.kyori.adventure.audience.Audience;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.adventure.MinestomAdventure;
+import net.minestom.server.command.builder.Command;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
@@ -53,6 +56,7 @@ import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.data.number.NumberProvider;
+import unnamed.mmo.entity.HeadRotationZombie;
 import unnamed.mmo.entity.UnnamedEntity;
 import unnamed.mmo.entity.brain.task.*;
 import unnamed.mmo.item.Item;
@@ -140,24 +144,35 @@ public class Main {
 //                            }
 //                        }
 //                    }""");
-            JsonElement json = JsonParser.parseString("""
-                    {
-                        "type": "unnamed:sequence",
-                        "children": [
-                            {
-                                "type": "unnamed:wander_in_region"
-                            },
-                            {
-                                "type": "unnamed:idle",
-                                "time": 20
-                            }
-                        ]
-                    }""");
-            Task task = JsonOps.INSTANCE.withDecoder(Task.Spec.CODEC)
-                    .apply(json).getOrThrow(false, System.err::println).getFirst().create();
-            UnnamedEntity entity = new UnnamedEntity(task);
-            entity.setInstance(instance, new Pos(0, 40, 0))
-                    .thenAccept(unused -> System.out.println("Spawned"));
+//            JsonElement json = JsonParser.parseString("""
+//                    {
+//                        "type": "unnamed:sequence",
+//                        "children": [
+//                            {
+//                                "type": "unnamed:wander_in_region"
+//                            },
+//                            {
+//                                "type": "unnamed:idle",
+//                                "time": 20
+//                            }
+//                        ]
+//                    }""");
+//            Task task = JsonOps.INSTANCE.withDecoder(Task.Spec.CODEC)
+//                    .apply(json).getOrThrow(false, System.err::println).getFirst().create();
+//            UnnamedEntity entity = new UnnamedEntity(task);
+//            entity.setInstance(instance, new Pos(0, 40, 0))
+//                    .thenAccept(unused -> System.out.println("Spawned"));
+
+//            Entity entity = new Entity(EntityType.ZOMBIE) {
+//                @Override
+//                public void tick(long time) {
+//                    super.tick(time);
+//
+//                    lookAt(player);
+//                }
+//            };
+            Entity entity = new HeadRotationZombie();
+            entity.setInstance(instance, new Pos(0, 40, 0));
         });
 
         BaseCommandRegister.registerCommands(); //todo this should be in a facet?

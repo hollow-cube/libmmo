@@ -5,6 +5,7 @@ import com.mattworzala.debug.Layer;
 import com.mattworzala.debug.shape.Box;
 import com.mattworzala.debug.shape.Line;
 import com.mattworzala.debug.shape.OutlineBox;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.collision.CollisionUtils;
 import net.minestom.server.coordinate.Point;
@@ -14,7 +15,10 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.network.packet.server.play.EntityHeadLookPacket;
+import net.minestom.server.network.packet.server.play.EntityRotationPacket;
 import net.minestom.server.utils.NamespaceID;
+import net.minestom.server.utils.PacketUtils;
 import net.minestom.server.utils.position.PositionUtils;
 import net.minestom.server.utils.time.Cooldown;
 import net.minestom.server.utils.time.TimeUnit;
@@ -177,6 +181,11 @@ public final class MotionNavigator implements Navigator {
                 .color(0xFFFFFFFF)
                 .layer(Layer.TOP)
                 .build());
+        EntityHeadLookPacket headLook = new EntityHeadLookPacket(entity.getEntityId(), entity.getPosition().yaw());
+        PacketUtils.sendGroupedPacket(entity.getViewers(), headLook);
+        EntityRotationPacket rotation = new EntityRotationPacket(entity.getEntityId(), entity.getPosition().yaw(), entity.getPosition().pitch(), true);
+        PacketUtils.sendGroupedPacket(entity.getViewers(), rotation);
+
 
         builder.build()
                 .sendTo(entity.getViewersAsAudience());
