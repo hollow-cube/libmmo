@@ -1,12 +1,19 @@
 package unnamed.mmo.entity.motion.util;
 
 import net.minestom.server.collision.BoundingBox;
+import net.minestom.server.collision.CollisionUtils;
+import net.minestom.server.collision.PhysicsResult;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
+import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +22,13 @@ import static net.minestom.server.instance.block.Block.Getter.Condition;
 /**
  * Amalgamation of Minestom physics utility calls and a simpler static bounding box check in a world.
  */
+@SuppressWarnings("UnstableApiUsage")
 public final class PhysicsUtil {
     private PhysicsUtil() {}
 
     private static final int MAX_SNAP_DISTANCE = 32;
+
+    private static final MethodHandle handlePhysics;
 
 
     /**
@@ -83,6 +93,28 @@ public final class PhysicsUtil {
     }
 
     /**
+     * Collision check from a starting point to a given position.
+     * <p>
+     * Uses Minestom internal physics check, which does account for block shapes.
+     */
+    public static boolean testCollisionSwept(@NotNull Block.Getter world, @NotNull BoundingBox bb, @NotNull Point from, @NotNull Point to) {
+        PhysicsResult result;
+        if (world instanceof Instance instance) {
+            result = CollisionUtils.handlePhysics(instance, instance.getChunkAt(from),
+                    bb, Pos.fromPoint(from), Vec.fromPoint(to.sub(from)), null);
+        } else {
+            // Not advisable in production, but acceptable to use in tests
+            try {
+                result = (PhysicsResult) handlePhysics.invoke(bb, Vec.fromPoint(to.sub(from)), Pos.fromPoint(from), world, null);
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }
+
+        return result.collisionX() || result.collisionY() || result.collisionZ();
+    }
+
+    /**
      * Snap the given point to the ground. If the point is the ground block, this moves it to
      * the air block on top of the ground, if it is in the air, it snaps to the ground underneath.
      * <p>
@@ -102,5 +134,16 @@ public final class PhysicsUtil {
         // Snap to the exact Y position
         //todo need to take into account bounding box
         return ground.withY(y -> Math.floor(y + 1));
+    }
+
+    static {
+        try {
+            Class<?> blockCollision = Class.forName("net.minestom.server.collision.BlockCollision");
+            Method rHandlePhysics = blockCollision.getDeclaredMethod("handlePhysics", BoundingBox.class, Vec.class, Pos.class, Block.Getter.class, PhysicsResult.class);
+            rHandlePhysics.setAccessible(true);
+            handlePhysics = MethodHandles.lookup().unreflect(rHandlePhysics);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 }
