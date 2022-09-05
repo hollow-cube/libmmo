@@ -27,7 +27,7 @@ subprojects {
         implementation("com.google.auto.service:auto-service-annotations:1.0.1")
 
         // Minestom
-        implementation("com.github.Minestom:Minestom:c2db82a93424090505b03")
+        implementation("com.github.minestommmo:Minestom:c6c97162a6")
 
         // Testing
         testImplementation(project(":modules:test"))

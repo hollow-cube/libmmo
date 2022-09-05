@@ -1,6 +1,7 @@
 package unnamed.mmo.blocks.ore.handler;
 
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.instance.Instance;
@@ -96,12 +97,11 @@ public class OreBlockHandler implements BlockHandler {
         instance.setBlock(pos, BlockUtil.withType(block, REPLACEMENT_BLOCK));
 
         // Generate loot
+        final var direction = destroy.getBlockFace().toDirection();
         final var context = LootContext.builder("mining")
                 .key(LootContext.THIS_ENTITY, player)
                 .key(LootContext.POSITION, pos)
-                //todo direction hint
-                // This needs blockFace to be passed into destroy event. Will do in fork eventually
-                // and PR if we can agree
+                .key(LootContext.DIRECTION, new Vec(direction.normalX(), direction.normalY(), direction.normalZ()))
                 .build();
         final var loot = ore.lootTable().generate(context);
         // Distribute loot
