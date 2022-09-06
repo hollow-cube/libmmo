@@ -4,10 +4,11 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
+import net.minestom.server.inventory.TransactionOption;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.utils.inventory.PlayerInventoryUtils;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.item.Item;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,11 +53,20 @@ public class ToolCraftingInventory extends Inventory {
 
         // Crafting
         if(slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
-
+            if(!getCursorItem(player).isAir() || getItemStack(OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
+                if(getCursorItem(player).isAir()) {
+                    setCursorItem(player, getItemStack(OUTPUT_INDEX));
+                } else {
+                    setCursorItem(player, getCursorItem(player).withAmount(amount -> amount + getItemStack(OUTPUT_INDEX).amount()));
+                }
+            }
+            removeCraftingItems(1);
+            updateCraftingRecipe();
+            return true;
         }
 
         boolean result = super.leftClick(player, slot);
-        if(result)
+        if (result)
             updateCraftingRecipe();
         return result;
     }
@@ -72,7 +82,7 @@ public class ToolCraftingInventory extends Inventory {
 
         // Crafting
         if(slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
-            if(!getCursorItem(player).isAir() || getItemStack (OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
+            if(!getCursorItem(player).isAir() || getItemStack(OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
                 if(getCursorItem(player).isAir()) {
                     setCursorItem(player, getItemStack(OUTPUT_INDEX));
                 } else {
@@ -85,7 +95,7 @@ public class ToolCraftingInventory extends Inventory {
         }
 
         boolean result = super.rightClick(player, slot);
-        if(result)
+        if (result)
             updateCraftingRecipe();
         return result;
     }
@@ -93,7 +103,62 @@ public class ToolCraftingInventory extends Inventory {
     @Override
     public boolean shiftClick(@NotNull Player player, int slot) {
         if(!isValidIndex(slot)) return false;
-        return super.shiftClick(player, slot);
+
+        final boolean isInWindow = slot <= getSize();
+        // Pain and misery
+
+        // If we shift click in player inventory, try to populate it into the correct field
+        if (!isInWindow) {
+            int playerSlot = PlayerInventoryUtils.convertSlot(slot, getSize());
+            ItemStack stack = player.getInventory().getItemStack(playerSlot);
+            if (isToolItem(stack) && getItemStack(TOOL_INDEX).isAir()) {
+                // Try to shift click into the tool slot
+                var result = clickProcessor.shiftClick(player.getInventory(), this, TOOL_INDEX, TOOL_INDEX, 1, player, playerSlot, stack, getCursorItem(player));
+                return !result.isCancel();
+            } else {
+                // Try to shift click into the crafting inventory
+                for (int i = 0; i < 9; i += 3) {
+                    // Since the crafting slots are not continuous, we have to repeat this call multiple times
+                    var result = clickProcessor.shiftClick(player.getInventory(), this, CRAFTING_INDICES.get(i), CRAFTING_INDICES.get(i + 2), 1, player, playerSlot, stack, getCursorItem(player));
+                    if (!result.isCancel()) return true;
+                }
+                return false;
+            }
+        } else {
+            if (slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
+                // Crafting
+                final int maxCrafts = maximumCrafts();
+                final ItemStack craftingItemStack = getItemStack(OUTPUT_INDEX);
+                // We have calculated the most number of items we can craft, see if we can insert into the inventory
+                int outputAmount = craftingItemStack.amount();
+                int totalItems = maxCrafts * outputAmount;
+                boolean result = player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.DRY_RUN);
+                if(result) {
+                    // We can add all items! go ahead and do so
+                    player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.ALL);
+                    removeCraftingItems(maxCrafts);
+                } else {
+                    // Figure out how many we can add
+                    for(int i = totalItems; i > 0; i -= outputAmount) {
+                        boolean canAdd = player.getInventory().addItemStack(craftingItemStack.withAmount(i), TransactionOption.DRY_RUN);
+                        if(canAdd) {
+                            player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.ALL);
+                            final int craftNum = totalItems / outputAmount;
+                            removeCraftingItems(craftNum);
+                            break;
+                        }
+                    }
+                }
+                updateCraftingRecipe();
+                return true;
+            }
+        }
+
+
+        boolean result = super.shiftClick(player, slot);
+        if (result)
+            updateCraftingRecipe();
+        return result;
     }
 
     private boolean isValidIndex(int i) {
@@ -163,4 +228,31 @@ public class ToolCraftingInventory extends Inventory {
         }
     }
 
+    /**
+     * Based on the items in the current inventory and the active recipe, calculates the maximum number of crafts that can be performed
+     * @return
+     */
+    private int maximumCrafts() {
+        if(activeRecipe == null) {
+            return 0;
+        }
+        if(activeRecipe instanceof ShapedCraftingRecipe recipe) {
+            int maxCrafts = 999;
+            for (int i = 0; i < CRAFTING_INDICES.size(); i++) {
+                int currentAmount = getItemStack(CRAFTING_INDICES.get(i)).amount();
+                int craftAmount = recipe.recipe().get(i).item().amount();
+                maxCrafts = Math.min(maxCrafts, currentAmount / craftAmount);
+            }
+            return maxCrafts;
+        } else if(activeRecipe instanceof ToolShapedCraftingRecipe recipe) {
+            int maxCrafts = 999;
+            for (int i = 0; i < CRAFTING_INDICES.size(); i++) {
+                int currentAmount = getItemStack(CRAFTING_INDICES.get(i)).amount();
+                int craftAmount = recipe.recipe().get(i).item().amount();
+                maxCrafts = Math.min(maxCrafts, currentAmount / craftAmount);
+            }
+            return maxCrafts;
+        }
+        return 0;
+    }
 }
