@@ -22,7 +22,7 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         for (int i = 0; i < recipe.size(); i++) {
             if (recipe.get(i).item() == ItemImpl.EMPTY_ITEM) continue;
-            if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i)).stateId() || items.get(i).amount() >= recipe.get(i).count()) {
+            if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i)).stateId() || items.get(i).amount() < recipe.get(i).count()) {
                 return false;
             }
         }

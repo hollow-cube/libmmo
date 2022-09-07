@@ -11,12 +11,20 @@ import unnamed.mmo.util.ExtraCodecs;
 import java.util.List;
 
 public record ToolShapedCraftingRecipe(Item toolItem, @NotNull List<ComponentEntry> recipe, @NotNull ItemStack output) implements CraftingRecipe {
+
+    public ToolShapedCraftingRecipe {
+        if(recipe.size() != 9) {
+            throw new IllegalArgumentException("Shaped crafting recipe does not have exactly 9 items (use air for empty slots)!");
+        }
+    }
+
     @Override
     public boolean doesRecipeMatch(@NotNull List<ItemStack> items) {
         if (toolItem.stateId() != Item.fromItemStack(items.get(0)).stateId()) return false;
         for (int i = 1; i < recipe.size(); i++) {
             if (recipe.get(i).item() == ItemImpl.EMPTY_ITEM) continue;
-            if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i)).stateId() || items.get(i).amount() >= recipe.get(i).count()) {
+            // Need to do i + 1 since tool is the first item
+            if (recipe.get(i).item().stateId() != Item.fromItemStack(items.get(i + 1)).stateId() || items.get(i + 1).amount() < recipe.get(i).count()) {
                 return false;
             }
         }

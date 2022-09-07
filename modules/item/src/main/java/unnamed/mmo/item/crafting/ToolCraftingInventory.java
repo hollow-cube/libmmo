@@ -113,7 +113,7 @@ public class ToolCraftingInventory extends Inventory {
             ItemStack stack = player.getInventory().getItemStack(playerSlot);
             if (isToolItem(stack) && getItemStack(TOOL_INDEX).isAir()) {
                 // Try to shift click into the tool slot
-                var result = clickProcessor.shiftClick(player.getInventory(), this, TOOL_INDEX, TOOL_INDEX, 1, player, playerSlot, stack, getCursorItem(player));
+                var result = clickProcessor.shiftClick(player.getInventory(), this, TOOL_INDEX, TOOL_INDEX + 1, 1, player, playerSlot, stack, getCursorItem(player));
                 return !result.isCancel();
             } else {
                 // Try to shift click into the crafting inventory

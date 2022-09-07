@@ -11,6 +11,8 @@ public class RecipeList {
 
     private final List<CraftingRecipe> recipeList = new ArrayList<>();
 
+    public void addRecipe(CraftingRecipe recipe) { recipeList.add(recipe); }
+
     public void addRecipes(List<CraftingRecipe> list) {
         recipeList.addAll(list);
     }
