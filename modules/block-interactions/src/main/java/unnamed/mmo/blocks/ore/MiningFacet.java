@@ -7,7 +7,7 @@ import unnamed.mmo.blocks.ore.handler.OreBlockHandler;
 import unnamed.mmo.server.Facet;
 
 @AutoService(Facet.class)
-public class MiningManager implements Facet {
+public class MiningFacet implements Facet {
 
     @Override
     public void hook(@NotNull ServerProcess server) {

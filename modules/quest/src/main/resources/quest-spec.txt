@@ -1,0 +1,49 @@
+A quest is defined as follows:
+[
+    {
+        "name": "quest-name"
+        "objective": {
+            objective-data
+        }
+    }
+]
+
+In a file containing quests to load, each quest should be a JSON object in anrray that has a name key, representing the name of the quest Multiple quests
+can be stored in the same file, with unique names as their identifiers.
+
+A quest definition starts out with a root objective node. Objectives represent a task or tasks to complete, and once
+this root objective is complete, the quest is considered complete.
+
+Each Objective object is defined as follows:
+{
+    "type": Type of Objective
+    [optional] "parameterName": argument
+}
+
+Current Supported Types:
+list - for containing a list of subobjectives that the player must complete in that order
+    Parameters Required:
+        "objectives" - array of sub-objectives
+multi - for containing a list of subobjectives that the player can complete in any order
+    Parameters Required:
+        "objectives" - array of sub-objectives
+progress - intended as a flag of story progress
+    Parameters Required:
+        id - name of enum that exists in QuestProgress
+kill_mob - kill a certain entity x times
+    Parameters Required
+        id - name of enum that exists in EntityType
+        count - number of that mob to kill
+block_break - break a certain block x times
+    Parameters Required:
+        id - name of Enum (not really an enum but close enough) that exists in Block
+        count - number of that block to break
+If an objective requires certain parameters, those parameters are represented by key-value pairs that map the objective name
+to the argument it will be at
+
+Example of a "Kill 10 Zombies" objective:
+{
+    "type": "kill_mob",
+    "id": "zombie"
+    "count": 10
+}

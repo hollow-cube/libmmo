@@ -1,0 +1,20 @@
+[
+  {
+    "namespace": "unnamed:test_1",
+    "objective": {
+      "type": "unnamed:sequence",
+      "children": [
+        {
+          "type": "unnamed:mine_ore",
+          "ore": "unnamed:gold_ore",
+          "count": 3
+        },
+        {
+          "type": "unnamed:mine_ore",
+          "ore": "unnamed:diamond_ore",
+          "count": 2
+        }
+      ]
+    }
+  }
+]

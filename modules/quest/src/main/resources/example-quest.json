@@ -1,0 +1,31 @@
+[
+  {
+    "name": "example-quest",
+    "type": "list",
+    "objectives": [
+      {
+        "type": "progress",
+        "id": "start_adventure"
+      },
+      {
+        "type": "kill_mob",
+        "id": "zombie",
+        "count": 10
+      },
+      {
+        "type": "multi",
+        "objectives": [
+          {
+            "type": "progress",
+            "id": "complete-tutorial"
+          },
+          {
+            "type": "kill_mob",
+            "id": "pig",
+            "count": 4
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,7 +1,9 @@
 package unnamed.mmo.blocks.ore.handler;
 
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.Ore;
+import unnamed.mmo.blocks.ore.event.PlayerOreBreakEvent;
 import unnamed.mmo.loot.LootContext;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 import unnamed.mmo.util.BlockUtil;
@@ -31,7 +34,7 @@ public class OreBlockHandler implements BlockHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(OreBlockHandler.class);
 
     //todo this should probably be configurable.
-    private static final Block REPLACEMENT_BLOCK = Block.BEDROCK;
+    public static final Block REPLACEMENT_BLOCK = Block.BEDROCK;
 
     private OreBlockHandler() {
         Check.stateCondition(instance != null, "There can only be one OreBlockHandler");
@@ -66,11 +69,15 @@ public class OreBlockHandler implements BlockHandler {
     }
 
     @Override
-    public void onDestroy(@NotNull Destroy destroy) {
-        final Block block = destroy.getBlock();
-        if (block.compare(REPLACEMENT_BLOCK, Block.Comparator.STATE) || !(destroy instanceof PlayerDestroy))
+    public void onDestroy(@NotNull Destroy d) {
+        final Block block = d.getBlock();
+        if (block.compare(REPLACEMENT_BLOCK, Block.Comparator.STATE))
             return;
+        if (!(d instanceof PlayerDestroy destroy)) {
+            return;
+        }
 
+        // Get the Ore definition of the block being broken
         final Instance instance = destroy.getInstance();
         final Point pos = destroy.getBlockPosition();
         final Ore ore = Ore.fromBlock(block);
@@ -81,17 +88,20 @@ public class OreBlockHandler implements BlockHandler {
             return;
         }
 
+        // Call break event
+        final Player player = destroy.getPlayer();
+        final var event = new PlayerOreBreakEvent(player, block, ore);
+        EventDispatcher.call(event);
+
         // Replace the block with the temporary replacement block
         instance.setBlock(pos, BlockUtil.withType(block, REPLACEMENT_BLOCK));
 
         // Generate loot
-        final Player player = ((PlayerDestroy) destroy).getPlayer();
+        final var direction = destroy.getBlockFace().toDirection();
         final var context = LootContext.builder("mining")
                 .key(LootContext.THIS_ENTITY, player)
                 .key(LootContext.POSITION, pos)
-                //todo direction hint
-                // This needs blockFace to be passed into destroy event. Will do in fork eventually
-                // and PR if we can agree
+                .key(LootContext.DIRECTION, new Vec(direction.normalX(), direction.normalY(), direction.normalZ()))
                 .build();
         final var loot = ore.lootTable().generate(context);
         // Distribute loot

@@ -46,7 +46,7 @@ final class TestConnectionImpl implements TestConnection {
     @Override
     public @NotNull <T extends ServerPacket> Collector<T> trackIncoming(@NotNull Class<T> type) {
         var tracker = new IncomingCollector<>(type);
-        this.incomingTrackers.add(IncomingCollector.class.cast(tracker));
+        this.incomingTrackers.add((IncomingCollector) tracker);
         return tracker;
     }
 

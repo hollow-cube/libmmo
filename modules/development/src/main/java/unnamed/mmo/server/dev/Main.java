@@ -26,7 +26,9 @@ import unnamed.mmo.item.ItemManager;
 import unnamed.mmo.item.crafting.CraftingInventory;
 import unnamed.mmo.item.crafting.RecipeList;
 import unnamed.mmo.item.crafting.ToolCraftingInventory;
+import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.player.PlayerImpl;
+import unnamed.mmo.quest.QuestFacet;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
@@ -37,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     public static void main(String[] args) {
+        System.setProperty("minestom.terminal.disabled", "true");
+
         MinecraftServer server = MinecraftServer.init();
 
         MojangAuth.init();
@@ -62,6 +66,7 @@ public class Main {
 
             // Testing
             event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("unnamed:gold_ore").asBlock());
+            event.getSpawnInstance().setBlock(4, 43, 5, Ore.fromNamespaceId("unnamed:diamond_ore").asBlock());
             player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_pickaxe").asItemStack());
 
             //todo this needs to be done elsewhere
@@ -86,10 +91,15 @@ public class Main {
         //todo properly implement a config system & use facets better
         ItemManager itemManager = new ItemManager();
         itemManager.hook(MinecraftServer.process());
+        OwnedItemEntity.Handler itemEntityHandler = new OwnedItemEntity.Handler();
+        itemEntityHandler.hook(MinecraftServer.process());
 
         //todo stupid facet implementation
         DebugToolManager debugToolManager = new DebugToolManager();
         debugToolManager.hook(MinecraftServer.process());
+
+        QuestFacet questFacet = new QuestFacet();
+        questFacet.hook(MinecraftServer.process());
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(() ->
                 ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));

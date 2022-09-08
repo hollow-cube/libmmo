@@ -49,7 +49,7 @@ public record ItemImpl(
             keys[i] = property.key();
             values[i] = property.values().get(propertiesArray[i]);
         }
-        return Map.class.cast(Object2ObjectMaps.unmodifiable(new Object2ObjectArrayMap<>(keys, values, length)));
+        return (Map) Object2ObjectMaps.unmodifiable(new Object2ObjectArrayMap<>(keys, values, length));
     }
 
     @Override
