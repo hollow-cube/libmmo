@@ -12,8 +12,12 @@ import net.minestom.server.network.packet.client.play.ClientPlayerDiggingPacket;
 import net.minestom.server.network.packet.server.play.BlockBreakAnimationPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.modifiers.ModifierList;
+import unnamed.mmo.modifiers.ModifierOperation;
+import unnamed.mmo.modifiers.ModifierType;
 import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
 
+import java.util.EnumMap;
 import java.util.UUID;
 import java.util.function.IntSupplier;
 
@@ -26,6 +30,8 @@ public class PlayerImpl extends Player {
     private int diggingBlockHealth = 0;
     private int diggingBlockMaxHealth = 0;
     private BlockFace diggingFace = null;
+
+    private final EnumMap<ModifierType, ModifierList> currentModifiers = new EnumMap<>(ModifierType.class);
 
 
     public PlayerImpl(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
@@ -121,5 +127,15 @@ public class PlayerImpl extends Player {
         // New stage, send packet
         var packet = new BlockBreakAnimationPacket(getEntityId() + 1, diggingBlock, stage);
         sendPacket(packet);
+    }
+
+    public void addPermanentModifier(ModifierType type, String modifierId, double amount, ModifierOperation operation) {
+        currentModifiers.putIfAbsent(type, new ModifierList(type.getBaseAmount()));
+        currentModifiers.get(type).addPermanentModifier(modifierId, amount, operation);
+    }
+
+    public void addPermanentModifier(ModifierType type, String modifierId, double amount, ModifierOperation operation, long expireTime) {
+        currentModifiers.putIfAbsent(type, new ModifierList(type.getBaseAmount()));
+        currentModifiers.get(type).addTemporaryModifier(modifierId, amount, operation, expireTime);
     }
 }
