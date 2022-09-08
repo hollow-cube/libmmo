@@ -18,6 +18,8 @@ import unnamed.mmo.modifiers.ModifierType;
 import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
 
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.IntSupplier;
 
@@ -31,7 +33,7 @@ public class PlayerImpl extends Player {
     private int diggingBlockMaxHealth = 0;
     private BlockFace diggingFace = null;
 
-    private final EnumMap<ModifierType, ModifierList> currentModifiers = new EnumMap<>(ModifierType.class);
+    private final Map<String, ModifierList> currentModifiers = new HashMap<>();
 
 
     public PlayerImpl(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
@@ -129,13 +131,28 @@ public class PlayerImpl extends Player {
         sendPacket(packet);
     }
 
-    public void addPermanentModifier(ModifierType type, String modifierId, double amount, ModifierOperation operation) {
-        currentModifiers.putIfAbsent(type, new ModifierList(type.getBaseAmount()));
-        currentModifiers.get(type).addPermanentModifier(modifierId, amount, operation);
+    /**
+     * Adds a new permanent modifier to this player
+     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc
+     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden
+     * @param amount The amount to modify by
+     * @param operation The operation with which to modify by
+     */
+    public void addPermanentModifier(String modifierType, String modifierId, double amount, ModifierOperation operation) {
+        currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
+        currentModifiers.get(modifierType).addPermanentModifier(modifierId, amount, operation);
     }
 
-    public void addPermanentModifier(ModifierType type, String modifierId, double amount, ModifierOperation operation, long expireTime) {
-        currentModifiers.putIfAbsent(type, new ModifierList(type.getBaseAmount()));
-        currentModifiers.get(type).addTemporaryModifier(modifierId, amount, operation, expireTime);
+    /**
+     * Adds a new temporary modifier to this player
+     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc
+     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden
+     * @param amount The amount to modify by
+     * @param operation The operation with which to modify by
+     * @param expireTime The time when this modifier expires
+     */
+    public void addTemporaryModifier(String modifierType, String modifierId, double amount, ModifierOperation operation, long expireTime) {
+        currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
+        currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, expireTime);
     }
 }

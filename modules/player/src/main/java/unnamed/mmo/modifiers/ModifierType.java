@@ -1,17 +1,23 @@
 package unnamed.mmo.modifiers;
 
-public enum ModifierType {
-    DIG_SPEED(1),
-    MELEE_DAMAGE(0)
-    ;
+import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.NotNull;
 
-    private final double baseAmount;
+import java.util.HashMap;
+import java.util.Map;
 
-    ModifierType(double baseAmount) {
-        this.baseAmount = baseAmount;
+public class ModifierType {
+    // A list of modifierID - base value
+    private static final Map<String, Double> allModifiers = new HashMap<>();
+
+
+    public static boolean doesModifierExist(@NotNull String modifierId) {
+        return allModifiers.containsKey(modifierId);
     }
 
-    public double getBaseAmount() {
-        return baseAmount;
+    public static double getBaseValue(@NotNull String modifierId) {
+        return allModifiers.getOrDefault(modifierId, -1d);
     }
+
+    public static final Codec<Map<String, Double>> CODEC = Codec.unboundedMap(Codec.STRING, Codec.DOUBLE);
 }
