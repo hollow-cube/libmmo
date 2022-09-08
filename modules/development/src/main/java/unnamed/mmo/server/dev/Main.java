@@ -1,6 +1,7 @@
 package unnamed.mmo.server.dev;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.builder.Command;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
@@ -22,6 +23,9 @@ import unnamed.mmo.command.BaseCommandRegister;
 import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemManager;
+import unnamed.mmo.item.crafting.CraftingInventory;
+import unnamed.mmo.item.crafting.RecipeList;
+import unnamed.mmo.item.crafting.ToolCraftingInventory;
 import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.player.PlayerImpl;
 import unnamed.mmo.quest.QuestFacet;
@@ -104,6 +108,15 @@ public class Main {
         DamageProcessor.init();
 
         server.start("0.0.0.0", 25565);
+
+        Command craftCommand = new Command("craft");
+        craftCommand.setDefaultExecutor((sender, context) -> {
+            if(sender instanceof Player player) {
+                player.openInventory(new ToolCraftingInventory(new RecipeList()));
+            }
+        });
+
+        MinecraftServer.getCommandManager().register(craftCommand);
     }
 
 }

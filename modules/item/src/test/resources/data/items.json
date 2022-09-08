@@ -26,5 +26,38 @@
         "stateId": 1
       }
     }
+  },
+  {
+    "namespace": "test:log",
+    "id": 2,
+    "material": "minecraft:oak_log",
+    "defaultStateId": 2,
+    "states": {
+      "[]": {
+        "stateId": 2
+      }
+    }
+  },
+  {
+    "namespace": "test:tool",
+    "id": 3,
+    "material": "minecraft:wooden_axe",
+    "defaultStateId": 3,
+    "states": {
+      "[]": {
+        "stateId": 3
+      }
+    }
+  },
+  {
+    "namespace": "test:stick",
+    "id": 4,
+    "material": "minecraft:stick",
+    "defaultStateId": 4,
+    "states": {
+      "[]": {
+        "stateId": 4
+      }
+    }
   }
 ]
