@@ -2,9 +2,9 @@ package unnamed.mmo.modifiers;
 
 public interface Modifier<T> {
 
-    T getModifierAmount();
+    T modifierAmount();
 
-    ModifierOperation getOperation();
+    ModifierOperation operation();
 
     boolean hasExpired();
 }

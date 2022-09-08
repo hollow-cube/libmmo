@@ -1,5 +1,6 @@
 package unnamed.mmo.modifiers;
 
+import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.damage.MultiPartValue;
 
 import java.util.HashMap;
@@ -14,17 +15,17 @@ public class ModifierList {
         this.initialAmount = initialAmount;
     }
 
-    public void addPermanentModifier(String id, double amount) {
-        modifiers.put(id, new PermanentModifier<>(amount));
+    public void addPermanentModifier(@NotNull String id, double amount) {
+        addPermanentModifier(id, amount, ModifierOperation.ADD);
     }
 
-    public void addPermanentModifier(String id, double amount, ModifierOperation operation) {
+    public void addPermanentModifier(@NotNull String id, double amount, @NotNull ModifierOperation operation) {
         modifiers.put(id, new PermanentModifier<>(amount, operation));
     }
 
 
     public void addTemporaryModifier(String id, double amount, long expiresAt) {
-        modifiers.put(id, new TemporaryModifier<>(amount, expiresAt));
+        addTemporaryModifier(id, amount, ModifierOperation.ADD, expiresAt);
     }
 
     public void addTemporaryModifier(String id, double amount, ModifierOperation operation, long expiresAt) {
@@ -41,9 +42,9 @@ public class ModifierList {
         modifiers.values().removeIf(Modifier::hasExpired);
         for(var entry : modifiers.entrySet()) {
             Modifier<Double> modifier = entry.getValue();
-            switch (modifier.getOperation()) {
-                case ADD -> value.addBase(modifier.getModifierAmount());
-                case MULTIPLY -> value.multiply(modifier.getModifierAmount());
+            switch (modifier.operation()) {
+                case ADD -> value.addBase(modifier.modifierAmount());
+                case MULTIPLY -> value.multiply(modifier.modifierAmount());
             }
         }
         return value.getFinalValue();
