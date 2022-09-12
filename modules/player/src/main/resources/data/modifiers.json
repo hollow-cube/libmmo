@@ -1,0 +1,14 @@
+[
+  {
+    "modifier": "luck",
+    "defaultValue": 0
+  },
+  {
+    "modifier": "attack_damage",
+    "defaultValue": 1.0
+  },
+  {
+    "modifier": "mining_speed",
+    "defaultValue": 1.0
+  }
+]

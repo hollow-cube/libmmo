@@ -1,23 +1,33 @@
 package unnamed.mmo.modifiers;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.registry.Registry;
+import unnamed.mmo.registry.Resource;
 
-import java.util.HashMap;
-import java.util.Map;
+public record ModifierType(String id, double defaultValue) implements Resource {
 
-public class ModifierType {
-    // A list of modifierID - base value
-    private static final Map<String, Double> allModifiers = new HashMap<>();
+   public static final Codec<ModifierType> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.STRING.fieldOf("modifier").forGetter(ModifierType::id),
+            Codec.DOUBLE.fieldOf("defaultValue").forGetter(ModifierType::defaultValue)
+    ).apply(i, ModifierType::new));
+
+    public static final Registry<ModifierType> REGISTRY = Registry.codec("modifiers", CODEC);
 
 
     public static boolean doesModifierExist(@NotNull String modifierId) {
-        return allModifiers.containsKey(modifierId);
+        return REGISTRY.get("starlight:" + modifierId) != null;
     }
 
     public static double getBaseValue(@NotNull String modifierId) {
-        return allModifiers.getOrDefault(modifierId, -1d);
+        return REGISTRY.required("starlight:" + modifierId).defaultValue;
     }
 
-    public static final Codec<Map<String, Double>> CODEC = Codec.unboundedMap(Codec.STRING, Codec.DOUBLE);
+
+    @Override
+    public @NotNull NamespaceID namespace() {
+        return NamespaceID.from("starlight", id);
+    }
 }
