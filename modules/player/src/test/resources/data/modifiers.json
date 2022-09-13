@@ -1,0 +1,17 @@
+[
+  {
+    "namespace": "starlight:luck",
+    "modifier": "luck",
+    "defaultValue": 0
+  },
+  {
+    "namespace": "starlight:potatoes",
+    "modifier": "potatoes",
+    "defaultValue": 10
+  },
+  {
+    "namespace": "starlight:writing_tests",
+    "modifier": "writing_tests",
+    "defaultValue": -5
+  }
+]

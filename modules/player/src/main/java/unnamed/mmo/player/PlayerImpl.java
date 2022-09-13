@@ -133,26 +133,30 @@ public class PlayerImpl extends Player {
 
     /**
      * Adds a new permanent modifier to this player
-     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc
-     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden
+     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc. This modifier type should be in the modifier registry, and can be checked with {@link ModifierType#doesModifierExist(String)}
+     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden. This id can be basically any string, and it should be unique to each source so modifiers can stack properly
      * @param amount The amount to modify by
      * @param operation The operation with which to modify by
      */
     public void addPermanentModifier(String modifierType, String modifierId, double amount, ModifierOperation operation) {
-        currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
-        currentModifiers.get(modifierType).addPermanentModifier(modifierId, amount, operation);
+        if (ModifierType.doesModifierExist(modifierType)) {
+            currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
+            currentModifiers.get(modifierType).addPermanentModifier(modifierId, amount, operation);
+        }
     }
 
     /**
      * Adds a new temporary modifier to this player
-     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc
-     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden
+     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc. This modifier type should be in the modifier registry, and can be checked with {@link ModifierType#doesModifierExist(String)}
+     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden. This id can be basically any string, and it should be unique to each source so modifiers can stack properly
      * @param amount The amount to modify by
      * @param operation The operation with which to modify by
      * @param expireTime The time when this modifier expires
      */
     public void addTemporaryModifier(String modifierType, String modifierId, double amount, ModifierOperation operation, long expireTime) {
-        currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
-        currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, expireTime);
+        if (ModifierType.doesModifierExist(modifierType)) {
+            currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
+            currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, expireTime);
+        }
     }
 }
