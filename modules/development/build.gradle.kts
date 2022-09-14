@@ -1,4 +1,3 @@
-
 plugins {
     application
 }
@@ -15,7 +14,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("unnamed.mmo.server.dev.Main")
+    mainClass.set("net.hollowcube.server.dev.Main")
 }
 
 tasks.named("run", JavaExec::class) {
