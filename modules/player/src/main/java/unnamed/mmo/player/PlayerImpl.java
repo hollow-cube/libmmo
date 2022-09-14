@@ -159,4 +159,21 @@ public class PlayerImpl extends Player {
             currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, expireTime);
         }
     }
+
+    public double getModifierValue(String modifierType) {
+        if (ModifierType.doesModifierExist(modifierType)) {
+            if (currentModifiers.containsKey(modifierType)) {
+                return currentModifiers.get(modifierType).calculateTotal();
+            } else {
+                return ModifierType.getBaseValue(modifierType);
+            }
+        }
+        return -999;
+    }
+
+    public void removeModifier(String modifierType, String modifierId) {
+        if(currentModifiers.containsKey(modifierType)) {
+            currentModifiers.get(modifierType).removeModifier(modifierId);
+        }
+    }
 }

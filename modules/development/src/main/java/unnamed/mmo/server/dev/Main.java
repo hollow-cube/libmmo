@@ -29,6 +29,7 @@ import unnamed.mmo.item.crafting.ToolCraftingInventory;
 import unnamed.mmo.item.entity.OwnedItemEntity;
 import unnamed.mmo.player.PlayerImpl;
 import unnamed.mmo.quest.QuestFacet;
+import unnamed.mmo.server.dev.commands.CommandRegister;
 import unnamed.mmo.server.dev.tool.DebugToolManager;
 import unnamed.mmo.server.instance.TickTrackingInstance;
 
@@ -77,6 +78,7 @@ public class Main {
         });
 
         BaseCommandRegister.registerCommands();
+        CommandRegister.registerCommands(MinecraftServer.getCommandManager());
 
         // For now, manually register chat (with conn to mongo :/ need a config system)
 //        MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
@@ -108,15 +110,6 @@ public class Main {
         DamageProcessor.init();
 
         server.start("0.0.0.0", 25565);
-
-        Command craftCommand = new Command("craft");
-        craftCommand.setDefaultExecutor((sender, context) -> {
-            if(sender instanceof Player player) {
-                player.openInventory(new ToolCraftingInventory(new RecipeList()));
-            }
-        });
-
-        MinecraftServer.getCommandManager().register(craftCommand);
     }
 
 }
