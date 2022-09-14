@@ -9,7 +9,6 @@ public class TestModifierRegistry {
 
     @Test
     public void loadRegistry() {
-        System.out.println(ModifierType.REGISTRY.values());
         assertTrue(ModifierType.doesModifierExist("luck"));
         assertEquals(ModifierType.getBaseValue("potatoes"), 10d);
     }

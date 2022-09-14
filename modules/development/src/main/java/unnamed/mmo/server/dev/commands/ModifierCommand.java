@@ -2,6 +2,7 @@ package unnamed.mmo.server.dev.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentEnum;
 import net.minestom.server.command.builder.arguments.ArgumentString;
@@ -9,6 +10,7 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.command.builder.arguments.number.ArgumentDouble;
+import net.minestom.server.command.builder.arguments.number.ArgumentInteger;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.entity.Entity;
 import unnamed.mmo.modifiers.ModifierOperation;
@@ -22,6 +24,7 @@ public class ModifierCommand extends Command {
         super("modifier");
 
         ArgumentWord modeArg = ArgumentType.Word("mode").from("add", "remove");
+        ArgumentInteger modifierDurationArg = ArgumentType.Integer("durationType");
         ArgumentEntity playerArg = ArgumentType.Entity("players").onlyPlayers(true);
         ArgumentString modifierTypeArg = ArgumentType.String("modifierType");
         ArgumentString modifierIdArg = ArgumentType.String("modifierId");
@@ -33,6 +36,8 @@ public class ModifierCommand extends Command {
                 suggestion.addEntry(new SuggestionEntry(modifierType.namespace().toString()));
             }
         });
+
+        modifierDurationArg.min(0);
 
         addSyntax((sender, context) -> {
             String mode = context.get(modeArg).toLowerCase(Locale.ROOT);
@@ -46,6 +51,19 @@ public class ModifierCommand extends Command {
                 sender.sendMessage(Component.text("Invalid mode for the amount of arguments supplied (tried the add mode, got " + context.getRaw(mode) + " instead)", NamedTextColor.RED));
             }
         }, modeArg, playerArg, modifierTypeArg, modifierIdArg, amountArg, operationArg);
+
+        addSyntax((sender, context) -> {
+            String mode = context.get(modeArg).toLowerCase(Locale.ROOT);
+            if ("add".equals(mode)) {
+                for (Entity entity : context.get(playerArg).find(sender)) {
+                    if (entity instanceof PlayerImpl player) {
+                        player.addTemporaryModifier(context.get(modifierTypeArg), context.get(modifierIdArg), context.get(amountArg), context.get(operationArg), context.get(modifierDurationArg).longValue() * MinecraftServer.TICK_MS);
+                    }
+                }
+            } else {
+                sender.sendMessage(Component.text("Invalid mode for the amount of arguments supplied (tried the add mode, got " + context.getRaw(mode) + " instead)", NamedTextColor.RED));
+            }
+        }, modeArg, playerArg, modifierTypeArg, modifierIdArg, amountArg, operationArg, modifierDurationArg);
 
         addSyntax((sender, context) -> {
             String mode = context.get(modeArg).toLowerCase(Locale.ROOT);

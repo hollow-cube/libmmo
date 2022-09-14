@@ -131,6 +131,8 @@ public class PlayerImpl extends Player {
         sendPacket(packet);
     }
 
+    // ----- MODIFIERS -----
+
     /**
      * Adds a new permanent modifier to this player
      * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc. This modifier type should be in the modifier registry, and can be checked with {@link ModifierType#doesModifierExist(String)}
@@ -151,12 +153,12 @@ public class PlayerImpl extends Player {
      * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden. This id can be basically any string, and it should be unique to each source so modifiers can stack properly
      * @param amount The amount to modify by
      * @param operation The operation with which to modify by
-     * @param expireTime The time when this modifier expires
+     * @param expireTime The duration this modifier lasts
      */
     public void addTemporaryModifier(String modifierType, String modifierId, double amount, ModifierOperation operation, long expireTime) {
         if (ModifierType.doesModifierExist(modifierType)) {
             currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
-            currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, expireTime);
+            currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, System.currentTimeMillis() + expireTime);
         }
     }
 
@@ -175,5 +177,13 @@ public class PlayerImpl extends Player {
         if(currentModifiers.containsKey(modifierType)) {
             currentModifiers.get(modifierType).removeModifier(modifierId);
         }
+    }
+
+    public Map<String, Double> getCurrentModifierValues() {
+        HashMap<String, Double> amounts = new HashMap<>();
+        for(var entry : currentModifiers.entrySet()) {
+            amounts.put(entry.getKey(), entry.getValue().calculateTotal());
+        }
+        return amounts;
     }
 }
