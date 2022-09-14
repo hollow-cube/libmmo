@@ -1,14 +1,14 @@
 [
   {
-    "namespace": "unnamed:gold_ore",
+    "namespace": "starlight:gold_ore",
     "oreBlock": "minecraft:gold_ore",
     "health": 100,
-    "lootTable": "unnamed:gold_ore"
+    "lootTable": "starlight:gold_ore"
   },
   {
-    "namespace": "unnamed:diamond_ore",
+    "namespace": "starlight:diamond_ore",
     "oreBlock": "minecraft:diamond_ore",
     "health": 50,
-    "lootTable": "unnamed:gold_ore"
+    "lootTable": "starlight:gold_ore"
   }
 ]

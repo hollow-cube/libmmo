@@ -1,13 +1,13 @@
 [
   {
-    "namespace": "unnamed:gold_ore",
+    "namespace": "starlight:gold_ore",
     "pools": [
       {
         "rolls": 1,
         "entries": [
           {
-            "type": "unnamed:item",
-            "item": "unnamed:gold_ingot"
+            "type": "starlight:item",
+            "item": "starlight:gold_ingot"
           }
         ]
       }

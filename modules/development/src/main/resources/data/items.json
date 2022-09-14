@@ -1,15 +1,15 @@
 [
   {
-    "namespace": "unnamed:diamond_pickaxe",
+    "namespace": "starlight:diamond_pickaxe",
     "id": 0,
     "material": "minecraft:diamond_pickaxe",
     "components": [
       {
-        "type": "unnamed:pickaxe",
+        "type": "starlight:pickaxe",
         "miningSpeed": 5
       },
       {
-        "type": "unnamed:rarity",
+        "type": "starlight:rarity",
         "value": "common"
       }
     ],
@@ -21,7 +21,7 @@
     }
   },
   {
-    "namespace": "unnamed:gold_ingot",
+    "namespace": "starlight:gold_ingot",
     "id": 1,
     "material": "minecraft:gold_ingot",
     "defaultStateId": 1,
