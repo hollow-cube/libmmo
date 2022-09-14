@@ -16,7 +16,7 @@ import unnamed.mmo.util.FutureUtil;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static unnamed.mmo.util.ExtraCodecs.lazy;
+import static unnamed.mmo.dfu.ExtraCodecs.lazy;
 
 public record SequenceObjective(List<Objective> children) implements Objective {
 

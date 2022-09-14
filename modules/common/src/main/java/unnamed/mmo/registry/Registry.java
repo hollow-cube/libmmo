@@ -14,7 +14,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.Env;
-import unnamed.mmo.util.DFUUtil;
+import unnamed.mmo.dfu.DFUUtil;
 
 import java.util.Collection;
 import java.util.HashMap;

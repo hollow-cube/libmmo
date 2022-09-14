@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.server.Facet;
+import unnamed.mmo.server.ServerWrapper;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class DebugToolManager implements Facet {
     }
 
     @Override
-    public void hook(@NotNull ServerProcess server) {
+    public void hook(@NotNull ServerWrapper server) {
         // Right click
         eventNode.addListener(PlayerUseItemEvent.class, this::useItemOnAir);
         eventNode.addListener(PlayerUseItemOnBlockEvent.class, this::useItemOnBlock);
@@ -56,9 +57,8 @@ public class DebugToolManager implements Facet {
         eventNode.addListener(PlayerSwapItemEvent.class, this::swapItem);
         eventNode.addListener(PlayerDisconnectEvent.class, this::disconnect);
 
-        server.eventHandler().addChild(eventNode);
-
-        LOGGER.info("Loaded {} debug tools", REGISTRY.size());
+        server.addEventNode(eventNode);
+        LOGGER.debug("Loaded {} debug tools", REGISTRY.size());
     }
 
     private void useItemOnAir(@NotNull PlayerUseItemEvent event) {

@@ -10,6 +10,7 @@ import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.server.Facet;
+import unnamed.mmo.server.ServerWrapper;
 
 import java.util.UUID;
 
@@ -33,11 +34,11 @@ public class OwnedItemEntity extends ItemEntity {
     @AutoService(Facet.class)
     public static class Handler implements Facet {
         @Override
-        public void hook(@NotNull ServerProcess server) {
-            var node = EventNode.all("owneditementity");
-            node.addListener(PickupItemEvent.class, this::handlePickup);
-            node.addListener(EntityItemMergeEvent.class, this::handleMerge);
-            server.eventHandler().addChild(node);
+        public void hook(@NotNull ServerWrapper server) {
+            var eventNode = EventNode.all("unnamed:item_entity/handler");
+            eventNode.addListener(PickupItemEvent.class, this::handlePickup);
+            eventNode.addListener(EntityItemMergeEvent.class, this::handleMerge);
+            server.addEventNode(eventNode);
         }
 
         private void handlePickup(@NotNull PickupItemEvent event) {

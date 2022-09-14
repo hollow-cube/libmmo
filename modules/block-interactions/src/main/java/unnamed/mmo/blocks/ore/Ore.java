@@ -17,7 +17,7 @@ import unnamed.mmo.lang.LanguageProvider;
 import unnamed.mmo.loot.LootTable;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 public record Ore(
         @NotNull NamespaceID namespace,

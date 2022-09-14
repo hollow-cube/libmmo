@@ -6,6 +6,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.test.Env;
 import net.minestom.server.test.EnvTest;
 import org.junit.jupiter.api.Test;
+import unnamed.mmo.server.ServerWrapper;
 
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class TestOwnedItemEntityIntegration {
     @Test
     public void testHappyCase(Env env) throws Exception {
         // Register associated handlers
-        new OwnedItemEntity.Handler().hook(env.process());
+        new OwnedItemEntity.Handler().hook(ServerWrapper.isolated(env.process()));
 
         // Create the player in an instance
         var instance = env.createFlatInstance();
@@ -40,7 +41,7 @@ public class TestOwnedItemEntityIntegration {
     @Test
     public void testNonOwnerPickup(Env env) {
         // Register associated handlers
-        new OwnedItemEntity.Handler().hook(env.process());
+        new OwnedItemEntity.Handler().hook(ServerWrapper.isolated(env.process()));
 
         // Create the player in an instance
         var instance = env.createFlatInstance();
@@ -60,7 +61,7 @@ public class TestOwnedItemEntityIntegration {
     @Test
     public void testFullInventoryPickup(Env env) {
         // Register associated handlers
-        new OwnedItemEntity.Handler().hook(env.process());
+        new OwnedItemEntity.Handler().hook(ServerWrapper.isolated(env.process()));
 
         // Create the player in an instance
         var instance = env.createFlatInstance();
@@ -86,7 +87,7 @@ public class TestOwnedItemEntityIntegration {
     @Test
     public void testSameItemSameOwnerMerge(Env env) {
         // Register associated handlers
-        new OwnedItemEntity.Handler().hook(env.process());
+        new OwnedItemEntity.Handler().hook(ServerWrapper.isolated(env.process()));
 
         // Create an instance and add two of the same item
         var instance = env.createFlatInstance();
@@ -112,7 +113,7 @@ public class TestOwnedItemEntityIntegration {
     @Test
     public void testSameItemDiffOwnerDontMerge(Env env) {
         // Register associated handlers
-        new OwnedItemEntity.Handler().hook(env.process());
+        new OwnedItemEntity.Handler().hook(ServerWrapper.isolated(env.process()));
 
         // Create an instance and add two of the same item
         var instance = env.createFlatInstance();

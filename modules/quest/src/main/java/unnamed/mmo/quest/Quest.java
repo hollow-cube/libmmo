@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.quest.objective.Objective;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 public record Quest(
         @NotNull NamespaceID namespace,

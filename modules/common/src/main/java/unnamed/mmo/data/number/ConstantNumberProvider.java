@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.data.NumberSource;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 record ConstantNumberProvider(
         @NotNull Number value

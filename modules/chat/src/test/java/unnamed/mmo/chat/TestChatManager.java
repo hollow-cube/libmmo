@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestChatManager {
     private final MockChatStorage storage = new MockChatStorage();
-    private final ChatManager manager = new ChatManager(storage);
+    private final ChatFacet manager = new ChatFacet(storage);
     private final Player player = TestUtil.headlessPlayer();
 
     @Test

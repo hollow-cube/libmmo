@@ -14,7 +14,7 @@ import unnamed.mmo.util.EventUtil;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static unnamed.mmo.util.ExtraCodecs.lazy;
+import static unnamed.mmo.dfu.ExtraCodecs.lazy;
 
 public record ParallelObjective(List<Objective> children) implements Objective {
     public static final Codec<ParallelObjective> CODEC = RecordCodecBuilder.create(i -> i.group(

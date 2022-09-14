@@ -1,4 +1,4 @@
-package unnamed.mmo.util;
+package unnamed.mmo.dfu;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -13,6 +13,7 @@ import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public final class ExtraCodecs {
@@ -40,6 +41,10 @@ public final class ExtraCodecs {
 
     public static @NotNull MapCodec<String> string(@NotNull String name, @Nullable String defaultValue) {
         return Codec.STRING.optionalFieldOf(name, defaultValue);
+    }
+
+    public static <T extends Enum<T>> @NotNull Codec<T> forEnum(Class<T> type) {
+        return Codec.STRING.xmap(s -> Enum.valueOf(type, s.toUpperCase(Locale.ROOT)), e -> e.name().toLowerCase(Locale.ROOT));
     }
 
     public static <T> @NotNull Codec<T> lazy(Supplier<Codec<T>> init) {

@@ -6,6 +6,8 @@ import net.minestom.server.ServerProcess;
 import net.minestom.server.advancements.FrameType;
 import net.minestom.server.advancements.notifications.Notification;
 import net.minestom.server.advancements.notifications.NotificationCenter;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.item.Material;
@@ -19,6 +21,7 @@ import unnamed.mmo.quest.objective.Objective;
 import unnamed.mmo.quest.player.QuestManager;
 import unnamed.mmo.quest.storage.QuestStorage;
 import unnamed.mmo.server.Facet;
+import unnamed.mmo.server.ServerWrapper;
 import unnamed.mmo.util.FutureUtil;
 
 import java.util.HashMap;
@@ -33,14 +36,17 @@ public class QuestFacet implements Facet {
     private final Map<UUID, QuestManager> managers = new HashMap<>();
 
     @Override
-    public void hook(@NotNull ServerProcess server) {
+    public void hook(@NotNull ServerWrapper server) {
         LOGGER.info("Loaded {} quest objectives", Objective.Factory.REGISTRY.size());
 
-        server.eventHandler().addListener(PlayerLoginEvent.class, this::handleJoin);
-        server.eventHandler().addListener(PlayerDisconnectEvent.class, this::handleLeave);
+        EventNode<Event> eventNode = EventNode.all("questing");
+        server.addEventNode(eventNode);
 
-        server.eventHandler().addListener(QuestObjectiveChangeEvent.class, this::handleObjectiveChange);
-        server.eventHandler().addListener(QuestCompleteEvent.class, this::handleQuestCompletion);
+        eventNode.addListener(PlayerLoginEvent.class, this::handleJoin);
+        eventNode.addListener(PlayerDisconnectEvent.class, this::handleLeave);
+
+        eventNode.addListener(QuestObjectiveChangeEvent.class, this::handleObjectiveChange);
+        eventNode.addListener(QuestCompleteEvent.class, this::handleQuestCompletion);
     }
 
     private void handleJoin(@NotNull PlayerLoginEvent event) {

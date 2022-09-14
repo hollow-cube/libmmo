@@ -1,7 +1,6 @@
 package unnamed.mmo.chat;
 
 import com.google.auto.service.AutoService;
-import net.minestom.server.ServerProcess;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
@@ -11,13 +10,14 @@ import org.jetbrains.annotations.TestOnly;
 import unnamed.mmo.chat.command.LogCommand;
 import unnamed.mmo.chat.storage.ChatStorage;
 import unnamed.mmo.server.Facet;
+import unnamed.mmo.server.ServerWrapper;
 import unnamed.mmo.util.EventUtil;
 import unnamed.mmo.util.FutureUtil;
 
 import java.time.Instant;
 
 @AutoService(Facet.class)
-public class ChatManager implements Facet {
+public class ChatFacet implements Facet {
 
     //todo where does this come from?
     private static final String SERVER_NAME = "test_server";
@@ -31,13 +31,13 @@ public class ChatManager implements Facet {
 
     private final ChatStorage storage;
 
-    public ChatManager() {
+    public ChatFacet() {
         //todo this should be based on a config param, which should be loaded before loading managers
         this(ChatStorage.noop());
     }
 
     @TestOnly
-    public ChatManager(@NotNull ChatStorage storage) {
+    public ChatFacet(@NotNull ChatStorage storage) {
         this.storage = storage;
 
         eventNode.addListener(PlayerChatEvent.class, this::handleChatEvent);
@@ -45,10 +45,9 @@ public class ChatManager implements Facet {
     }
 
     @Override
-    public void hook(@NotNull ServerProcess server) {
-        server.eventHandler().addChild(eventNode);
-
-        server.command().register(new LogCommand(storage));
+    public void hook(@NotNull ServerWrapper server) {
+        server.addEventNode(eventNode);
+        server.registerCommand(new LogCommand(storage));
     }
 
     public EventNode<Event> eventNode() {

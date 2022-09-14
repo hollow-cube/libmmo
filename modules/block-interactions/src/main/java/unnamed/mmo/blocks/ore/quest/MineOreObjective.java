@@ -11,7 +11,7 @@ import unnamed.mmo.blocks.ore.Ore;
 import unnamed.mmo.blocks.ore.event.PlayerOreBreakEvent;
 import unnamed.mmo.quest.QuestContext;
 import unnamed.mmo.quest.objective.Objective;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.concurrent.CompletableFuture;
 

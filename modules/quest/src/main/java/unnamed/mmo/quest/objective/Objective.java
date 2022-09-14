@@ -11,7 +11,7 @@ import unnamed.mmo.registry.ResourceFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-import static unnamed.mmo.util.ExtraCodecs.lazy;
+import static unnamed.mmo.dfu.ExtraCodecs.lazy;
 
 public interface Objective {
 
