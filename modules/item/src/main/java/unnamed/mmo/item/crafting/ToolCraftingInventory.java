@@ -36,7 +36,7 @@ public class ToolCraftingInventory extends Inventory {
         Arrays.fill(stacks, blockedItemStack);
         stacks[TOOL_INDEX] = super.getItemStack(TOOL_INDEX);
         stacks[OUTPUT_INDEX] = super.getItemStack(OUTPUT_INDEX);
-        for(Integer i : CRAFTING_INDICES) {
+        for (Integer i : CRAFTING_INDICES) {
             stacks[i] = super.getItemStack(i);
         }
         return stacks;
@@ -44,17 +44,18 @@ public class ToolCraftingInventory extends Inventory {
 
     @Override
     public boolean leftClick(@NotNull Player player, int slot) {
-        if(!isValidIndex(slot)) return false;
+        if (!isValidIndex(slot)) return false;
 
         // Only allow tools to be placed into the index
-        if(slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && !isToolItem(getCursorItem(player))) return false;
+        if (slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && !isToolItem(getCursorItem(player)))
+            return false;
         // Deny placements into the Crafting index
-        if(slot == OUTPUT_INDEX && getItemStack(OUTPUT_INDEX).isAir()) return false;
+        if (slot == OUTPUT_INDEX && getItemStack(OUTPUT_INDEX).isAir()) return false;
 
         // Crafting
-        if(slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
-            if(!getCursorItem(player).isAir() || getItemStack(OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
-                if(getCursorItem(player).isAir()) {
+        if (slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
+            if (!getCursorItem(player).isAir() || getItemStack(OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
+                if (getCursorItem(player).isAir()) {
                     setCursorItem(player, getItemStack(OUTPUT_INDEX));
                 } else {
                     setCursorItem(player, getCursorItem(player).withAmount(amount -> amount + getItemStack(OUTPUT_INDEX).amount()));
@@ -73,17 +74,18 @@ public class ToolCraftingInventory extends Inventory {
 
     @Override
     public boolean rightClick(@NotNull Player player, int slot) {
-        if(!isValidIndex(slot)) return false;
+        if (!isValidIndex(slot)) return false;
 
         // Only allow tools to be placed into the index
-        if(slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && !isToolItem(getCursorItem(player))) return false;
+        if (slot == TOOL_INDEX && getItemStack(TOOL_INDEX).isAir() && !getCursorItem(player).isAir() && !isToolItem(getCursorItem(player)))
+            return false;
         // Deny placements into the Crafting index
-        if(slot == OUTPUT_INDEX && getItemStack(OUTPUT_INDEX).isAir()) return false;
+        if (slot == OUTPUT_INDEX && getItemStack(OUTPUT_INDEX).isAir()) return false;
 
         // Crafting
-        if(slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
-            if(!getCursorItem(player).isAir() || getItemStack(OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
-                if(getCursorItem(player).isAir()) {
+        if (slot == OUTPUT_INDEX && !getItemStack(OUTPUT_INDEX).isAir()) {
+            if (!getCursorItem(player).isAir() || getItemStack(OUTPUT_INDEX).isSimilar(getCursorItem(player))) {
+                if (getCursorItem(player).isAir()) {
                     setCursorItem(player, getItemStack(OUTPUT_INDEX));
                 } else {
                     setCursorItem(player, getCursorItem(player).withAmount(amount -> amount + getItemStack(OUTPUT_INDEX).amount()));
@@ -102,7 +104,7 @@ public class ToolCraftingInventory extends Inventory {
 
     @Override
     public boolean shiftClick(@NotNull Player player, int slot) {
-        if(!isValidIndex(slot)) return false;
+        if (!isValidIndex(slot)) return false;
 
         final boolean isInWindow = slot <= getSize();
         // Pain and misery
@@ -133,15 +135,15 @@ public class ToolCraftingInventory extends Inventory {
                 int outputAmount = craftingItemStack.amount();
                 int totalItems = maxCrafts * outputAmount;
                 boolean result = player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.DRY_RUN);
-                if(result) {
+                if (result) {
                     // We can add all items! go ahead and do so
                     player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.ALL);
                     removeCraftingItems(maxCrafts);
                 } else {
                     // Figure out how many we can add
-                    for(int i = totalItems; i > 0; i -= outputAmount) {
+                    for (int i = totalItems; i > 0; i -= outputAmount) {
                         boolean canAdd = player.getInventory().addItemStack(craftingItemStack.withAmount(i), TransactionOption.DRY_RUN);
-                        if(canAdd) {
+                        if (canAdd) {
                             player.getInventory().addItemStack(craftingItemStack.withAmount(totalItems), TransactionOption.ALL);
                             final int craftNum = totalItems / outputAmount;
                             removeCraftingItems(craftNum);
@@ -162,7 +164,7 @@ public class ToolCraftingInventory extends Inventory {
     }
 
     private boolean isValidIndex(int i) {
-        if(i < getSize())
+        if (i < getSize())
             return i == TOOL_INDEX || i == OUTPUT_INDEX || CRAFTING_INDICES.contains(i);
         return true;
     }
@@ -173,7 +175,7 @@ public class ToolCraftingInventory extends Inventory {
 
     private void updateCraftingRecipe() {
         List<ItemStack> currentRecipe = new ArrayList<>(9);
-        for(Integer i : CRAFTING_INDICES) {
+        for (Integer i : CRAFTING_INDICES) {
             currentRecipe.add(getItemStack(i));
         }
         List<ItemStack> currentRecipeWithTool = new ArrayList<>(10);
@@ -200,26 +202,28 @@ public class ToolCraftingInventory extends Inventory {
 
     /**
      * Removes the current recipe's crafting components from the inventory's item stacks
-     * @param recipeCrafts The amount of times to remove the recipe components (that is, the number of crafts that have been performed)
+     *
+     * @param recipeCrafts The amount of times to remove the recipe components (that is, the number of crafts that have
+     *                     been performed)
      */
     private void removeCraftingItems(int recipeCrafts) {
-        if(activeRecipe instanceof ShapedCraftingRecipe recipe) {
-            for(int i = 0; i < CRAFTING_INDICES.size(); i++) {
+        if (activeRecipe instanceof ShapedCraftingRecipe recipe) {
+            for (int i = 0; i < CRAFTING_INDICES.size(); i++) {
                 int index = CRAFTING_INDICES.get(i);
                 CraftingRecipe.ComponentEntry entry = recipe.recipe().get(i);
                 final int decrementAmount = entry.count() * recipeCrafts;
-                if(getItemStack(index).amount() <= decrementAmount) {
+                if (getItemStack(index).amount() <= decrementAmount) {
                     setItemStack(index, ItemStack.AIR);
                 } else {
                     setItemStack(index, getItemStack(index).withAmount(count -> count - decrementAmount));
                 }
             }
         } else if (activeRecipe instanceof ToolShapedCraftingRecipe recipe) {
-            for(int i = 0; i < CRAFTING_INDICES.size(); i++) {
+            for (int i = 0; i < CRAFTING_INDICES.size(); i++) {
                 int index = CRAFTING_INDICES.get(i);
                 CraftingRecipe.ComponentEntry entry = recipe.recipe().get(i);
                 final int decrementAmount = entry.count() * recipeCrafts;
-                if(getItemStack(index).amount() <= decrementAmount) {
+                if (getItemStack(index).amount() <= decrementAmount) {
                     setItemStack(index, ItemStack.AIR);
                 } else {
                     setItemStack(index, getItemStack(index).withAmount(count -> count - decrementAmount));
@@ -229,14 +233,16 @@ public class ToolCraftingInventory extends Inventory {
     }
 
     /**
-     * Based on the items in the current inventory and the active recipe, calculates the maximum number of crafts that can be performed
+     * Based on the items in the current inventory and the active recipe, calculates the maximum number of crafts that
+     * can be performed
+     *
      * @return
      */
     private int maximumCrafts() {
-        if(activeRecipe == null) {
+        if (activeRecipe == null) {
             return 0;
         }
-        if(activeRecipe instanceof ShapedCraftingRecipe recipe) {
+        if (activeRecipe instanceof ShapedCraftingRecipe recipe) {
             int maxCrafts = 999;
             for (int i = 0; i < CRAFTING_INDICES.size(); i++) {
                 int currentAmount = getItemStack(CRAFTING_INDICES.get(i)).amount();
@@ -244,7 +250,7 @@ public class ToolCraftingInventory extends Inventory {
                 maxCrafts = Math.min(maxCrafts, currentAmount / craftAmount);
             }
             return maxCrafts;
-        } else if(activeRecipe instanceof ToolShapedCraftingRecipe recipe) {
+        } else if (activeRecipe instanceof ToolShapedCraftingRecipe recipe) {
             int maxCrafts = 999;
             for (int i = 0; i < CRAFTING_INDICES.size(); i++) {
                 int currentAmount = getItemStack(CRAFTING_INDICES.get(i)).amount();

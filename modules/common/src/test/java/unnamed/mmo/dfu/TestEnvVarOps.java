@@ -21,7 +21,7 @@ public class TestEnvVarOps {
         ).apply(i, Config::new));
 
         var ops = new MockEnvVarOps(Map.of(
-            "VALUE", "foo"
+                "VALUE", "foo"
         ));
         var result = ops.withDecoder(codec)
                 .apply("")
@@ -40,7 +40,7 @@ public class TestEnvVarOps {
         ).apply(i, Config::new));
 
         var ops = new MockEnvVarOps(Map.of(
-            "VALUE", "1"
+                "VALUE", "1"
         ));
         var result = ops.withDecoder(codec)
                 .apply("")
@@ -63,7 +63,7 @@ public class TestEnvVarOps {
         ).apply(i, Config::new));
 
         var ops = new MockEnvVarOps(Map.of(
-            "INNER_VALUE", "foo"
+                "INNER_VALUE", "foo"
         ));
         var result = ops.withDecoder(codec)
                 .apply("")
@@ -90,7 +90,7 @@ public class TestEnvVarOps {
         ).apply(i, Config::new));
 
         var ops = new MockEnvVarOps(Map.of(
-            "INNER_INNER_VALUE", "foo"
+                "INNER_INNER_VALUE", "foo"
         ));
         var result = ops.withDecoder(codec)
                 .apply("")
@@ -151,8 +151,6 @@ public class TestEnvVarOps {
                 new InnerConfig("1 a", "1 b")
         );
     }
-
-
 
 
     private static class MockEnvVarOps extends EnvVarOps {

@@ -10,10 +10,11 @@ import unnamed.mmo.item.ItemImpl;
 
 import java.util.List;
 
-public record ToolShapedCraftingRecipe(Item toolItem, @NotNull List<ComponentEntry> recipe, @NotNull ItemStack output) implements CraftingRecipe {
+public record ToolShapedCraftingRecipe(Item toolItem, @NotNull List<ComponentEntry> recipe,
+                                       @NotNull ItemStack output) implements CraftingRecipe {
 
     public ToolShapedCraftingRecipe {
-        if(recipe.size() != 9) {
+        if (recipe.size() != 9) {
             throw new IllegalArgumentException("Shaped crafting recipe does not have exactly 9 items (use air for empty slots)!");
         }
     }

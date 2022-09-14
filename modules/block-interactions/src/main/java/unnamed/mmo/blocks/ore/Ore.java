@@ -13,11 +13,11 @@ import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unnamed.mmo.blocks.ore.handler.OreBlockHandler;
+import unnamed.mmo.dfu.ExtraCodecs;
 import unnamed.mmo.lang.LanguageProvider;
 import unnamed.mmo.loot.LootTable;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
-import unnamed.mmo.dfu.ExtraCodecs;
 
 public record Ore(
         @NotNull NamespaceID namespace,

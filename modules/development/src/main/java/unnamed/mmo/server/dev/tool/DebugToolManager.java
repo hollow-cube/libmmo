@@ -1,7 +1,6 @@
 package unnamed.mmo.server.dev.tool;
 
 import com.google.auto.service.AutoService;
-import net.minestom.server.ServerProcess;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;

@@ -5,13 +5,14 @@ import com.mojang.serialization.Codec;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.data.NumberSource;
-import unnamed.mmo.registry.Registry;
-import unnamed.mmo.registry.ResourceFactory;
 import unnamed.mmo.dfu.DFUUtil;
 import unnamed.mmo.dfu.ExtraCodecs;
+import unnamed.mmo.registry.Registry;
+import unnamed.mmo.registry.ResourceFactory;
 
 /**
- * A source of numbers, see <a href="https://minecraft.fandom.com/wiki/Loot_table#Number_Providers">Number Providers</a>.
+ * A source of numbers, see <a href="https://minecraft.fandom.com/wiki/Loot_table#Number_Providers">Number
+ * Providers</a>.
  * <p>
  * Implementing a new number source requires a few steps:
  * <ol>

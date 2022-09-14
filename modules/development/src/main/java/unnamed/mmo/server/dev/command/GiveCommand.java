@@ -23,7 +23,7 @@ public class GiveCommand extends Command {
 
         addSyntax((sender, context) -> {
             int amount = context.get(amountArg);
-            if(sender instanceof Player player) {
+            if (sender instanceof Player player) {
                 player.getInventory().addItemStack(context.get(itemArg).withAmount(amount));
             }
         }, itemArg, amountArg);
@@ -31,8 +31,8 @@ public class GiveCommand extends Command {
         addSyntax((sender, context) -> {
             int amount = context.get(amountArg);
             ItemStack stack = context.get(itemArg).withAmount(amount);
-            for(Entity entity : context.get(playerArg).find(sender)) {
-                if(entity instanceof Player player) {
+            for (Entity entity : context.get(playerArg).find(sender)) {
+                if (entity instanceof Player player) {
                     player.getInventory().addItemStack(stack);
                 }
             }

@@ -1,15 +1,5 @@
 package unnamed.mmo.logging;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.auto.service.AutoService;
 import org.tinylog.core.LogEntry;
 import org.tinylog.core.LogEntryValue;
@@ -18,6 +8,11 @@ import org.tinylog.pattern.Token;
 import org.tinylog.writers.AbstractFileBasedWriter;
 import org.tinylog.writers.Writer;
 import org.tinylog.writers.raw.ByteArrayWriter;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Copy of {@link org.tinylog.writers.JsonWriter} with some modifications to join the config with the log

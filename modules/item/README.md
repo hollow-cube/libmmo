@@ -1,7 +1,9 @@
 ## Items
+
 Items are loaded from a JSON data file, the format is described below
 
 ### Format
+
 ```json5
 [
   {
@@ -66,19 +68,24 @@ Items are loaded from a JSON data file, the format is described below
 ```
 
 ### Components
+
 An item component should handle behavior for an item type, be it interaction, lore changes, or anything else.
+
 * Create a class (or record) which implements `Component`
 * Create a `Codec<YourComponent>` (typically as a static field on the component class)
-  * See https://forge.gemwire.uk/wiki/Codecs
+    * See https://forge.gemwire.uk/wiki/Codecs
 * Create a class which implements `ComponentHandler<YourComponent>`, filling in the relevant methods
 * Annotate `YourComponentHandler` with `@AutoService(ComponentHandler.class)`.
 * Implement any content methods (`eventNode`, the lore one when added).
 
 ### Development
+
 During development, sample items can be added to `development/src/main/resources/data/items.json`.
 
 ### Future Notes
+
 Below is a minimal item, except for the commented parts which have not currently been done but probably need to be.
+
 ```json5
 {
   "unnnamed:item": {

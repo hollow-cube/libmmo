@@ -12,9 +12,9 @@ public class BlockInteracter {
 
     public static void registerEvents() {
         MinecraftServer.getGlobalEventHandler().addListener(PlayerBlockPlaceEvent.class, event -> {
-           if (event.getBlock().registry().material() == Material.DIRT) {
-               event.setBlock(event.getBlock().withHandler(new TillHandler()));
-           }
+            if (event.getBlock().registry().material() == Material.DIRT) {
+                event.setBlock(event.getBlock().withHandler(new TillHandler()));
+            }
         });
         MinecraftServer.getGlobalEventHandler().addListener(PlayerBlockInteractEvent.class, event -> {
             Player player = event.getPlayer();

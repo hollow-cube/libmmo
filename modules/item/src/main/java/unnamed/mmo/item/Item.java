@@ -22,13 +22,12 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * A custom item. This system works similarly to {@link net.minestom.server.instance.block.Block}, where
- * each item has a unique ID, and can have multiple states, each of which gave their own unique ID and some
- * property overrides.
+ * A custom item. This system works similarly to {@link net.minestom.server.instance.block.Block}, where each item has a
+ * unique ID, and can have multiple states, each of which gave their own unique ID and some property overrides.
  * <p>
- * The {@link #stateId()} is used as the custom model data of the {@link ItemStack}, and should be used
- * to identify an {@link Item} from an {@link ItemStack}. For this conversion, {@link #fromItemStack(ItemStack)}
- * should always be used.
+ * The {@link #stateId()} is used as the custom model data of the {@link ItemStack}, and should be used to identify an
+ * {@link Item} from an {@link ItemStack}. For this conversion, {@link #fromItemStack(ItemStack)} should always be
+ * used.
  */
 public interface Item extends Resource.Id {
 
@@ -67,6 +66,7 @@ public interface Item extends Resource.Id {
 
     /**
      * Returns the translation key for this item
+     *
      * @see LanguageProvider#get(Component)
      */
     @Contract(pure = true)
@@ -137,8 +137,8 @@ public interface Item extends Resource.Id {
     }
 
     /**
-     * Parses an {@link ItemStack} into an {@link Item}. This should be used over a manual item lookup
-     * because it correctly loads transient item data.
+     * Parses an {@link ItemStack} into an {@link Item}. This should be used over a manual item lookup because it
+     * correctly loads transient item data.
      */
     static @NotNull Item fromItemStack(@NotNull ItemStack itemStack) {
         // Makes the assumption that there will not be unhandled items in circulation

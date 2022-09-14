@@ -4,16 +4,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.dfu.ExtraCodecs;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemImpl;
-import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.List;
 
-public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNull ItemStack output) implements CraftingRecipe {
+public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe,
+                                   @NotNull ItemStack output) implements CraftingRecipe {
 
     public ShapedCraftingRecipe {
-        if(recipe.size() != 9) {
+        if (recipe.size() != 9) {
             throw new IllegalArgumentException("Shaped crafting recipe does not have exactly 9 items (use air for empty slots)!");
         }
     }
@@ -37,8 +38,8 @@ public record ShapedCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNul
     @Override
     public boolean containsIngredient(@NotNull ItemStack itemStack) {
         int stateId = Item.fromItemStack(itemStack).stateId();
-        for(ComponentEntry entry : recipe) {
-            if(entry.item().stateId() != stateId) {
+        for (ComponentEntry entry : recipe) {
+            if (entry.item().stateId() != stateId) {
                 return true;
             }
         }

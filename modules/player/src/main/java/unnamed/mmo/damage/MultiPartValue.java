@@ -26,6 +26,7 @@ public class MultiPartValue {
 
     /**
      * Multiplies the total value by the amount
+     *
      * @param amount The amount to multiply the value by
      */
     @Contract(mutates = "this")
@@ -35,7 +36,8 @@ public class MultiPartValue {
 
     /**
      * Modifies the current value according to the operation
-     * @param amount The amount to modify by
+     *
+     * @param amount    The amount to modify by
      * @param operation The operation by which to modify the value
      */
     @Contract(mutates = "this")
@@ -49,6 +51,7 @@ public class MultiPartValue {
 
     /**
      * Calculates and returns the value represented bu this object
+     *
      * @return The result of the value calculation
      */
     public double getFinalValue() {

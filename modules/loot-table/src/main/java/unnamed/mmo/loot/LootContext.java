@@ -17,17 +17,25 @@ public interface LootContext extends NumberSource {
 
     // Required keys
 
-    /** The source of the loot table generation, eg "mining", "foraging". */
+    /**
+     * The source of the loot table generation, eg "mining", "foraging".
+     */
     LootContext.Key<String> SOURCE_NAME = new LootContext.Key<>("source_name", String.class);
 
-    /** The target of the loot generation, if it is an entity. */
+    /**
+     * The target of the loot generation, if it is an entity.
+     */
     LootContext.Key<Entity> THIS_ENTITY = new LootContext.Key<>("this", Entity.class);
 
     // Common hints
 
-    /** The location of the loot generation. */
+    /**
+     * The location of the loot generation.
+     */
     LootContext.Key<Point> POSITION = new LootContext.Key<>("position", Point.class);
-    /** The direction the loot should be generated in. */
+    /**
+     * The direction the loot should be generated in.
+     */
     LootContext.Key<Vec> DIRECTION = new LootContext.Key<>("direction", Vec.class);
 
 

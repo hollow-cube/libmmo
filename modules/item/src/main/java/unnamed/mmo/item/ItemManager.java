@@ -1,7 +1,6 @@
 package unnamed.mmo.item;
 
 import com.google.auto.service.AutoService;
-import net.minestom.server.ServerProcess;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import org.jetbrains.annotations.ApiStatus;

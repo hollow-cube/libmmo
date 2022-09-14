@@ -5,8 +5,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import unnamed.mmo.item.ItemComponent;
 import unnamed.mmo.dfu.ExtraCodecs;
+import unnamed.mmo.item.ItemComponent;
 
 import java.util.List;
 
@@ -30,12 +30,13 @@ public record Weapon(
             DataResult<Number> number = ops.getNumberValue(input);
             Number value = number.get().orThrow();
             WeaponWeight weaponWeight = WeaponWeight.getWeight(value.intValue());
-            if(weaponWeight == null) {
+            if (weaponWeight == null) {
                 return DataResult.error("Number was outside valid bounds!");
             } else {
                 return DataResult.success(weaponWeight);
             }
         }
+
         @Override
         public <T> T write(DynamicOps<T> ops, WeaponWeight value) {
             return ops.createNumeric(value.ordinal());

@@ -22,7 +22,7 @@ public class CropBlockDataSerializer implements TagSerializer<CropBlockData> {
     @Override
     public @Nullable CropBlockData read(@NotNull TagReadable reader) {
         if (reader.hasTag(seedMaterialTag) && reader.hasTag(cropGrownMaterialTag) &&
-            reader.hasTag(cropBlockTag) && reader.hasTag(maxAgeTag) && reader.hasTag(createsOtherTag)) {
+                reader.hasTag(cropBlockTag) && reader.hasTag(maxAgeTag) && reader.hasTag(createsOtherTag)) {
             return new CropBlockData(
                     Objects.requireNonNullElse(Material.fromId(reader.getTag(seedMaterialTag)), Material.AIR),
                     Objects.requireNonNullElse(Material.fromId(reader.getTag(cropGrownMaterialTag)), Material.AIR),

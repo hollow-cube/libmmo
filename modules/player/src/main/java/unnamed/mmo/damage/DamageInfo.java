@@ -53,14 +53,14 @@ public class DamageInfo {
     @Contract(mutates = "param1")
     public void apply(@NotNull LivingEntity entity, double attackerYaw) {
         // Apply knockback - don't need to handle kb resistance, since that is already done in livingEntity.takeKnockback
-        double yawRadians =  attackerYaw * Math.PI / 180;
+        double yawRadians = attackerYaw * Math.PI / 180;
         entity.takeKnockback((float) knockbackStrength.getFinalValue(), Math.sin(yawRadians), -Math.cos(yawRadians));
         // Apply fire
         entity.setFireForDuration(fireTicks);
         // Deal damage
 
         float finalDamage = (float) damageValue.getFinalValue();
-        if(entity.getHealth() - finalDamage <= 0.00001 && type instanceof EntityDamage entityDamage) {
+        if (entity.getHealth() - finalDamage <= 0.00001 && type instanceof EntityDamage entityDamage) {
             EntityKilledByEntityEvent entityKilledByEntityEvent = new EntityKilledByEntityEvent(entity, entityDamage.getSource());
             EventDispatcher.call(entityKilledByEntityEvent);
         }

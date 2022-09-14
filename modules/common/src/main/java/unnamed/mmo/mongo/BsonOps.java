@@ -18,9 +18,9 @@ import java.util.stream.Stream;
 /**
  * DFU {@link DynamicOps} implementation for BSON values.
  * <p>
- * The official BSON library _does_ support direct reflection based object mapping, however,
- * since codecs are being used in many other places, it makes some sense to use them here too.
- * It generalizes storage implementations to simply use the codec for a type.
+ * The official BSON library _does_ support direct reflection based object mapping, however, since codecs are being used
+ * in many other places, it makes some sense to use them here too. It generalizes storage implementations to simply use
+ * the codec for a type.
  * <p>
  * todo its possible this will be problematic because it is not using the real bson types (eg bson date),
  *      but I dont expect this to be a huge issue.
@@ -262,7 +262,6 @@ public class BsonOps implements DynamicOps<BsonValue> {
         }
         return input;
     }
-
 
 
     private static final class BsonNumberWrapper extends Number {

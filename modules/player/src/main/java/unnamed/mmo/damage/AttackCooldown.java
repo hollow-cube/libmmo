@@ -20,7 +20,7 @@ public class AttackCooldown {
 
     public double getCooldownDamageMultiplier(Player player) {
         // Formula from https://minecraft.fandom.com/wiki/Damage#Attack_cooldown
-        if(!player.hasTag(startTimeTag) || !player.hasTag(cooldownTickTag)) {
+        if (!player.hasTag(startTimeTag) || !player.hasTag(cooldownTickTag)) {
             return 1;
         }
         int cooldownTicks = player.getTag(cooldownTickTag);

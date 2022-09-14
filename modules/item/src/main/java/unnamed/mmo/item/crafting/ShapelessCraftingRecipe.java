@@ -4,16 +4,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import unnamed.mmo.item.Item;
 import unnamed.mmo.dfu.ExtraCodecs;
+import unnamed.mmo.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @NotNull ItemStack output) implements CraftingRecipe {
+public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe,
+                                      @NotNull ItemStack output) implements CraftingRecipe {
 
     public ShapelessCraftingRecipe {
-        if(recipe.size() > 9) {
+        if (recipe.size() > 9) {
             throw new IllegalArgumentException("Cannot create a shapeless recipe with more than 9 items!");
         }
     }
@@ -35,6 +36,7 @@ public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @Not
         }
         return recipeClone.isEmpty();
     }
+
     @Override
     public @NotNull ItemStack getRecipeOutput() {
         return output;
@@ -42,8 +44,8 @@ public record ShapelessCraftingRecipe(@NotNull List<ComponentEntry> recipe, @Not
 
     @Override
     public boolean containsIngredient(@NotNull ItemStack itemStack) {
-        for(ComponentEntry entry : recipe) {
-            if(Item.fromItemStack(itemStack).stateId() == entry.item().stateId()) {
+        for (ComponentEntry entry : recipe) {
+            if (Item.fromItemStack(itemStack).stateId() == entry.item().stateId()) {
                 return true;
             }
         }

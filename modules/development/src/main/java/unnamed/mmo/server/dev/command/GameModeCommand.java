@@ -16,15 +16,15 @@ public class GameModeCommand extends Command {
         ArgumentEntity playerArg = ArgumentType.Entity("players").onlyPlayers(true);
 
         addSyntax((sender, context) -> {
-            if(sender instanceof Player player) {
+            if (sender instanceof Player player) {
                 player.setGameMode(context.get(modeArg));
             }
         }, modeArg);
 
         addSyntax((sender, context) -> {
             GameMode mode = context.get(modeArg);
-            for(Entity entity : context.get(playerArg).find(sender)) {
-                if(entity instanceof Player player) {
+            for (Entity entity : context.get(playerArg).find(sender)) {
+                if (entity instanceof Player player) {
                     player.setGameMode(mode);
                 }
             }

@@ -12,7 +12,7 @@ public class TestChatQuery {
 
     @Test
     public void testBuilderMethods() {
-        UUID[] uuids = new UUID[]{ new UUID(0, 0), new UUID(0, 1), new UUID(0, 2), new UUID(0, 3) };
+        UUID[] uuids = new UUID[]{new UUID(0, 0), new UUID(0, 1), new UUID(0, 2), new UUID(0, 3)};
         ChatQuery query = ChatQuery.builder()
                 .serverId("a", "b")
                 .serverIds(List.of("c", "d"))

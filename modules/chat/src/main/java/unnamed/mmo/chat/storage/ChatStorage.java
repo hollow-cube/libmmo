@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import unnamed.mmo.chat.ChatMessage;
 import unnamed.mmo.chat.ChatQuery;
 import unnamed.mmo.config.ConfigProvider;
-import unnamed.mmo.mongo.MongoConfig;
 import unnamed.mmo.dfu.ExtraCodecs;
+import unnamed.mmo.mongo.MongoConfig;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

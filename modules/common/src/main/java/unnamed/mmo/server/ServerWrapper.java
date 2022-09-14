@@ -17,17 +17,16 @@ public interface ServerWrapper {
     }
 
     /**
-     * Access to the underlying server process. Should not be used if there
-     * is an alternative api present in this class.
+     * Access to the underlying server process. Should not be used if there is an alternative api present in this
+     * class.
      */
     @NotNull ServerProcess process();
 
     /**
      * Fetches a {@link Facet} loaded on the server.
      * <p>
-     * Note: Load order is _not_ guaranteed. If this method is accessed during
-     * the facet loading phase of server start, the target may not have been
-     * loaded yet. It will still be returned in this case.
+     * Note: Load order is _not_ guaranteed. If this method is accessed during the facet loading phase of server start,
+     * the target may not have been loaded yet. It will still be returned in this case.
      *
      * @return The facet if it is present on the server, otherwise null
      */

@@ -68,11 +68,11 @@ public class DamageProcessor {
                 double armorToughnessValue = getAttributeValue(targetEntity, Attribute.ARMOR_TOUGHNESS, 0).getFinalValue();
                 // Formula from https://minecraft.fandom.com/wiki/Armor#Damage_protection
                 info.getDamageValue().multiply(
-                    1 -
-                               Math.min(20,
-                                   Math.max(armorValue / 5,
-                                           armorValue - (4 * info.getDamageValue().getFinalValue()) / (armorToughnessValue + 8)))
-                                       / 25
+                        1 -
+                                Math.min(20,
+                                        Math.max(armorValue / 5,
+                                                armorValue - (4 * info.getDamageValue().getFinalValue()) / (armorToughnessValue + 8)))
+                                        / 25
                 );
 
                 // Enemy Potion Effect multiplier
@@ -86,7 +86,7 @@ public class DamageProcessor {
                 }
                 info.getDamageValue().multiply(resistanceMod);*/
                 // Attack cooldown modifier
-                if(attacker instanceof Player player) {
+                if (attacker instanceof Player player) {
                     info.getDamageValue().multiply(attackCooldownManager.getCooldownDamageMultiplier(player));
                     attackCooldownManager.resetCooldown(player);
                 }

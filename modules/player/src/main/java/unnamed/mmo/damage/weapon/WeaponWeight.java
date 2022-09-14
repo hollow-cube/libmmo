@@ -6,12 +6,11 @@ public enum WeaponWeight {
     NONE,
     LIGHT,
     MEDIUM,
-    HEAVY
-    ;
+    HEAVY;
 
     public static @Nullable WeaponWeight getWeight(int ordinal) {
         WeaponWeight[] values = WeaponWeight.values();
-        if(ordinal <= 0 || ordinal >= values.length) {
+        if (ordinal <= 0 || ordinal >= values.length) {
             return null;
         }
         return values[ordinal];

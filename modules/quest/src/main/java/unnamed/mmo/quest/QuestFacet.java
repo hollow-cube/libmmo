@@ -2,7 +2,6 @@ package unnamed.mmo.quest;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.ServerProcess;
 import net.minestom.server.advancements.FrameType;
 import net.minestom.server.advancements.notifications.Notification;
 import net.minestom.server.advancements.notifications.NotificationCenter;

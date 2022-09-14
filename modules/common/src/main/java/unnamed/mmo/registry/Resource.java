@@ -82,8 +82,8 @@ public interface Resource extends Keyed {
     }
 
     /**
-     * Loads a resource using the semantics of {@link #load(String)}, but the resource must be a json file with
-     * an array at the root. If the file cannot be found, an empty array will be returned.
+     * Loads a resource using the semantics of {@link #load(String)}, but the resource must be a json file with an array
+     * at the root. If the file cannot be found, an empty array will be returned.
      */
     static @NotNull JsonArray loadJsonArray(@NotNull String resource) {
         String content = load(resource);

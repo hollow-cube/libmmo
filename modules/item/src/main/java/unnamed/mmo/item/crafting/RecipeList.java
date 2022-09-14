@@ -11,7 +11,7 @@ public class RecipeList {
 
     private final List<CraftingRecipe> recipeList = new ArrayList<>();
 
-    public void addRecipe(CraftingRecipe recipe) { recipeList.add(recipe); }
+    public void addRecipe(CraftingRecipe recipe) {recipeList.add(recipe);}
 
     public void addRecipes(List<CraftingRecipe> list) {
         recipeList.addAll(list);
@@ -23,8 +23,8 @@ public class RecipeList {
 
     public @NotNull List<CraftingRecipe> findRecipesWithIngredient(@NotNull ItemStack itemStack) {
         ArrayList<CraftingRecipe> list = new ArrayList<>();
-        for(CraftingRecipe recipe : recipeList) {
-            if(recipe.containsIngredient(itemStack)) {
+        for (CraftingRecipe recipe : recipeList) {
+            if (recipe.containsIngredient(itemStack)) {
                 list.add(recipe);
             }
         }
@@ -32,8 +32,8 @@ public class RecipeList {
     }
 
     public @Nullable CraftingRecipe findRecipeForItem(@NotNull ItemStack itemStack) {
-        for(CraftingRecipe recipe : recipeList) {
-            if(recipe.getRecipeOutput().equals(itemStack)) {
+        for (CraftingRecipe recipe : recipeList) {
+            if (recipe.getRecipeOutput().equals(itemStack)) {
                 return recipe;
             }
         }

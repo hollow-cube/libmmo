@@ -1,7 +1,6 @@
 package unnamed.mmo.config;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.dfu.EnvVarOps;

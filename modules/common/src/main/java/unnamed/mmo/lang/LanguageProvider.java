@@ -35,15 +35,14 @@ public class LanguageProvider {
     /**
      * Translates a component (if possible, see below).
      * <p>
-     * If the component is a {@link TranslatableComponent}, it will attempt to be translated.
-     * Any arguments in the component will also be templated into the translation using the
-     * {@link java.text.MessageFormat} syntax of `{0}`, `{1}`, etc. Translations are parsed
-     * using MiniMessage, and may contain styling as such.
+     * If the component is a {@link TranslatableComponent}, it will attempt to be translated. Any arguments in the
+     * component will also be templated into the translation using the {@link java.text.MessageFormat} syntax of `{0}`,
+     * `{1}`, etc. Translations are parsed using MiniMessage, and may contain styling as such.
      * <p>
-     * Translations are always (for now) loaded from `/lang/en_US.properties` within the classpath.
-     * This system is temporary, and will be replaced with either a proxy translation system or using
-     * the Adventure translation system. The problem with the adventure translation system is that it
-     * does not support MiniMessage in translation strings as far as I can tell.
+     * Translations are always (for now) loaded from `/lang/en_US.properties` within the classpath. This system is
+     * temporary, and will be replaced with either a proxy translation system or using the Adventure translation system.
+     * The problem with the adventure translation system is that it does not support MiniMessage in translation strings
+     * as far as I can tell.
      *
      * @param component The component to translate
      * @return The component, or a component holding just the translation key if not found

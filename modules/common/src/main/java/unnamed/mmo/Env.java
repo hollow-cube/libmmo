@@ -10,8 +10,8 @@ public class Env {
     /**
      * Strict mode is enabled in production, but may be disabled during tests.
      * <p>
-     * It should be used to check cases which are fine during development but are a fatal problem in production.
-     * For example, if a registry is empty for any reason in production the server should not be allowed to start.
+     * It should be used to check cases which are fine during development but are a fatal problem in production. For
+     * example, if a registry is empty for any reason in production the server should not be allowed to start.
      */
     public static final Boolean STRICT_MODE = Boolean.valueOf(System.getProperty("unnamed.strict", "false"));
 

@@ -17,7 +17,7 @@ public interface LootEntry<T> {
     record Option<T>(
             @NotNull List<T> loot,
             int weight
-    ) { }
+    ) {}
 
 
     abstract class Factory extends ResourceFactory<LootEntry<?>> {

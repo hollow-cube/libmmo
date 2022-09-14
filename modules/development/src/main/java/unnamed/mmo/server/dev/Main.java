@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unnamed.mmo.blocks.BlockInteracter;
 import unnamed.mmo.blocks.ore.Ore;
-import unnamed.mmo.damage.DamageProcessor;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.crafting.RecipeList;
 import unnamed.mmo.item.crafting.ToolCraftingInventory;

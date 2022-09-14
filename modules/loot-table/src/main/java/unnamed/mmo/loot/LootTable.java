@@ -5,10 +5,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import unnamed.mmo.dfu.ExtraCodecs;
 import unnamed.mmo.loot.impl.LootResultImpl;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
-import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.List;
 import java.util.stream.Collectors;

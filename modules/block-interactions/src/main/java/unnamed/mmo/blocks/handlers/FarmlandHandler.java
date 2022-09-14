@@ -27,7 +27,7 @@ public class FarmlandHandler implements BlockHandler {
             Material.PUMPKIN_SEEDS, new CropBlockData(Material.PUMPKIN_SEEDS, Material.PUMPKIN_SEEDS, Block.PUMPKIN_STEM, 7, true),
             Material.MELON_SEEDS, new CropBlockData(Material.MELON_SEEDS, Material.PUMPKIN_SEEDS, Block.MELON_STEM, 7, true)
     );
-    private static final int waterUpdateThreshold = 5*20; // every 5 seconds
+    private static final int waterUpdateThreshold = 5 * 20; // every 5 seconds
     private static final String moisturePropertyName = "moisture";
 
     @Override
@@ -86,9 +86,9 @@ public class FarmlandHandler implements BlockHandler {
 
     private boolean hasNearbyWater(@NotNull Instance instance, @NotNull Point point) {
         final int waterRange = 4;
-        for(int x = point.blockX() - waterRange; x <= point.blockX() + waterRange; x++) {
-            for(int y = point.blockY(); y < point.blockY() + 2; y++) { // Checks at farmland y level and 1 above
-                for(int z = point.blockZ() - waterRange; z <= point.blockZ() + waterRange; z++) {
+        for (int x = point.blockX() - waterRange; x <= point.blockX() + waterRange; x++) {
+            for (int y = point.blockY(); y < point.blockY() + 2; y++) { // Checks at farmland y level and 1 above
+                for (int z = point.blockZ() - waterRange; z <= point.blockZ() + waterRange; z++) {
                     if (BlockUtil.isWater(instance.getBlock(x, y, z))) {
                         return true;
                     }

@@ -18,7 +18,7 @@ import unnamed.mmo.util.FutureUtil;
 public class CropHandler implements BlockHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(CropHandler.class);
-    private static final int cropUpdateThreshold = 3*20;
+    private static final int cropUpdateThreshold = 3 * 20;
     private static final Tag<Integer> tickTag = Tag.Integer("cropTickCount").defaultValue(0);
 
     @Override
@@ -63,7 +63,7 @@ public class CropHandler implements BlockHandler {
                 Block block = tick.getBlock().withTag(tickTag, 0);
                 CropBlockData blockData = BlockInteractionUtils.readDataFromBlock(tick.getBlock());
                 //System.out.println(blockData);
-                if(blockData == null) return;
+                if (blockData == null) return;
 
                 int age = getCurrentAge(tick.getBlock());
                 if (age == -1) {
