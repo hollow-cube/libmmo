@@ -4,9 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import unnamed.mmo.dfu.ExtraCodecs;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemImpl;
-import unnamed.mmo.util.ExtraCodecs;
 
 import java.util.List;
 

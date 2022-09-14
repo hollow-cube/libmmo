@@ -140,6 +140,11 @@ public abstract class EnvVarOps implements DynamicOps<String> {
         });
     }
 
+    @Override
+    public String createList(Stream<String> input) {
+        return "ERR@createList";
+    }
+
     // NOT IMPLEMENTED BELOW
     // The rest of DynamicOps is not implemented. The reasons are:
     // - Serialization is not supported by EnvVarOps.
@@ -199,11 +204,6 @@ public abstract class EnvVarOps implements DynamicOps<String> {
     @Override
     public DataResult<Stream<String>> getStream(String input) {
         return notImplemented("getStream");
-    }
-
-    @Override
-    public String createList(Stream<String> input) {
-        return notImplemented("createList");
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemImpl;
-import unnamed.mmo.util.ExtraCodecs;
+import unnamed.mmo.dfu.ExtraCodecs;
 
 import java.util.List;
 
