@@ -139,7 +139,7 @@ public class PlayerImpl extends Player {
      * @param amount The amount to modify by
      * @param operation The operation with which to modify by
      */
-    public void addPermanentModifier(String modifierType, String modifierId, double amount, ModifierOperation operation) {
+    public void addPermanentModifier(@NotNull String modifierType, @NotNull String modifierId, double amount, @NotNull ModifierOperation operation) {
         if (ModifierType.doesModifierExist(modifierType)) {
             currentModifiers.computeIfAbsent(modifierType, (type) -> new ModifierList(ModifierType.getBaseValue(modifierType))).addPermanentModifier(
                     modifierId, amount, operation
@@ -155,7 +155,7 @@ public class PlayerImpl extends Player {
      * @param operation The operation with which to modify by
      * @param expireTime The duration this modifier lasts
      */
-    public void addTemporaryModifier(String modifierType, String modifierId, double amount, ModifierOperation operation, long expireTime) {
+    public void addTemporaryModifier(@NotNull String modifierType, @NotNull String modifierId, double amount, @NotNull ModifierOperation operation, long expireTime) {
         if (ModifierType.doesModifierExist(modifierType)) {
             currentModifiers.computeIfAbsent(modifierType, (type) -> new ModifierList(ModifierType.getBaseValue(modifierType))).addTemporaryModifier(
                     modifierId, amount, operation, System.currentTimeMillis() + expireTime
@@ -163,7 +163,7 @@ public class PlayerImpl extends Player {
         }
     }
 
-    public double getModifierValue(String modifierType) {
+    public double getModifierValue(@NotNull String modifierType) {
         if (ModifierType.doesModifierExist(modifierType)) {
             if (currentModifiers.containsKey(modifierType)) {
                 return currentModifiers.get(modifierType).calculateTotal();
@@ -174,9 +174,15 @@ public class PlayerImpl extends Player {
         return -999;
     }
 
-    public void removeModifier(String modifierType, String modifierId) {
-        if(currentModifiers.containsKey(modifierType)) {
+    public void removeModifier(@NotNull String modifierType, @NotNull String modifierId) {
+        if (currentModifiers.containsKey(modifierType)) {
             currentModifiers.get(modifierType).removeModifier(modifierId);
+        }
+    }
+
+    public void removeAllModifiersWithId(@NotNull String modifierId) {
+        for (var modifier : currentModifiers.values()) {
+            modifier.removeModifier(modifierId);
         }
     }
 

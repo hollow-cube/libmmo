@@ -48,6 +48,7 @@ public class ModifierCommand extends Command {
                     }
                 }
             } else {
+                // TODO: Make translation
                 sender.sendMessage(Component.text("Invalid mode for the amount of arguments supplied (tried the add mode, got " + context.getRaw(mode) + " instead)", NamedTextColor.RED));
             }
         }, modeArg, playerArg, modifierTypeArg, modifierIdArg, amountArg, operationArg);
@@ -61,6 +62,7 @@ public class ModifierCommand extends Command {
                     }
                 }
             } else {
+                // TODO: Make translation
                 sender.sendMessage(Component.text("Invalid mode for the amount of arguments supplied (tried the add mode, got " + context.getRaw(mode) + " instead)", NamedTextColor.RED));
             }
         }, modeArg, playerArg, modifierTypeArg, modifierIdArg, amountArg, operationArg, modifierDurationArg);
@@ -74,6 +76,7 @@ public class ModifierCommand extends Command {
                     }
                 }
             } else {
+                // TODO: Make translation
                 sender.sendMessage(Component.text("Invalid mode for the amount of arguments supplied (tried the remove mode, got " + context.getRaw(mode) + " instead)", NamedTextColor.RED));
             }
         }, modeArg, playerArg, modifierTypeArg, modifierIdArg);
