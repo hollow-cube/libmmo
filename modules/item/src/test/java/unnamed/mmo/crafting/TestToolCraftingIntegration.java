@@ -7,7 +7,6 @@ import net.minestom.server.test.Env;
 import net.minestom.server.test.EnvTest;
 import net.minestom.server.utils.NamespaceID;
 import org.junit.jupiter.api.Test;
-import unnamed.mmo.item.Item;
 import unnamed.mmo.item.ItemImpl;
 import unnamed.mmo.item.crafting.CraftingRecipe;
 import unnamed.mmo.item.crafting.RecipeList;

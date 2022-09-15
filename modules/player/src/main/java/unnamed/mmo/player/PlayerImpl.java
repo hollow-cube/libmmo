@@ -17,7 +17,6 @@ import unnamed.mmo.modifiers.ModifierOperation;
 import unnamed.mmo.modifiers.ModifierType;
 import unnamed.mmo.player.event.PlayerLongDiggingStartEvent;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -142,8 +141,9 @@ public class PlayerImpl extends Player {
      */
     public void addPermanentModifier(String modifierType, String modifierId, double amount, ModifierOperation operation) {
         if (ModifierType.doesModifierExist(modifierType)) {
-            currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
-            currentModifiers.get(modifierType).addPermanentModifier(modifierId, amount, operation);
+            currentModifiers.computeIfAbsent(modifierType, (type) -> new ModifierList(ModifierType.getBaseValue(modifierType))).addPermanentModifier(
+                    modifierId, amount, operation
+            );
         }
     }
 
@@ -157,8 +157,9 @@ public class PlayerImpl extends Player {
      */
     public void addTemporaryModifier(String modifierType, String modifierId, double amount, ModifierOperation operation, long expireTime) {
         if (ModifierType.doesModifierExist(modifierType)) {
-            currentModifiers.putIfAbsent(modifierType, new ModifierList(ModifierType.getBaseValue(modifierType)));
-            currentModifiers.get(modifierType).addTemporaryModifier(modifierId, amount, operation, System.currentTimeMillis() + expireTime);
+            currentModifiers.computeIfAbsent(modifierType, (type) -> new ModifierList(ModifierType.getBaseValue(modifierType))).addTemporaryModifier(
+                    modifierId, amount, operation, System.currentTimeMillis() + expireTime
+            );
         }
     }
 

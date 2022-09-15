@@ -1,17 +1,14 @@
 [
   {
     "namespace": "starlight:luck",
-    "modifier": "luck",
     "defaultValue": 0
   },
   {
     "namespace": "starlight:attack_damage",
-    "modifier": "attack_damage",
     "defaultValue": 1.0
   },
   {
     "namespace": "starlight:mining_speed",
-    "modifier": "mining_speed",
     "defaultValue": 1.0
   }
 ]

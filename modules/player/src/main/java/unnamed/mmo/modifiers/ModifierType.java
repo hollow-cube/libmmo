@@ -6,11 +6,12 @@ import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import unnamed.mmo.registry.Registry;
 import unnamed.mmo.registry.Resource;
+import unnamed.mmo.util.ExtraCodecs;
 
-public record ModifierType(String id, double defaultValue) implements Resource {
+public record ModifierType(NamespaceID namespace, double defaultValue) implements Resource {
 
    public static final Codec<ModifierType> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.STRING.fieldOf("modifier").forGetter(ModifierType::id),
+            ExtraCodecs.NAMESPACE_ID.fieldOf("namespace").forGetter(ModifierType::namespace),
             Codec.DOUBLE.fieldOf("defaultValue").forGetter(ModifierType::defaultValue)
     ).apply(i, ModifierType::new));
 
@@ -18,16 +19,18 @@ public record ModifierType(String id, double defaultValue) implements Resource {
 
 
     public static boolean doesModifierExist(@NotNull String modifierId) {
-        return REGISTRY.get("starlight:" + modifierId) != null;
+        if(!modifierId.startsWith("starlight:")) {
+            return REGISTRY.get("starlight:" + modifierId) != null;
+        } else {
+            return REGISTRY.get(modifierId) != null;
+        }
     }
 
     public static double getBaseValue(@NotNull String modifierId) {
-        return REGISTRY.required("starlight:" + modifierId).defaultValue;
-    }
-
-
-    @Override
-    public @NotNull NamespaceID namespace() {
-        return NamespaceID.from("starlight", id);
+        if(!modifierId.startsWith("starlight:")) {
+            return REGISTRY.required("starlight:" + modifierId).defaultValue;
+        } else {
+            return REGISTRY.required(modifierId).defaultValue;
+        }
     }
 }
