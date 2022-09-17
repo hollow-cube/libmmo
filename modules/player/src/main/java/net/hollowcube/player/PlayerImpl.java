@@ -16,6 +16,8 @@ import net.minestom.server.network.packet.client.play.ClientPlayerDiggingPacket;
 import net.minestom.server.network.packet.server.play.BlockBreakAnimationPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,8 @@ public class PlayerImpl extends Player {
     private BlockFace diggingFace = null;
 
     private final Map<String, ModifierList> currentModifiers = new HashMap<>();
+
+    private final Logger logger = LoggerFactory.getLogger(PlayerImpl.class);
 
 
     public PlayerImpl(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
@@ -93,7 +97,7 @@ public class PlayerImpl extends Player {
     private void tickLongDigging() {
         if (diggingBlock == null) return;
 
-        int damage = diggingDamageFn.getAsInt();
+        int damage = (int) (diggingDamageFn.getAsInt() * getModifierValue("starlight:mining_speed"));
 
         diggingBlockHealth = Math.max(0, diggingBlockHealth - damage);
         if (diggingBlockHealth == 0) {
@@ -171,6 +175,7 @@ public class PlayerImpl extends Player {
                 return ModifierType.getBaseValue(modifierType);
             }
         }
+        logger.warn("Tried to get '{}' modifier, but it does not exist in the Registry!", modifierType);
         return -999;
     }
 
