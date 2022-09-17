@@ -1,7 +1,5 @@
 # Minecraft Query Language (mql)
 
-a.k.a MoLang Jr.
-
 A subset of MoLang (may eventually be a full implementation). Currently implemented as a basic tree-walk interpreter, 
 but may eventually be refactored to something more performant in the future. 
 

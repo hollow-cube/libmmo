@@ -1,5 +1,6 @@
 package net.hollowcube.entity;
 
+import net.hollowcube.mql.foreign.Query;
 import net.hollowcube.mql.runtime.MqlRuntimeError;
 import net.hollowcube.mql.runtime.MqlScope;
 import net.hollowcube.mql.value.MqlHolder;
@@ -21,4 +22,22 @@ public record EntityMqlQueryContext(@NotNull UnnamedEntity entity) implements Mq
             default -> throw new MqlRuntimeError("no such query function: " + queryFunction);
         };
     }
+
+
+    @Query
+    public boolean isAlive() {
+        return !entity.isDead();
+    }
+
+    @Query
+    public boolean hasTarget() {
+        return entity.brain().getTarget() != null;
+    }
+
+    // math.function_name	    Various math functions
+    // query.function_name	    Access to an entity's properties
+    // temp.variable_name	    Read/write temporary storage
+    // variable.variable_name	Read/write storage on an actor
+    // context.variable_name	Read-only storage provided by the game in certain scenarios
+
 }
