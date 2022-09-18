@@ -1,0 +1,14 @@
+[
+  {
+    "namespace": "starlight:luck",
+    "defaultValue": 0
+  },
+  {
+    "namespace": "starlight:attack_damage",
+    "defaultValue": 1.0
+  },
+  {
+    "namespace": "starlight:mining_speed",
+    "defaultValue": 1.0
+  }
+]

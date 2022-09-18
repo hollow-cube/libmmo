@@ -1,5 +1,8 @@
 package net.hollowcube.player;
 
+import net.hollowcube.modifiers.ModifierList;
+import net.hollowcube.modifiers.ModifierOperation;
+import net.hollowcube.modifiers.ModifierType;
 import net.hollowcube.player.event.PlayerLongDiggingStartEvent;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Point;
@@ -13,7 +16,11 @@ import net.minestom.server.network.packet.client.play.ClientPlayerDiggingPacket;
 import net.minestom.server.network.packet.server.play.BlockBreakAnimationPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.IntSupplier;
 
@@ -26,6 +33,10 @@ public class PlayerImpl extends Player {
     private int diggingBlockHealth = 0;
     private int diggingBlockMaxHealth = 0;
     private BlockFace diggingFace = null;
+
+    private final Map<String, ModifierList> currentModifiers = new HashMap<>();
+
+    private final Logger logger = LoggerFactory.getLogger(PlayerImpl.class);
 
 
     public PlayerImpl(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
@@ -86,7 +97,7 @@ public class PlayerImpl extends Player {
     private void tickLongDigging() {
         if (diggingBlock == null) return;
 
-        int damage = diggingDamageFn.getAsInt();
+        int damage = (int) (diggingDamageFn.getAsInt() * getModifierValue("starlight:mining_speed"));
 
         diggingBlockHealth = Math.max(0, diggingBlockHealth - damage);
         if (diggingBlockHealth == 0) {
@@ -122,5 +133,69 @@ public class PlayerImpl extends Player {
         // New stage, send packet
         var packet = new BlockBreakAnimationPacket(getEntityId() + 1, diggingBlock, stage);
         sendPacket(packet);
+    }
+    // ----- MODIFIERS -----
+
+    /**
+     * Adds a new permanent modifier to this player
+     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc. This modifier type should be in the modifier registry, and can be checked with {@link ModifierType#doesModifierExist(String)}
+     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden. This id can be basically any string, and it should be unique to each source so modifiers can stack properly
+     * @param amount The amount to modify by
+     * @param operation The operation with which to modify by
+     */
+    public void addPermanentModifier(@NotNull String modifierType, @NotNull String modifierId, double amount, @NotNull ModifierOperation operation) {
+        if (ModifierType.doesModifierExist(modifierType)) {
+            currentModifiers.computeIfAbsent(modifierType, (type) -> new ModifierList(ModifierType.getBaseValue(modifierType))).addPermanentModifier(
+                    modifierId, amount, operation
+            );
+        }
+    }
+
+    /**
+     * Adds a new temporary modifier to this player
+     * @param modifierType The type of modifier to modify, such as dig speed, melee damage, etc. This modifier type should be in the modifier registry, and can be checked with {@link ModifierType#doesModifierExist(String)}
+     * @param modifierId The id of this modifier. If a player already has this modifier id, it will be overridden. This id can be basically any string, and it should be unique to each source so modifiers can stack properly
+     * @param amount The amount to modify by
+     * @param operation The operation with which to modify by
+     * @param expireTime The duration this modifier lasts
+     */
+    public void addTemporaryModifier(@NotNull String modifierType, @NotNull String modifierId, double amount, @NotNull ModifierOperation operation, long expireTime) {
+        if (ModifierType.doesModifierExist(modifierType)) {
+            currentModifiers.computeIfAbsent(modifierType, (type) -> new ModifierList(ModifierType.getBaseValue(modifierType))).addTemporaryModifier(
+                    modifierId, amount, operation, System.currentTimeMillis() + expireTime
+            );
+        }
+    }
+
+    public double getModifierValue(@NotNull String modifierType) {
+        if (ModifierType.doesModifierExist(modifierType)) {
+            if (currentModifiers.containsKey(modifierType)) {
+                return currentModifiers.get(modifierType).calculateTotal();
+            } else {
+                return ModifierType.getBaseValue(modifierType);
+            }
+        }
+        logger.warn("Tried to get '{}' modifier, but it does not exist in the Registry!", modifierType);
+        return -999;
+    }
+
+    public void removeModifier(@NotNull String modifierType, @NotNull String modifierId) {
+        if (currentModifiers.containsKey(modifierType)) {
+            currentModifiers.get(modifierType).removeModifier(modifierId);
+        }
+    }
+
+    public void removeAllModifiersWithId(@NotNull String modifierId) {
+        for (var modifier : currentModifiers.values()) {
+            modifier.removeModifier(modifierId);
+        }
+    }
+
+    public Map<String, Double> getCurrentModifierValues() {
+        HashMap<String, Double> amounts = new HashMap<>();
+        for(var entry : currentModifiers.entrySet()) {
+            amounts.put(entry.getKey(), entry.getValue().calculateTotal());
+        }
+        return amounts;
     }
 }

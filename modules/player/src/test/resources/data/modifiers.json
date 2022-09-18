@@ -1,0 +1,18 @@
+[
+  {
+    "namespace": "starlight:luck",
+    "defaultValue": 0
+  },
+  {
+    "namespace": "starlight:potatoes",
+    "defaultValue": 10
+  },
+  {
+    "namespace": "starlight:writing_tests",
+    "defaultValue": -5
+  },
+  {
+    "namespace": "starlight:mining_speed",
+    "defaultValue": 1
+  }
+]

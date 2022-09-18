@@ -10,5 +10,7 @@ public class BaseCommandRegister {
         commandManager.register(new StopCommand());
         commandManager.register(new GameModeCommand());
         commandManager.register(new GiveCommand());
+        commandManager.register(new CraftCommand());
+        commandManager.register(new ModifierCommand());
     }
 }
