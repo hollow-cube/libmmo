@@ -92,6 +92,26 @@ public class Main {
             event.getSpawnInstance().setBlock(11, 47, 5, Block.WATER);
             event.getSpawnInstance().setBlock(11, 48, 5, Block.WATER);
 
+            event.getSpawnInstance().setBlock(10, 40, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 41, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 42, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 43, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 44, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 45, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 46, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 47, 5, Block.BUBBLE_COLUMN);
+            event.getSpawnInstance().setBlock(10, 48, 5, Block.BUBBLE_COLUMN);
+
+            event.getSpawnInstance().setBlock(11, 40, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 41, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 42, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 43, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 44, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 45, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 46, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 47, 5, Block.WATER);
+            event.getSpawnInstance().setBlock(11, 48, 5, Block.WATER);
+
             //todo this needs to be done elsewhere
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));
 

@@ -3,10 +3,10 @@ package net.hollowcube.player;
 import net.hollowcube.modifiers.ModifierList;
 import net.hollowcube.modifiers.ModifierOperation;
 import net.hollowcube.modifiers.ModifierType;
-import net.hollowcube.player.event.PlayerBubbleColumnSinkEvent;
 import net.hollowcube.player.event.PlayerLongDiggingStartEvent;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.instance.Instance;
@@ -105,33 +105,26 @@ public class PlayerImpl extends Player {
     }
 
     private void handlePositionPacket(ClientPlayerPositionPacket packet) {
+        Pos playerPos = this.getPosition();
+        Block blockAtPlayerPos = this.getInstance().getBlock(playerPos);
+
         if (packet.onGround()) {
 
         }
         else {
-            if (this.getInstance().getBlock(this.getPosition()) == Block.BUBBLE_COLUMN) {
-                //TODO: I think we want to make this part of a whole PlayerInWaterHandler or something, and on top of that,
-                // we would have to make a BlockComponentHandler or something to encapsulate it. I wonder if @Matt has a
-                // suggestion on this.
-
-                // PlayerBubbleColumnSinkEvent playerBubbleColumnSinkEvent = new PlayerBubbleColumnSinkEvent(this, this.getFood());
-                // MinecraftServer.getGlobalEventHandler().call(playerBubbleColumnSinkEvent);
-
+            if (blockAtPlayerPos == Block.BUBBLE_COLUMN) {
                 if (!this.wasLastSeenInBubbleColumn) {
                     this.wasLastSeenInBubbleColumn = true;
                     this.bubbleColumnSinkEnergyLevel = this.getFood();
-                    //TODO: This does not work lol it is not implemented in minestom to get rid of the player's
-                    // ability to sprint when they have hunger below 7
                     this.setFood(6);
                 }
             }
-            else if (this.wasLastSeenInBubbleColumn) {
-                if (this.getInstance().getBlock(this.getPosition()) != Block.BUBBLE_COLUMN) {
-                    this.wasLastSeenInBubbleColumn = false;
-                    this.setFood(this.bubbleColumnSinkEnergyLevel);
-                    this.bubbleColumnSinkEnergyLevel = -1;
-                }
-            }
+        }
+
+        if ((this.wasLastSeenInBubbleColumn) && (blockAtPlayerPos != Block.BUBBLE_COLUMN)) {
+            this.wasLastSeenInBubbleColumn = false;
+            this.setFood(this.bubbleColumnSinkEnergyLevel);
+            this.bubbleColumnSinkEnergyLevel = -1;
         }
     }
 
