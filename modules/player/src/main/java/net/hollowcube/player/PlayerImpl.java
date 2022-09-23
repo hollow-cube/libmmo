@@ -3,6 +3,7 @@ package net.hollowcube.player;
 import net.hollowcube.modifiers.ModifierList;
 import net.hollowcube.modifiers.ModifierOperation;
 import net.hollowcube.modifiers.ModifierType;
+import net.hollowcube.player.event.PlayerBubbleColumnSinkEvent;
 import net.hollowcube.player.event.PlayerLongDiggingStartEvent;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Point;
@@ -13,6 +14,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockFace;
 import net.minestom.server.network.packet.client.ClientPacket;
 import net.minestom.server.network.packet.client.play.ClientPlayerDiggingPacket;
+import net.minestom.server.network.packet.client.play.ClientPlayerPositionPacket;
 import net.minestom.server.network.packet.server.play.BlockBreakAnimationPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +35,10 @@ public class PlayerImpl extends Player {
     private int diggingBlockHealth = 0;
     private int diggingBlockMaxHealth = 0;
     private BlockFace diggingFace = null;
+
+    // Bubble column sink event state
+    private int bubbleColumnSinkEnergyLevel = -1;
+    private boolean wasLastSeenInBubbleColumn = false;
 
     private final Map<String, ModifierList> currentModifiers = new HashMap<>();
 
@@ -57,6 +63,10 @@ public class PlayerImpl extends Player {
 
         if (packet instanceof ClientPlayerDiggingPacket diggingPacket) {
             handleDiggingPacket(diggingPacket);
+        }
+
+        if (packet instanceof ClientPlayerPositionPacket positionPacket) {
+            handlePositionPacket(positionPacket);
         }
     }
 
@@ -90,6 +100,37 @@ public class PlayerImpl extends Player {
                 clearLongDigging();
             }
             default -> {
+            }
+        }
+    }
+
+    private void handlePositionPacket(ClientPlayerPositionPacket packet) {
+        if (packet.onGround()) {
+
+        }
+        else {
+            if (this.getInstance().getBlock(this.getPosition()) == Block.BUBBLE_COLUMN) {
+                //TODO: I think we want to make this part of a whole PlayerInWaterHandler or something, and on top of that,
+                // we would have to make a BlockComponentHandler or something to encapsulate it. I wonder if @Matt has a
+                // suggestion on this.
+
+                // PlayerBubbleColumnSinkEvent playerBubbleColumnSinkEvent = new PlayerBubbleColumnSinkEvent(this, this.getFood());
+                // MinecraftServer.getGlobalEventHandler().call(playerBubbleColumnSinkEvent);
+
+                if (!this.wasLastSeenInBubbleColumn) {
+                    this.wasLastSeenInBubbleColumn = true;
+                    this.bubbleColumnSinkEnergyLevel = this.getFood();
+                    //TODO: This does not work lol it is not implemented in minestom to get rid of the player's
+                    // ability to sprint when they have hunger below 7
+                    this.setFood(6);
+                }
+            }
+            else if (this.wasLastSeenInBubbleColumn) {
+                if (this.getInstance().getBlock(this.getPosition()) != Block.BUBBLE_COLUMN) {
+                    this.wasLastSeenInBubbleColumn = false;
+                    this.setFood(this.bubbleColumnSinkEnergyLevel);
+                    this.bubbleColumnSinkEnergyLevel = -1;
+                }
             }
         }
     }
