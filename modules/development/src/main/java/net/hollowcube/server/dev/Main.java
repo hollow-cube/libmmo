@@ -1,7 +1,5 @@
 package net.hollowcube.server.dev;
 
-import net.hollowcube.item.crafting.RecipeList;
-import net.hollowcube.item.crafting.ToolCraftingInventory;
 import net.hollowcube.player.PlayerImpl;
 import net.hollowcube.server.dev.tool.DebugToolManager;
 import net.hollowcube.server.instance.TickTrackingInstance;
@@ -69,9 +67,9 @@ public class Main {
             player.setAllowFlying(true);
 
             // Testing
-            event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("unnamed:gold_ore").asBlock());
-            event.getSpawnInstance().setBlock(4, 43, 5, Ore.fromNamespaceId("unnamed:diamond_ore").asBlock());
-            player.getInventory().addItemStack(Item.fromNamespaceId("unnamed:diamond_pickaxe").asItemStack());
+            event.getSpawnInstance().setBlock(5, 43, 5, Ore.fromNamespaceId("starlight:gold_ore").asBlock());
+            event.getSpawnInstance().setBlock(4, 43, 5, Ore.fromNamespaceId("starlight:diamond_ore").asBlock());
+            player.getInventory().addItemStack(Item.fromNamespaceId("starlight:diamond_pickaxe").asItemStack());
 
             //todo this needs to be done elsewhere
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));
@@ -127,15 +125,6 @@ public class Main {
         BlockInteracter.registerEvents();
 
         server.start("0.0.0.0", 25565);
-
-        Command craftCommand = new Command("craft");
-        craftCommand.setDefaultExecutor((sender, context) -> {
-            if (sender instanceof Player player) {
-                player.openInventory(new ToolCraftingInventory(new RecipeList()));
-            }
-        });
-
-        MinecraftServer.getCommandManager().register(craftCommand);
     }
 
 }

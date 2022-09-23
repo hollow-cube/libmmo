@@ -13,7 +13,7 @@ public class RarityHandler implements ItemComponentHandler<Rarity> {
 
     @Override
     public @NotNull NamespaceID namespace() {
-        return NamespaceID.from("unnamed:rarity");
+        return NamespaceID.from("starlight:rarity");
     }
 
     @Override
