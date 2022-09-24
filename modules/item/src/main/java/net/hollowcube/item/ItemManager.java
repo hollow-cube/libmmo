@@ -17,7 +17,7 @@ public class ItemManager implements Facet {
 
     @Override
     public void hook(@NotNull ServerWrapper server) {
-        EventNode<Event> eventNode = EventNode.all("unnamed:item/facet");
+        EventNode<Event> eventNode = EventNode.all("starlight:item/facet");
         server.addEventNode(eventNode);
 
         // Component handlers

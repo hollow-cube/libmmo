@@ -9,7 +9,7 @@ import net.hollowcube.item.ItemComponentHandler;
 
 public class WeaponHandler implements ItemComponentHandler<Weapon> {
 
-    private final EventNode<Event> eventNode = EventNode.all("unnamed:weapon/item_component_handler");
+    private final EventNode<Event> eventNode = EventNode.all("starlight:weapon/item_component_handler");
 
     public WeaponHandler() {
 
@@ -17,7 +17,7 @@ public class WeaponHandler implements ItemComponentHandler<Weapon> {
 
     @Override
     public @NotNull NamespaceID namespace() {
-        return NamespaceID.from("unnamed:weapon");
+        return NamespaceID.from("starlight:weapon");
     }
 
     @Override
