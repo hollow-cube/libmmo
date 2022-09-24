@@ -15,6 +15,12 @@ public abstract class ResourceFactory<T> implements Resource {
         this.codec = codec;
     }
 
+    public ResourceFactory(String namespace, Class<? extends T> type, Codec<? extends T> codec) {
+        this.namespace = NamespaceID.from(namespace);
+        this.type = type;
+        this.codec = codec;
+    }
+
     @Override
     public @NotNull NamespaceID namespace() {
         return this.namespace;

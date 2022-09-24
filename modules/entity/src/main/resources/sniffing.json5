@@ -1,0 +1,93 @@
+{
+  "namespace": "unnamed:sniffing",
+  "task": {
+    "type": "selector",
+    "stimuli": [
+      {
+        // Target closest player that it has line of sight to
+        "type": "target_closest",
+        "range": 25
+      },
+      // Below is the stimuli for the sniffing value
+      {
+        // Probably not super reusable, also we dont want to track this for every region (would be expensive)
+        // so maybe it would be even more specific.
+        "type": "ticks_in_region",
+        "ref": "forest",
+
+        // Not sure about this, but need some way to have multiple targets here
+        "into": "sniffTarget"
+      },
+      {
+        // An alternative to above with some kind of weighting system
+        "type": "weighted_target",
+        "children": [
+          {
+            "type": "target_closest_no_los",
+            "entityType": "player",
+            "range": {
+              "type": "region",
+              "ref": "forest"
+            },
+
+            "weight": 0.1
+          },
+          {
+            "type": "ticks_in_region",
+            "ref": "forest",
+
+            "weight": 1
+          }
+        ]
+      }
+    ],
+    "children": {
+      "target != null": {
+        // Move towards the closest player
+        "type": "follow_target",
+
+        //todo attack when close enough
+      },
+      "sniffTarget != null": {
+        // Move towards the player, stopping every once in a while for a bit
+        "type": "sequence",
+        "children": [
+          {
+            "type": "timeout",
+            "length": 100,
+            "child": {
+              "type": "follow_target",
+              "navigator": {
+                "movementSpeed": 0.5
+              }
+            },
+          },
+          {
+            "type": "play_animation",
+            "animation": "bear_sniff"
+          }
+        ],
+
+        // This should be interruptable in case it gets line of sight to somebody
+        "canInterrupt": true
+      },
+      // Default case, matches everything
+      "": {
+        // Idle wander in the center of the forest
+        "type": "sequence",
+        "children": [
+          {
+            "type": "wander_in_region",
+            "ref": "forest_center"
+          },
+          {
+            "type": "idle_time",
+            "time": 5
+          }
+        ],
+
+        "canInterrupt": true
+      },
+    }
+  }
+}

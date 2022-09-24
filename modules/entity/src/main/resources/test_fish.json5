@@ -1,0 +1,26 @@
+{
+  "namespace": "unnamed:attack_enemy",
+  "task": {
+    "type": "selector",
+    // No stimuli, the fish will have its value set programmatically
+    "stimuli": [],
+    "children": {
+      // If we have a value, move towards it
+      "target != null": {
+        "type": "follow_target"
+      },
+      "": {
+        "type": "sequence",
+        "children": [
+          {
+            "type": "idle_time",
+            "time": 5
+          },
+          {
+            "type": "wander_in_region"
+          }
+        ]
+      }
+    }
+  }
+}

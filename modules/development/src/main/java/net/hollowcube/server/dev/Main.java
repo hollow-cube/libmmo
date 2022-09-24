@@ -2,9 +2,7 @@ package net.hollowcube.server.dev;
 
 import net.hollowcube.item.crafting.RecipeList;
 import net.hollowcube.item.crafting.ToolCraftingInventory;
-import net.hollowcube.player.PlayerImpl;
 import net.hollowcube.server.dev.tool.DebugToolManager;
-import net.hollowcube.server.instance.TickTrackingInstance;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.command.builder.Command;
@@ -15,14 +13,12 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
-import net.minestom.server.world.DimensionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.hollowcube.blocks.BlockInteracter;
@@ -35,7 +31,6 @@ import net.hollowcube.server.dev.command.BaseCommandRegister;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.UUID;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -47,18 +42,14 @@ public class Main {
 
         MinecraftServer server = MinecraftServer.init();
 
-        MojangAuth.init();
-        MinecraftServer.getConnectionManager().setPlayerProvider(PlayerImpl::new);
-
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
-
-        Instance instance = new TickTrackingInstance(UUID.randomUUID(), DimensionType.OVERWORLD);
-        instanceManager.registerInstance(instance);
+        Instance instance = instanceManager.createInstanceContainer();
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.STONE));
 
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
+            player.setPermissionLevel(2);
             event.setSpawningInstance(instance);
             player.setRespawnPoint(new Pos(0, 42, 0));
         });
@@ -78,6 +69,7 @@ public class Main {
 
             //todo a command for this
             player.getInventory().addItemStack(DebugToolManager.createTool("unnamed:hello"));
+
         });
 
         BaseCommandRegister.registerCommands(); //todo this should be in a facet?

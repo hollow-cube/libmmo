@@ -110,7 +110,7 @@ public class DebugToolManager implements Facet {
         if (tool == null || debounce(player)) return;
 
         final Point targetBlock = player.getTargetBlockPosition(3);
-        //todo ray trace for target entity
+        //todo ray trace for value entity
 
         final ItemStack newItemStack = tool.leftClicked(player, itemStack, targetBlock, null);
         if (itemStack != newItemStack) {
