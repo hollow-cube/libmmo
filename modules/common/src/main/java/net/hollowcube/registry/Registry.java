@@ -164,7 +164,7 @@ public interface Registry<T extends Resource> {
 
     default @NotNull T required(String namespace) {
         T result = get(namespace);
-        Check.notNull(result, "Missing required registry entry: " + namespace);
+        if (result == null) throw new MissingEntryException(this, namespace);
         return result;
     }
 

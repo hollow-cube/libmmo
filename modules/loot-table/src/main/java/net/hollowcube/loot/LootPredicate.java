@@ -25,7 +25,7 @@ public interface LootPredicate {
         static Registry<Factory> REGISTRY = Registry.service("loot_predicates", LootPredicate.Factory.class);
         static Registry.Index<Class<?>, Factory> TYPE_REGISTRY = REGISTRY.index(Factory::type);
 
-        public static final Codec<Factory> CODEC = Codec.STRING.xmap(ns -> REGISTRY.get(ns), Factory::name);
+        public static final Codec<Factory> CODEC = Codec.STRING.xmap(ns -> REGISTRY.required(ns), Factory::name);
 
         public Factory(NamespaceID namespace, Class<? extends LootPredicate> type, Codec<? extends LootPredicate> codec) {
             super(namespace, type, codec);
