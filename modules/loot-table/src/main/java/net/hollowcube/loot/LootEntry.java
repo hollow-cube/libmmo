@@ -24,7 +24,7 @@ public interface LootEntry<T> {
         static Registry<Factory> REGISTRY = Registry.service("loot_entries", Factory.class);
         static Registry.Index<Class<?>, Factory> TYPE_REGISTRY = REGISTRY.index(Factory::type);
 
-        static Codec<Factory> CODEC = Codec.STRING.xmap(ns -> REGISTRY.get(ns), Factory::name);
+        static Codec<Factory> CODEC = Codec.STRING.xmap(ns -> REGISTRY.required(ns), Factory::name);
 
         public Factory(NamespaceID namespace, Class<? extends LootEntry<?>> type, Codec<? extends LootEntry<?>> codec) {
             super(namespace, type, codec);

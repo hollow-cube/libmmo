@@ -14,7 +14,7 @@ public interface ItemComponentHandler<C extends ItemComponent> extends Resource 
 
     // Cannot be a method ref because REGISTRY may be mid-initialization when this is initialized.
     @SuppressWarnings("Convert2MethodRef")
-    Codec<ItemComponentHandler<?>> CODEC = Codec.STRING.xmap(namespace -> ItemComponentRegistry.REGISTRY.get(namespace), ItemComponentHandler::name);
+    Codec<ItemComponentHandler<?>> CODEC = Codec.STRING.xmap(namespace -> ItemComponentRegistry.REGISTRY.required(namespace), ItemComponentHandler::name);
 
 
     // Descriptors
