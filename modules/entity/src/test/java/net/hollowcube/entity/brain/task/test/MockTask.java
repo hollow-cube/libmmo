@@ -1,8 +1,7 @@
 package net.hollowcube.entity.brain.task.test;
 
-import net.hollowcube.entity.brain.task.AbstractTask;
+import net.hollowcube.entity.task.AbstractTask;
 import org.jetbrains.annotations.NotNull;
-import net.hollowcube.entity.brain.Brain;
 
 public class MockTask extends AbstractTask {
     private final Boolean pass;

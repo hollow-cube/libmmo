@@ -1,6 +1,6 @@
 package net.hollowcube.entity.motion;
 
-import net.hollowcube.entity.brain.navigator.Navigator;
+import net.hollowcube.entity.navigator.Navigator;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;

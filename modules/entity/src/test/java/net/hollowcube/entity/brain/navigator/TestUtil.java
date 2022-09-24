@@ -1,5 +1,6 @@
 package net.hollowcube.entity.brain.navigator;
 
+import net.hollowcube.entity.navigator.Navigator;
 import net.minestom.server.entity.Entity;
 import org.junit.jupiter.params.provider.Arguments;
 import net.hollowcube.entity.motion.MotionNavigator;

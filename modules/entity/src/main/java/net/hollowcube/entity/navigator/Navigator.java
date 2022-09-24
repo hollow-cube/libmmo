@@ -1,4 +1,4 @@
-package net.hollowcube.entity.brain.navigator;
+package net.hollowcube.entity.navigator;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;

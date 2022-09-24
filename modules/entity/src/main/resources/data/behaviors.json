@@ -25,7 +25,7 @@
             "type": "unnamed:wander_in_region"
           }
         ],
-        "can_interrupt": true
+        "interrupt": true
       }
     }
   }

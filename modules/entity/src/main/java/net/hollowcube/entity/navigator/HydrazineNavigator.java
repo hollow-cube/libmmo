@@ -1,4 +1,4 @@
-package net.hollowcube.entity.brain.navigator;
+package net.hollowcube.entity.navigator;
 
 import com.extollit.gaming.ai.path.HydrazinePathFinder;
 import net.minestom.server.coordinate.Point;

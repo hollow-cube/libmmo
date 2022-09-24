@@ -1,7 +1,7 @@
-package net.hollowcube.entity.brain.task;
+package net.hollowcube.entity.task;
 
+import net.hollowcube.entity.SmartEntity;
 import org.jetbrains.annotations.NotNull;
-import net.hollowcube.entity.brain.Brain;
 
 public abstract non-sealed class AbstractTask implements Task {
     private State state = State.INIT;
@@ -12,7 +12,7 @@ public abstract non-sealed class AbstractTask implements Task {
     }
 
     @Override
-    public void start(@NotNull Brain brain) {
+    public void start(@NotNull SmartEntity entity) {
         this.state = State.RUNNING;
     }
 

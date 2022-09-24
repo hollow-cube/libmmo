@@ -1,16 +1,16 @@
-package net.hollowcube.entity.brain.task;
+package net.hollowcube.entity.task;
 
+import com.google.auto.service.AutoService;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.hollowcube.entity.brain.stimuli.NearbyEntityStimuliSource;
-import net.hollowcube.entity.brain.stimuli.StimuliSource;
+import net.hollowcube.entity.SmartEntity;
+import net.hollowcube.entity.stimuli.NearbyEntityStimuliSource;
+import net.hollowcube.entity.stimuli.StimuliSource;
+import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.hollowcube.entity.EntityMqlQueryContext;
-import net.hollowcube.entity.UnnamedEntity;
-import net.hollowcube.entity.brain.Brain;
 import net.hollowcube.mql.MqlScript;
 
 import java.util.ArrayList;
@@ -24,7 +24,6 @@ public class SelectorTask extends AbstractTask {
     private final Spec spec;
     private final List<Task> children = new ArrayList<>();
 
-    private EntityMqlQueryContext queryContext;
     private int activeTask = -1;
 
     //todo temp
@@ -39,21 +38,20 @@ public class SelectorTask extends AbstractTask {
 
 
     @Override
-    public void start(@NotNull Brain brain) {
-        super.start(brain);
-        this.queryContext = new EntityMqlQueryContext((UnnamedEntity) brain.entity());
+    public void start(@NotNull SmartEntity entity) {
+        super.start(entity);
 
-        evaluate(brain);
+        evaluate(entity);
     }
 
     @Override
-    public void tick(@NotNull Brain brain, long time) {
-        stimuli.update(brain); //todo not sure these should update every tick?
+    public void tick(@NotNull SmartEntity entity, long time) {
+        stimuli.update(entity); //todo not sure these should update every tick?
 
         // Try to tick the current task, if present
         if (activeTask != -1) {
             Task active = children.get(activeTask);
-            active.tick(brain, time);
+            active.tick(entity, time);
 
             // Check if task is complete
             switch (active.getState()) {
@@ -61,7 +59,7 @@ public class SelectorTask extends AbstractTask {
                 case COMPLETE -> {
                     // Current task finished with success, select a new task.
                     activeTask = -1; // Reset the active task so evaluate restarts it if relevant
-                    evaluate(brain);
+                    evaluate(entity);
                     return;
                 }
                 // Otherwise do nothing and continue as normal
@@ -74,15 +72,15 @@ public class SelectorTask extends AbstractTask {
 
         // Attempt to choose a new task.
         //todo do not test for change every tick in the future
-        evaluate(brain);
+        evaluate(entity);
     }
 
     /** Evaluate each task in order, choosing the first matching one. */
-    private void evaluate(@NotNull Brain brain) {
+    private void evaluate(@NotNull SmartEntity entity) {
         for (int i = 0; i < children.size(); i++) {
             Descriptor child = spec.children.get(i);
             // Try to evaluate this child
-            if (!child.script.evaluateToBool(queryContext))
+            if (!entity.evalScriptBool(child.script))
                 continue;
 
             // If the selected task is also the current task, do nothing
@@ -90,13 +88,13 @@ public class SelectorTask extends AbstractTask {
 
             // Cancel the old task
             //todo should do this better
-            brain.navigator().setPathTo(null);
+            entity.navigator().setPathTo(null);
 
             // Change task and start the new one
             LOGGER.info("starting new task: {}", i);
             activeTask = i;
             Task newTask = children.get(i);
-            newTask.start(brain);
+            newTask.start(entity);
             return;
         }
     }
@@ -113,6 +111,11 @@ public class SelectorTask extends AbstractTask {
         public @NotNull Task create() {
             return task.create();
         }
+
+        @Override
+        public @NotNull NamespaceID namespace() {
+            return task.namespace();
+        }
     }
 
     public record Spec(
@@ -122,7 +125,7 @@ public class SelectorTask extends AbstractTask {
         private static final Codec<Pair<Task.Spec, Boolean>> TASK_MIXIN = Codec.pair(
                 lazy(() -> Task.Spec.CODEC),
                 RecordCodecBuilder.create(i -> i.group(
-                        Codec.BOOL.optionalFieldOf("canInterrupt", false).forGetter(b -> b)
+                        Codec.BOOL.optionalFieldOf("interrupt", false).forGetter(b -> b)
                 ).apply(i, b -> b))
         );
 
@@ -139,8 +142,18 @@ public class SelectorTask extends AbstractTask {
         public @NotNull Task create() {
             return new SelectorTask(this);
         }
+
+        @Override
+        public @NotNull NamespaceID namespace() {
+            return NamespaceID.from("unnamed:selector");
+        }
     }
 
-
+    @AutoService(Task.Factory.class)
+    public static final class Factory extends Task.Factory {
+        public Factory() {
+            super("starlight:selector", Spec.class, Spec.CODEC);
+        }
+    }
 
 }

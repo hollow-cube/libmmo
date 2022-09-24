@@ -2,6 +2,8 @@ package net.hollowcube.entity.brain.task;
 
 import net.hollowcube.data.number.NumberProvider;
 import net.hollowcube.entity.brain.task.test.MockBrain;
+import net.hollowcube.entity.task.IdleTask;
+import net.hollowcube.entity.task.Task;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;

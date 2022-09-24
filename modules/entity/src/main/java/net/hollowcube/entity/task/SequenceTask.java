@@ -1,10 +1,11 @@
-package net.hollowcube.entity.brain.task;
+package net.hollowcube.entity.task;
 
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.hollowcube.entity.SmartEntity;
+import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
-import net.hollowcube.entity.brain.Brain;
 
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class SequenceTask extends AbstractTask {
     }
 
     @Override
-    public void start(@NotNull Brain brain) {
-        super.start(brain);
+    public void start(@NotNull SmartEntity entity) {
+        super.start(entity);
 
         reset();
         if (!hasNext()) {
@@ -34,13 +35,13 @@ public class SequenceTask extends AbstractTask {
             return;
         }
 
-        current().start(brain);
+        current().start(entity);
     }
 
     @Override
-    public void tick(@NotNull Brain brain, long time) {
+    public void tick(@NotNull SmartEntity entity, long time) {
         final Task current = current();
-        current.tick(brain, time);
+        current.tick(entity, time);
 
         // Do nothing if current task is still running
         if (current.getState() == State.RUNNING) return;
@@ -58,7 +59,7 @@ public class SequenceTask extends AbstractTask {
         }
 
         // Next task
-        next().start(brain);
+        next().start(entity);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -89,6 +90,11 @@ public class SequenceTask extends AbstractTask {
         @Override
         public @NotNull Task create() {
             return new SequenceTask(this);
+        }
+
+        @Override
+        public @NotNull NamespaceID namespace() {
+            return NamespaceID.from("unnamed:sequence");
         }
     }
 

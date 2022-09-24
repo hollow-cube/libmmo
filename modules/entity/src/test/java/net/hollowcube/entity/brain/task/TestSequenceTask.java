@@ -3,6 +3,8 @@ package net.hollowcube.entity.brain.task;
 import net.hollowcube.entity.brain.task.test.MockBrain;
 import net.hollowcube.entity.brain.task.test.MockTask;
 import net.hollowcube.entity.brain.task.test.TaskSubject;
+import net.hollowcube.entity.task.SequenceTask;
+import net.hollowcube.entity.task.Task;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

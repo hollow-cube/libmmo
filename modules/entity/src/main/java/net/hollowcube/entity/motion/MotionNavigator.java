@@ -5,7 +5,7 @@ import com.mattworzala.debug.Layer;
 import com.mattworzala.debug.shape.Box;
 import com.mattworzala.debug.shape.Line;
 import com.mattworzala.debug.shape.OutlineBox;
-import net.hollowcube.entity.brain.navigator.Navigator;
+import net.hollowcube.entity.navigator.Navigator;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.collision.CollisionUtils;
 import net.minestom.server.coordinate.Point;

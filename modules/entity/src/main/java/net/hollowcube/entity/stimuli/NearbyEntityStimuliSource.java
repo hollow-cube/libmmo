@@ -1,12 +1,10 @@
-package net.hollowcube.entity.brain.stimuli;
+package net.hollowcube.entity.stimuli;
 
-import net.minestom.server.entity.Entity;
+import net.hollowcube.entity.SmartEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.EntityTracker;
 import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
-import net.hollowcube.entity.brain.Brain;
-import net.hollowcube.entity.brain.SingleTaskBrain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +12,7 @@ import java.util.List;
 public class NearbyEntityStimuliSource implements StimuliSource {
 
     @Override
-    public void update(@NotNull Brain brain) {
-        final Entity entity = brain.entity();
+    public void update(@NotNull SmartEntity entity) {
         final Instance instance = entity.getInstance();
 
         List<Player> nearby = new ArrayList<>();
@@ -31,7 +28,7 @@ public class NearbyEntityStimuliSource implements StimuliSource {
             }
         }
 
-        ((SingleTaskBrain) brain).setTarget(closest);
+        entity.setTarget(closest);
     }
 
 }

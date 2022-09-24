@@ -1,6 +1,7 @@
 [
   {
     "id": "unnamed:slime",
+    "model": "minecraft:slime",
     "behavior": "unnamed:slime_generic"
   }
 ]

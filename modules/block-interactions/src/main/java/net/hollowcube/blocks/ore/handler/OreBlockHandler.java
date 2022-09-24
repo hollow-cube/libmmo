@@ -7,6 +7,7 @@ import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
+import net.minestom.server.thread.TickThread;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import net.hollowcube.blocks.ore.Ore;
 import net.hollowcube.blocks.ore.event.PlayerOreBreakEvent;
 import net.hollowcube.loot.LootContext;
-import net.hollowcube.server.instance.TickTrackingInstance;
 import net.hollowcube.util.BlockUtil;
 import net.hollowcube.util.FutureUtil;
 
@@ -118,8 +118,9 @@ public class OreBlockHandler implements BlockHandler {
         // Only tick once a second.
         // This could be adjusted in the future if necessary.
         final Instance instance = tick.getInstance();
-        long currentTick = ((TickTrackingInstance) instance).getTick();
-        if (currentTick % 20 != 0)
+        final TickThread thread = TickThread.current();
+        Check.notNull(thread, "TickThread.current() returned null");
+        if (thread.getTick() % 20 != 0)
             return;
 
         final Point pos = tick.getBlockPosition();

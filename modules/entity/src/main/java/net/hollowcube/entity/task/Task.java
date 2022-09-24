@@ -1,8 +1,9 @@
-package net.hollowcube.entity.brain.task;
+package net.hollowcube.entity.task;
 
 import com.mojang.serialization.Codec;
+import net.hollowcube.entity.SmartEntity;
+import net.hollowcube.registry.Resource;
 import org.jetbrains.annotations.NotNull;
-import net.hollowcube.entity.brain.Brain;
 import net.hollowcube.registry.Registry;
 import net.hollowcube.registry.ResourceFactory;
 
@@ -10,16 +11,18 @@ public sealed interface Task permits AbstractTask {
 
     @NotNull State getState();
 
-    void start(@NotNull Brain brain);
+    void start(@NotNull SmartEntity entity);
 
-    void tick(@NotNull Brain brain, long time);
+    void tick(@NotNull SmartEntity entity, long time);
 
     enum State {
         INIT, RUNNING, COMPLETE, FAILED
     }
 
-    interface Spec {
+    interface Spec extends Resource {
         Codec<Spec> CODEC = Factory.CODEC.dispatch(Factory::from, Factory::codec);
+
+        Registry<Spec> REGISTRY = Registry.codec("behaviors", CODEC);
 
         @NotNull Task create();
     }

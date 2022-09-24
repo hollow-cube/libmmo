@@ -1,44 +1,41 @@
-package net.hollowcube.entity.brain.task;
+package net.hollowcube.entity.task;
 
 import com.google.auto.service.AutoService;
 import com.mojang.serialization.Codec;
+import net.hollowcube.entity.SmartEntity;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.thread.TickThread;
+import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.time.Cooldown;
 import net.minestom.server.utils.time.TimeUnit;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
-import net.hollowcube.entity.UnnamedEntity;
-import net.hollowcube.entity.brain.Brain;
 
 import java.time.Duration;
 
 public class FollowTargetTask extends AbstractTask {
 
-    private int tick = 0;
-
     private Cooldown attackCooldown = new Cooldown(Duration.of(1, TimeUnit.SECOND));
 
     @Override
-    public void start(@NotNull Brain brain) {
-        super.start(brain);
-    }
+    public void tick(@NotNull SmartEntity entity, long time) {
 
-    @Override
-    public void tick(@NotNull Brain brain, long time) {
-
-        final Entity target = brain.getTarget();
+        final Entity target = entity.getTarget();
         if (target == null) {
             end(true);
             return;
         }
 
-        if (tick++ % 5 == 0) {
-            brain.setPathTo(target.getPosition());
+        TickThread thread = TickThread.current();
+        Check.notNull(thread, "Task ticked outside of tick thread");
+        if (thread.getTick() % 5 == 0) {
+            entity.navigator().setPathTo(target.getPosition());
         }
 
-        double distance = brain.entity().getDistanceSquared(target);
+        double distance = entity.getDistanceSquared(target);
         if (distance < 4 && attackCooldown.isReady(time)) {
             attackCooldown.refreshLastUpdate(time);
-            ((UnnamedEntity) brain.entity()).attack(target);
+            entity.attack(target);
         }
     }
 
@@ -49,6 +46,11 @@ public class FollowTargetTask extends AbstractTask {
         @Override
         public @NotNull Task create() {
             return new FollowTargetTask();
+        }
+
+        @Override
+        public @NotNull NamespaceID namespace() {
+            return NamespaceID.from("unnamed:follow_target");
         }
     }
 
