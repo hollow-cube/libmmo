@@ -141,7 +141,7 @@ public class OreBlockHandler implements BlockHandler {
 
     @Override
     public @NotNull NamespaceID getNamespaceId() {
-        return NamespaceID.from("unnamed:ore");
+        return NamespaceID.from("starlight:ore");
     }
 
     @Override

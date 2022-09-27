@@ -20,22 +20,22 @@ Items are loaded from a JSON data file, the format is described below
     "components": [
       {
         // Component ID
-        "type": "unnamed:my_component",
+        "type": "starlight:my_component",
         // All other values are determined by the component requirements.
         // See the section below on implementing components. A few samples are below
       },
       {
-        "type": "unnamed:fuel",
+        "type": "starlight:fuel",
         "burn_time": "200"
       },
       {
-        "type": "unnamed:sword",
+        "type": "starlight:sword",
         "cooldown": 5,
         "damage_type": "heavy",
         "base_damage": 25
       },
       {
-        "type": "unnamed:rarity",
+        "type": "starlight:rarity",
         "value": "legendary"
       }
     ],

@@ -1,17 +1,17 @@
 [
   {
-    "namespace": "unnamed:test_1",
+    "namespace": "starlight:test_1",
     "objective": {
-      "type": "unnamed:sequence",
+      "type": "starlight:sequence",
       "children": [
         {
-          "type": "unnamed:mine_ore",
-          "ore": "unnamed:gold_ore",
+          "type": "starlight:mine_ore",
+          "ore": "starlight:gold_ore",
           "count": 3
         },
         {
-          "type": "unnamed:mine_ore",
-          "ore": "unnamed:diamond_ore",
+          "type": "starlight:mine_ore",
+          "ore": "starlight:diamond_ore",
           "count": 2
         }
       ]

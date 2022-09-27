@@ -75,7 +75,7 @@ public class Main {
             player.addEffect(new Potion(PotionEffect.MINING_FATIGUE, (byte) -1, Short.MAX_VALUE, (byte) 0x0));
 
             //todo a command for this
-            player.getInventory().addItemStack(DebugToolManager.createTool("unnamed:hello"));
+            player.getInventory().addItemStack(DebugToolManager.createTool("starlight:hello"));
         });
 
         BaseCommandRegister.registerCommands(); //todo this should be in a facet?

@@ -56,8 +56,8 @@ public class QuestFacet implements Facet {
                     managers.put(player, manager);
                     event.getPlayer().sendMessage("Quest data loaded " + data);
 
-                    if (manager.getState("unnamed:test_1") == QuestState.NOT_STARTED) {
-                        manager.startQuest("unnamed:test_1");
+                    if (manager.getState("starlight:test_1") == QuestState.NOT_STARTED) {
+                        manager.startQuest("starlight:test_1");
                     }
                 }).exceptionally(FutureUtil::handleException);
     }

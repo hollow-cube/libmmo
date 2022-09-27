@@ -124,7 +124,7 @@ public class ModifierCommand extends Command {
         if(player.getDisplayName() != null) {
             sender.sendMessage(player.getDisplayName().append(Component.text("'s Modifiers:")));
         } else {
-            sender.sendMessage((Component.text(player.getUsername() + "'s Modifiers:")));
+            sender.sendMessage(Component.text(player.getUsername() + "'s Modifiers:"));
         }
 
         for (var entry : player.getCurrentModifierValues().entrySet()) {

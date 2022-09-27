@@ -28,7 +28,7 @@ jobs:
           save-maven-dependencies-cache: true
           # Ignore some of the paths when caching Maven Local repository
           maven-local-ignore-paths: |
-            unnamed/mmo/
+            starlight/mmo/
       - name: Build
         run: ./gradlew classes testClasses
       - name: Run tests

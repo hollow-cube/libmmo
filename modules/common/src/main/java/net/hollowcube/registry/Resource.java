@@ -44,7 +44,7 @@ public interface Resource extends Keyed {
     }
 
 
-    Path DATA_PATH = Path.of(System.getProperty("unnamed.data.dir", "data"));
+    Path DATA_PATH = Path.of(System.getProperty("starlight.data.dir", "data"));
 
     /**
      * Attempts to load a resource file with the following priorities
