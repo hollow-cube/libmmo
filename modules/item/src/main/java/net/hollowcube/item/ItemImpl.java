@@ -135,7 +135,7 @@ public record ItemImpl(
 
         @Override
         public @NotNull NamespaceID namespace() {
-            return NamespaceID.from("unnamed", "emptyitem");
+            return NamespaceID.from("starlight", "emptyitem");
         }
 
         @Override

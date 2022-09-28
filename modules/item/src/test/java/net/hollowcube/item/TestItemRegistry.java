@@ -7,7 +7,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class TestItemRegistry {
     static {
-        System.setProperty("unnamed.data.dir", "src/test/resources");
+        System.setProperty("starlight.data.dir", "src/test/resources");
     }
 
     @Test

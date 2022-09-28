@@ -33,7 +33,7 @@ public record ItemEntry(
     public static class Factory extends LootEntry.Factory {
         public Factory() {
             super(
-                    NamespaceID.from("unnamed:item"),
+                    NamespaceID.from("starlight:item"),
                     ItemEntry.class,
                     ItemEntry.CODEC
             );

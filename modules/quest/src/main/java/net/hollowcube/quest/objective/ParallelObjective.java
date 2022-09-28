@@ -73,7 +73,7 @@ public record ParallelObjective(List<Objective> children) implements Objective {
     @AutoService(Objective.Factory.class)
     public static class Factory extends Objective.Factory {
         public Factory() {
-            super(NamespaceID.from("unnamed:parallel"), ParallelObjective.class, ParallelObjective.CODEC);
+            super(NamespaceID.from("starlight:parallel"), ParallelObjective.class, ParallelObjective.CODEC);
         }
     }
 }

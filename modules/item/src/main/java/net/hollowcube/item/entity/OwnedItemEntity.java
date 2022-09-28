@@ -34,7 +34,7 @@ public class OwnedItemEntity extends ItemEntity {
     public static class Handler implements Facet {
         @Override
         public void hook(@NotNull ServerWrapper server) {
-            var eventNode = EventNode.all("unnamed:item_entity/handler");
+            var eventNode = EventNode.all("starlight:item_entity/handler");
             eventNode.addListener(PickupItemEvent.class, this::handlePickup);
             eventNode.addListener(EntityItemMergeEvent.class, this::handleMerge);
             server.addEventNode(eventNode);

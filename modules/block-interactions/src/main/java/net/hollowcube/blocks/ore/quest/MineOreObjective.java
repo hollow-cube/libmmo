@@ -64,7 +64,7 @@ public record MineOreObjective(
     @AutoService(Objective.Factory.class)
     public static class Factory extends Objective.Factory {
         public Factory() {
-            super(NamespaceID.from("unnamed:mine_ore"), MineOreObjective.class, MineOreObjective.CODEC);
+            super(NamespaceID.from("starlight:mine_ore"), MineOreObjective.class, MineOreObjective.CODEC);
         }
     }
 }

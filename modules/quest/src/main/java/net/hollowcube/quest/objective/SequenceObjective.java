@@ -66,7 +66,7 @@ public record SequenceObjective(List<Objective> children) implements Objective {
     @AutoService(Objective.Factory.class)
     public static class Factory extends Objective.Factory {
         public Factory() {
-            super(NamespaceID.from("unnamed:sequence"), SequenceObjective.class, SequenceObjective.CODEC);
+            super(NamespaceID.from("starlight:sequence"), SequenceObjective.class, SequenceObjective.CODEC);
         }
     }
 }

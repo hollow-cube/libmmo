@@ -22,7 +22,7 @@ public class ItemDistributor implements LootResult.DefaultDistributor<Item> {
 
     @Override
     public @NotNull NamespaceID namespace() {
-        return NamespaceID.from("unnamed:item");
+        return NamespaceID.from("starlight:item");
     }
 
     @Override

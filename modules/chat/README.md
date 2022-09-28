@@ -1,4 +1,4 @@
 ## Chat
 
-General chat module for unnamed mmo.
+General chat module for starlight mmo.
 

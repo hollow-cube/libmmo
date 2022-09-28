@@ -32,7 +32,7 @@ record ConstantNumberProvider(
     public static final class Factory extends NumberProvider.Factory {
         public Factory() {
             super(
-                    NamespaceID.from("unnamed:constant"),
+                    NamespaceID.from("starlight:constant"),
                     ConstantNumberProvider.class,
                     ConstantNumberProvider.CODEC
             );
