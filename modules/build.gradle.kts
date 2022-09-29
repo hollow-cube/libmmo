@@ -32,7 +32,7 @@ subprojects {
         implementation("com.github.minestommmo:Minestom:c6c97162a6")
 
         // Testing
-        testImplementation(project(":modules:test"))
+        testImplementation("net.hollowcube.common:test:0.0.0")
     }
 
     tasks.getByName<Test>("test") {

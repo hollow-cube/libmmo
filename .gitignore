@@ -50,3 +50,5 @@ bin/
 !.github
 
 log.txt
+
+.env
