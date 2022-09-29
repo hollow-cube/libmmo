@@ -3,6 +3,9 @@ package net.hollowcube.server.dev;
 import net.hollowcube.player.PlayerImpl;
 import net.hollowcube.server.dev.tool.DebugToolManager;
 import net.hollowcube.server.instance.TickTrackingInstance;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerProcess;
 import net.minestom.server.command.builder.Command;
@@ -76,6 +79,8 @@ public class Main {
 
             //todo a command for this
             player.getInventory().addItemStack(DebugToolManager.createTool("starlight:hello"));
+
+            player.showBossBar(BossBar.bossBar(Component.text("Starlight Alpha 0.1.1, Not representative of final product").color(TextColor.color(78, 92, 36)), 1, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS));
         });
 
         BaseCommandRegister.registerCommands(); //todo this should be in a facet?
