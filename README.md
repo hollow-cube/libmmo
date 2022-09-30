@@ -25,6 +25,14 @@ todo
 
 todo
 
+## Using a local copy of `hollow-cube/common`
+> Currently, this is the only option. When the libraries are properly versioned in the future this will be optional.
+
+1. Ensure you have a local copy of `hollow-cube/common` on your machine.
+2. Create a copy of the sample `.env` file in the root of this project, eg `cp .env.sample .env`.
+3. Ensure `COMMON_LIB_PATH` points to the location of your local copy of `hollow-cube/common`.
+4. Reload the gradle project.
+
 # Project Structure
 
 The project is split into a set of modules, each one representing a unique feature. The modules may be used
