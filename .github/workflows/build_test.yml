@@ -14,6 +14,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           path: libmmo
+      - name: Set up libmmo env
+        working-directory: libmmo
+        run: cp .env.sample .env
       - name: Checkout common project
         uses: actions/checkout@v2
         with:
