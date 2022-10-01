@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation("com.github.hollow-cube:Minestom:e84114b752")
     implementation(project(":modules:common"))
     implementation(project(":modules:chat"))
     implementation(project(":modules:block-interactions"))
