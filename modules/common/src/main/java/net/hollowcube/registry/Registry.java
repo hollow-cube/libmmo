@@ -168,6 +168,7 @@ public interface Registry<T extends Resource> {
         return result;
     }
 
+    @NotNull Collection<String> keys();
 
     @NotNull Collection<T> values();
 

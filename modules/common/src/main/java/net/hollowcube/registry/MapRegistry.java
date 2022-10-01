@@ -22,6 +22,11 @@ class MapRegistry<T extends Resource> implements Registry<T> {
     }
 
     @Override
+    public @NotNull Collection<String> keys() {
+        return delegate.keySet();
+    }
+
+    @Override
     public @NotNull Collection<T> values() {
         return delegate.values();
     }

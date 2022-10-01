@@ -84,6 +84,7 @@ public class Main {
         // Discover loaded facets
         Map<Class<?>, Facet> facets = new HashMap<>();
         for (Facet facet : ServiceLoader.load(Facet.class)) {
+            System.out.println("FACET : " + facet.getClass().getName());
             facets.put(facet.getClass(), facet);
         }
 
