@@ -1,4 +1,4 @@
-rootProject.name = "JointMMO"
+rootProject.name = "libmmo"
 
 include(":modules")
 include(":modules:common")
