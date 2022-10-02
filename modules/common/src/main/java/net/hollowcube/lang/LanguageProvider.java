@@ -32,6 +32,10 @@ public class LanguageProvider {
 
     private static final Pattern ARG_PATTERN = Pattern.compile("\\{[0-9]+}");
 
+    public static @NotNull Component get(@NotNull String key) {
+        return get(Component.translatable(key));
+    }
+
     /**
      * Translates a component (if possible, see below).
      * <p>

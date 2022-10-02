@@ -147,6 +147,10 @@ public interface Registry<T extends Resource> {
         return new MapRegistry<>(registry);
     }
 
+    static <T extends Resource> Registry<T> lazy(Supplier<Registry<T>> supplier) {
+        return new LazyRegistry<>(supplier);
+    }
+
 
     // Impl
 

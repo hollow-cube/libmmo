@@ -44,20 +44,21 @@ public class PickaxeHandler implements ItemComponentHandler<Pickaxe> {
     }
 
     private void handleLongDiggingStart(PlayerLongDiggingStartEvent event) {
-        var ore = Ore.fromBlock(event.getBlock());
-        if (ore == null || event.getBlock().compare(OreBlockHandler.REPLACEMENT_BLOCK, Block.Comparator.STATE)) return;
-
-        // Ensure they have a pickaxe in hand and get the pickaxe
-        var item = Item.fromItemStack(event.getPlayer().getItemInMainHand());
-        //todo will currently fail on any non-custom item
-
-        var pickaxe = item.getComponent(Pickaxe.class);
-        if (pickaxe == null) return; // Not holding a pickaxe
-
-        // Start mining the block
-        event.setDiggingBlock(
-                ore.health(),
-                pickaxe::miningSpeed
-        );
+//        var ore = Ore.fromBlock(event.getBlock());
+//        if (ore == null || event.getBlock().compare(OreBlockHandler.REPLACEMENT_BLOCK, Block.Comparator.STATE)) return;
+//
+//        // Ensure they have a pickaxe in hand and get the pickaxe
+//        var item = Item.fromItemStack(event.getPlayer().getItemInMainHand());
+//        //todo will currently fail on any non-custom item
+//
+//        var pickaxe = item.getComponent(Pickaxe.class);
+//        if (pickaxe == null) return; // Not holding a pickaxe
+//
+//        // Start mining the block
+//        event.setDiggingBlock(
+//                ore.health(),
+//                pickaxe::miningSpeed
+//        );
     }
+
 }

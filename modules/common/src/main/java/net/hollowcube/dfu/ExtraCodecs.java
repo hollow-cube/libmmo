@@ -6,6 +6,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.Material;
 import net.minestom.server.potion.PotionEffect;
@@ -38,6 +40,12 @@ public final class ExtraCodecs {
     public static final Codec<PotionEffect> POTION_EFFECT = Codec.STRING.xmap(PotionEffect::fromNamespaceId, PotionEffect::name);
 
     public static final Codec<Block> BLOCK = Codec.STRING.xmap(Block::fromNamespaceId, Block::name);
+
+    public static final Codec<Vec> VEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.DOUBLE.fieldOf("x").forGetter(Vec::x),
+            Codec.DOUBLE.fieldOf("y").forGetter(Vec::y),
+            Codec.DOUBLE.fieldOf("z").forGetter(Vec::z)
+    ).apply(i, Vec::new));
 
     public static @NotNull MapCodec<String> string(@NotNull String name, @Nullable String defaultValue) {
         return Codec.STRING.optionalFieldOf(name, defaultValue);
